@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Requests\Admin\Grade;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateGradeRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'sort_order' => 'required|integer',
+        ];
+    }
+}
