@@ -1,54 +1,96 @@
-<header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+<header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-3 flex justify-between items-center">
 
         <!-- Logo -->
-        <a href="{{ route('student.home') }}" class="text-2xl font-bold text-blue-600">
-            GiaSu247
+        <a href="{{ route('student.home') }}" class="flex items-center gap-2 group">
+
+            <div class="relative">
+
+                <!-- Logo chính -->
+                <div class="w-9 h-9 rounded-xl
+                    bg-gradient-to-br from-blue-600 to-indigo-600
+                    flex items-center justify-center shadow-sm">
+
+                    <i class="fas fa-graduation-cap text-white text-base"></i>
+
+                </div>
+
+                <!-- Icon vai trò -->
+                <div class="absolute -bottom-1 -right-1
+                    w-4 h-4 rounded-full
+                    bg-blue-500 border-2 border-white
+                    flex items-center justify-center shadow-sm">
+
+                    <i class="fas fa-user-graduate text-[8px] text-white"></i>
+
+                </div>
+
+            </div>
+
+            <span class="text-xl font-bold
+                 bg-gradient-to-r from-blue-600 to-indigo-600
+                 bg-clip-text text-transparent">
+
+                GiaSu247
+
+            </span>
+
         </a>
 
         <!-- Menu -->
-        <nav class="hidden md:flex items-center space-x-6 font-medium">
+        <nav class="hidden md:flex items-center space-x-1 font-medium text-gray-600">
 
-            <a href="{{ route('student.home') }}" class="hover:text-blue-600 transition">
-                Trang chủ
+            <a href="{{ route('student.home') }}"
+                class="px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
+                <i class="fas fa-home mr-1 text-xs"></i> Trang chủ
             </a>
 
+            <!-- Dropdown Quản lý lớp học -->
             <div class="relative group">
-                <button class="hover:text-blue-600 transition">
+                <button
+                    class="flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
+                    <i class="fas fa-book-open mr-1 text-xs"></i>
                     Quản lý lớp học
+                    <i
+                        class="fas fa-chevron-down text-xs ml-1 transition-transform duration-200 group-hover:rotate-180"></i>
                 </button>
 
-                <div
-                    class="absolute left-0 top-full hidden group-hover:block 
-                bg-white shadow-lg rounded-xl w-56 p-2 z-50">
-                    <a href="{{ route('classes.index') }}" class="block px-4 py-2 rounded-lg hover:bg-gray-100">
-                        Lịch sử đăng lớp
-                    </a>
-
-                    <a href="{{ route('classes.index', ['status' => 'assigned']) }}"
-                        class="block px-4 py-2 rounded-lg hover:bg-gray-100">
-                        Lớp học hiện hành
-                    </a>
+                <div class="absolute left-0 top-full pt-1 hidden group-hover:block">
+                    <div class="bg-white border border-gray-100 shadow-xl rounded-xl w-52 p-1.5 z-50">
+                        <a href="{{ route('classes.index') }}"
+                            class="flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition text-sm">
+                            <i class="fas fa-history text-xs w-4 text-center text-gray-400"></i>
+                            Lịch sử đăng lớp
+                        </a>
+                        <a href="{{ route('classes.index', ['status' => 'assigned']) }}"
+                            class="flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition text-sm">
+                            <i class="fas fa-chalkboard-teacher text-xs w-4 text-center text-gray-400"></i>
+                            Lớp học hiện hành
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Lời mời từ gia sư -->
-            <a href="{{ route('student.applications.index') }}" class="hover:text-blue-600 transition">
-                Lời mời từ gia sư
+            <a href="{{ route('student.applications.index') }}"
+                class="px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
+                <i class="fas fa-envelope-open-text mr-1 text-xs"></i> Lời mời từ gia sư
             </a>
 
             <!-- Thanh toán -->
-            <a href="#" class="hover:text-blue-600 transition">
-                Thanh toán
+            <a href="#"
+                class="px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
+                <i class="fas fa-credit-card mr-1 text-xs"></i> Thanh toán
             </a>
 
             <!-- Nút đăng lớp nổi bật -->
             @auth
                 @if (auth()->user()->role === 'student' || auth()->user()->role === 'both')
-                    <a href="{{ route('create-class.step1') }}"
-                        class="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-xl font-semibold
-                              hover:bg-blue-600 hover:text-white transition">
-                        + Đăng lớp
+                    <a href="{{ route('create-class.step1') }}" class="ml-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white
+                                              px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
+                                              hover:shadow-md hover:from-blue-700 hover:to-indigo-700
+                                              transition-all duration-200">
+                        <i class="fas fa-plus mr-1"></i> Đăng lớp
                     </a>
                 @endif
             @endauth
@@ -56,12 +98,14 @@
         </nav>
 
         <!-- Avatar / Login -->
-        <div>
+        <div class="flex items-center gap-3">
             @auth
                 <x-partials.user-dropdown />
             @else
-                <a href="{{ route('login') }}"
-                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                <a href="{{ route('login') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white
+                                  px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
+                                  hover:shadow-md hover:from-blue-700 hover:to-indigo-700
+                                  transition-all duration-200">
                     Đăng nhập
                 </a>
             @endauth

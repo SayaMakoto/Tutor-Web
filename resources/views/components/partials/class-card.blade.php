@@ -31,74 +31,111 @@
 
     // Kiểm tra nếu lớp đã được giao cho tutor hiện tại
     $currentTutorId = auth()->user()->tutor?->id;
-
     $isAssignedToCurrentTutor = $classRequest->tutor_id === $currentTutorId && $classRequest->status === 'assigned';
+
+    // Màu gradient header theo môn học
+    $gradientMap = [
+        'Toán'      => ['from-blue-500 to-blue-700',    'fas fa-square-root-alt'],
+        'Văn'       => ['from-purple-500 to-purple-700', 'fas fa-feather-alt'],
+        'Anh'       => ['from-amber-400 to-orange-500',  'fas fa-language'],
+        'Lý'        => ['from-cyan-500 to-blue-600',     'fas fa-atom'],
+        'Hóa'       => ['from-emerald-500 to-teal-600',  'fas fa-flask'],
+        'Sinh'      => ['from-green-500 to-green-700',   'fas fa-leaf'],
+        'Sử'        => ['from-red-400 to-rose-600',      'fas fa-landmark'],
+        'Địa'       => ['from-lime-500 to-green-600',    'fas fa-globe-asia'],
+        'Tin'       => ['from-violet-500 to-indigo-600', 'fas fa-laptop-code'],
+    ];
+    $subjectKey = collect($gradientMap)->keys()->first(fn($k) => str_contains($className, $k));
+    [$cardGradient, $cardIcon] = $gradientMap[$subjectKey] ?? ['from-indigo-500 to-blue-600', 'fas fa-book'];
 @endphp
 
-<div
-    class="bg-white rounded-2xl shadow-md overflow-hidden relative w-96 hover:shadow-lg hover:border hover:border-blue-500 transition">
+<div class="w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden
+            hover:shadow-lg hover:-translate-y-1 transition-all duration-200 relative flex flex-col">
 
-    {{-- Thông báo trạng thái góc trên bên phải --}}
-    <div class="absolute top-3 right-3 px-3 py-1 text-xs font-semibold rounded-full {{ $statusColor }}">
-        {{ $statusLabel }}
-    </div>
+    {{-- Header Card với Gradient --}}
+    <div class="bg-gradient-to-br {{ $cardGradient }} px-5 py-5 relative overflow-hidden">
 
-    {{-- Hình chữ nhật (placeholder) --}}
-    <div class="h-40 bg-gray-100 flex flex-col justify-center items-start p-4">
-        <h3 class="text-lg font-semibold text-gray-800">
-            {{ $className }} - Mã: {{ $classCode }}
+        {{-- Decorative circle --}}
+        <div class="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full pointer-events-none"></div>
+
+        {{-- Icon môn học --}}
+        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-3">
+            <i class="{{ $cardIcon }} text-white text-lg"></i>
+        </div>
+
+        {{-- Tên + mã lớp --}}
+        <h3 class="text-white font-bold text-base leading-snug">
+            {{ $className }}
         </h3>
-        <p class="text-sm text-gray-600 mt-1">
-            Ngành học: {{ $gradeName }}
-        </p>
-        <p class="text-sm text-gray-600 mt-1">
-            Học phí: <span class="font-semibold text-blue-600">{{ number_format($fee) }} VNĐ/1h</span>
-        </p>
-        <p class="text-sm text-gray-600 mt-1">
-            Địa chỉ: {{ $address }}
-        </p>
+        <p class="text-white/70 text-xs mt-0.5">Mã lớp: #{{ $classCode }}</p>
+
+        {{-- Badge trạng thái --}}
+        <div class="absolute top-3 right-3 px-2.5 py-1 text-xs font-semibold rounded-full {{ $statusColor }} shadow-sm">
+            {{ $statusLabel }}
+        </div>
     </div>
 
-    {{-- Nút Chi tiết + Hủy --}}
+    {{-- Body Card --}}
+    <div class="px-5 py-4 flex-1 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+            <i class="fas fa-layer-group w-4 text-center text-indigo-400"></i>
+            <span>{{ $gradeName }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+            <i class="fas fa-map-marker-alt w-4 text-center text-rose-400"></i>
+            <span class="truncate">{{ $address }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-sm font-semibold text-blue-600">
+            <i class="fas fa-dollar-sign w-4 text-center text-blue-400"></i>
+            <span>{{ number_format($fee) }} VNĐ / 1h</span>
+        </div>
+    </div>
+
+    {{-- Footer Card — Nút hành động --}}
     @if ($showDetail || $showCancel)
-        <div class="flex justify-between p-4 border-t">
+        <div class="px-5 py-3 border-t border-gray-100 flex justify-between items-center gap-2">
 
             {{-- Chi tiết --}}
             @if ($showDetail)
                 <a href="{{ $detailUrl }}"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-                    Chi tiết
+                   class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-xl 
+                          hover:bg-blue-700 text-sm font-semibold transition-colors duration-150">
+                    <i class="fas fa-eye mr-1"></i> Chi tiết
                 </a>
             @endif
 
             {{-- Nếu lớp đã được giao cho gia sư hiện tại --}}
             @if ($isAssignedToCurrentTutor)
                 <a href="#"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
-                    Lịch dạy
+                   class="flex-1 text-center px-4 py-2 bg-indigo-600 text-white rounded-xl 
+                          hover:bg-indigo-700 text-sm font-semibold transition-colors duration-150">
+                    <i class="fas fa-calendar-alt mr-1"></i> Lịch dạy
                 </a>
 
-                {{-- Nếu đang chờ thanh toán --}}
+            {{-- Nếu đang chờ thanh toán --}}
             @elseif ($isPaymentPending)
                 <a href="#"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
-                    Thanh toán
+                   class="flex-1 text-center px-4 py-2 bg-emerald-600 text-white rounded-xl 
+                          hover:bg-emerald-700 text-sm font-semibold transition-colors duration-150">
+                    <i class="fas fa-credit-card mr-1"></i> Thanh toán
                 </a>
 
-                {{-- Nếu được phép hủy --}}
+            {{-- Nếu được phép hủy --}}
             @elseif ($canCancel)
                 <form action="{{ $cancelUrl }}" method="POST"
-                    onsubmit="return confirm('Bạn có chắc muốn hủy lớp này?');">
+                      onsubmit="return confirm('Bạn có chắc muốn hủy lớp này?');"
+                      class="flex-1">
                     @csrf
                     @method('DELETE')
-
                     <button type="submit"
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">
-                        Hủy
+                            class="w-full px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl 
+                                   hover:bg-red-600 hover:text-white text-sm font-semibold transition-all duration-150">
+                        <i class="fas fa-times mr-1"></i> Hủy lớp
                     </button>
                 </form>
             @endif
 
         </div>
     @endif
+
 </div>
