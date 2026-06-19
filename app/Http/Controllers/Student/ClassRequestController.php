@@ -11,7 +11,7 @@ class ClassRequestController extends Controller
 {
     public function index(FilterRequest $request)
     {
-        $query = ClassRequest::where('student_id', auth()->id());
+        $query = ClassRequest::where('student_id', auth()->user()->student->id);
 
         $query->when($request->filled('id'), function ($q) use ($request) {
             $q->where('id', $request->id);

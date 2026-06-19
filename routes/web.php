@@ -190,6 +190,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/profile/update', [ProfileController::class, 'update'])
         ->name('profile.update');
+
+    Route::delete('/profile/documents/{id}', [ProfileController::class, 'deleteDocument'])
+        ->name('profile.documents.destroy');
 });
 
 Route::middleware('auth')->group(function () {

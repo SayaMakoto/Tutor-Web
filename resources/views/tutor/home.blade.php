@@ -3,6 +3,27 @@
 @section('title', 'Trang chủ gia sư')
 
 @section('content')
+    @auth
+        @if (is_null(auth()->user()->phone) || is_null(auth()->user()->date_of_birth))
+            <div
+                class="mb-6 p-4 bg-linear-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center text-red-600">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold text-gray-800 text-sm">Hồ sơ chưa hoàn thiện!</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Vui lòng cập nhật Số điện thoại và Ngày sinh để tài khoản hoạt
+                            động bình thường.</p>
+                    </div>
+                </div>
+                <a href="{{ route('profile.edit') }}"
+                    class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm whitespace-nowrap">
+                    Cập nhật ngay
+                </a>
+            </div>
+        @endif
+    @endauth
 
     {{-- Hero Banner --}}
     <x-partials.slider />
@@ -134,17 +155,15 @@
             <div class="grid md:grid-cols-3 gap-5">
 
                 @foreach ($approvedClasses as $class)
-
-                    <x-partials.class-card :classRequest="$class" />
-
+                    <<<<<<< HEAD <x-partials.class-card :classRequest="$class" />
+                    =======
+                    <x-partials.class-card :classRequest="$class" :showCancel="false" detailRoute="tutor.classes.show" />
+                    >>>>>>> 3ac214b (feat: update tutor onboarding documents and enhance profile edit UI)
                 @endforeach
 
             </div>
-
         @else
-
-            <div
-                class="text-center py-14 bg-white rounded-2xl border border-dashed border-gray-200">
+            <div class="text-center py-14 bg-white rounded-2xl border border-dashed border-gray-200">
 
                 <i class="fas fa-book-open text-gray-300 text-4xl mb-3"></i>
 
@@ -188,10 +207,10 @@
 
         <div class="grid md:grid-cols-3 gap-4 text-center">
 
-            <div
-                class="p-5 rounded-xl border border-green-100 bg-green-50 hover:shadow-md transition">
+            <div class="p-5 rounded-xl border border-green-100 bg-green-50 hover:shadow-md transition">
 
-                <div class="w-10 h-10 bg-green-100 rounded-xl
+                <div
+                    class="w-10 h-10 bg-green-100 rounded-xl
                             flex items-center justify-center
                             mx-auto mb-3">
 
@@ -220,10 +239,10 @@
             </div>
 
 
-            <div
-                class="p-5 rounded-xl border border-emerald-100 bg-emerald-50 hover:shadow-md transition">
+            <div class="p-5 rounded-xl border border-emerald-100 bg-emerald-50 hover:shadow-md transition">
 
-                <div class="w-10 h-10 bg-emerald-100 rounded-xl
+                <div
+                    class="w-10 h-10 bg-emerald-100 rounded-xl
                             flex items-center justify-center
                             mx-auto mb-3">
 
@@ -252,10 +271,10 @@
             </div>
 
 
-            <div
-                class="p-5 rounded-xl border border-teal-100 bg-teal-50 hover:shadow-md transition">
+            <div class="p-5 rounded-xl border border-teal-100 bg-teal-50 hover:shadow-md transition">
 
-                <div class="w-10 h-10 bg-teal-100 rounded-xl
+                <div
+                    class="w-10 h-10 bg-teal-100 rounded-xl
                             flex items-center justify-center
                             mx-auto mb-3">
 
@@ -305,7 +324,8 @@
 
             <div>
 
-                <div class="w-14 h-14 rounded-2xl bg-green-100
+                <div
+                    class="w-14 h-14 rounded-2xl bg-green-100
                             flex items-center justify-center
                             mx-auto mb-4">
 
@@ -330,7 +350,8 @@
 
             <div>
 
-                <div class="w-14 h-14 rounded-2xl bg-emerald-100
+                <div
+                    class="w-14 h-14 rounded-2xl bg-emerald-100
                             flex items-center justify-center
                             mx-auto mb-4">
 
@@ -355,7 +376,8 @@
 
             <div>
 
-                <div class="w-14 h-14 rounded-2xl bg-teal-100
+                <div
+                    class="w-14 h-14 rounded-2xl bg-teal-100
                             flex items-center justify-center
                             mx-auto mb-4">
 

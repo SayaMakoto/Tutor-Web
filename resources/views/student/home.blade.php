@@ -1,6 +1,27 @@
 @extends('layouts.student')
 
 @section('content')
+    @auth
+        @if (is_null(auth()->user()->phone) || is_null(auth()->user()->date_of_birth))
+            <div
+                class="mb-6 p-4 bg-linear-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl flex items-center justify-between shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center text-red-600">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
+                    </div>
+                    <div class="text-left">
+                        <h4 class="font-bold text-gray-800 text-sm">Hồ sơ chưa hoàn thiện!</h4>
+                        <p class="text-xs text-gray-500 mt-0.5">Vui lòng cập nhật Số điện thoại và Ngày sinh để tài khoản hoạt
+                            động bình thường.</p>
+                    </div>
+                </div>
+                <a href="{{ route('profile.edit') }}"
+                    class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm whitespace-nowrap">
+                    Cập nhật ngay
+                </a>
+            </div>
+        @endif
+    @endauth
     {{-- Hero Banner --}}
     <x-partials.slider />
 
@@ -46,7 +67,7 @@
                 <p class="text-sm text-gray-500 mt-0.5">Các lớp học vừa được đăng gần đây</p>
             </div>
             <a href="{{ route('classes.index') }}"
-               class="text-sm font-semibold text-blue-600 hover:text-indigo-600 transition flex items-center gap-1">
+                class="text-sm font-semibold text-blue-600 hover:text-indigo-600 transition flex items-center gap-1">
                 Xem tất cả <i class="fas fa-arrow-right text-xs"></i>
             </a>
         </div>
@@ -103,13 +124,14 @@
     {{-- CTA Section --}}
     @auth
         @if (in_array(auth()->user()->role, ['student']))
-            <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 
+            <div
+                class="relative bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 
                         text-white p-10 rounded-2xl text-center overflow-hidden mb-6">
                 <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                 <h2 class="text-2xl font-bold mb-2 relative z-10">Bạn là gia sư?</h2>
                 <p class="mb-6 text-blue-100 text-sm relative z-10">Đăng ký ngay để nhận lớp phù hợp với chuyên môn của bạn</p>
                 <a href="{{ route('become-tutor') }}"
-                   class="relative z-10 inline-flex items-center gap-2 bg-yellow-400 text-gray-900 
+                    class="relative z-10 inline-flex items-center gap-2 bg-yellow-400 text-gray-900 
                           px-7 py-3 rounded-xl font-bold hover:bg-yellow-300 transition shadow-lg">
                     <i class="fas fa-chalkboard-teacher"></i>
                     Đăng ký làm gia sư
@@ -119,13 +141,14 @@
     @endauth
 
     @guest
-        <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 
+        <div
+            class="relative bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 
                     text-white p-10 rounded-2xl text-center overflow-hidden mb-6">
             <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <h2 class="text-2xl font-bold mb-2 relative z-10">Bạn là gia sư?</h2>
             <p class="mb-6 text-blue-100 text-sm relative z-10">Đăng ký ngay để nhận lớp phù hợp với chuyên môn của bạn</p>
             <a href="{{ route('register.tutor') }}"
-               class="relative z-10 inline-flex items-center gap-2 bg-yellow-400 text-gray-900 
+                class="relative z-10 inline-flex items-center gap-2 bg-yellow-400 text-gray-900 
                       px-7 py-3 rounded-xl font-bold hover:bg-yellow-300 transition shadow-lg">
                 <i class="fas fa-chalkboard-teacher"></i>
                 Đăng ký làm gia sư
