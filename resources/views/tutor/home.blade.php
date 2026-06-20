@@ -155,10 +155,7 @@
             <div class="grid md:grid-cols-3 gap-5">
 
                 @foreach ($approvedClasses as $class)
-                    <<<<<<< HEAD <x-partials.class-card :classRequest="$class" />
-                    =======
                     <x-partials.class-card :classRequest="$class" :showCancel="false" detailRoute="tutor.classes.show" />
-                    >>>>>>> 3ac214b (feat: update tutor onboarding documents and enhance profile edit UI)
                 @endforeach
 
             </div>

@@ -29,6 +29,9 @@ use App\Http\Controllers\Tutor\TutorProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 
+// PAYMENT
+use App\Http\Controllers\PaymentController;
+
 use Illuminate\Support\Facades\Route;
 
 // =======================
@@ -206,6 +209,22 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
+
+// =======================
+// PAYMENT (Ví Xu)
+// =======================
+Route::middleware('auth')->prefix('payment')->name('payment.')->group(function () {
+    Route::get('/wallet',             [PaymentController::class, 'wallet'])  ->name('wallet');
+    Route::get('/topup',              [PaymentController::class, 'topup'])   ->name('topup');
+    Route::post('/create',            [PaymentController::class, 'create'])  ->name('create');
+    Route::get('/qr/{orderRef}',      [PaymentController::class, 'qr'])      ->name('qr');
+    Route::post('/simulate',          [PaymentController::class, 'simulate'])->name('simulate');
+    Route::get('/status/{orderRef}',  [PaymentController::class, 'status'])  ->name('status');
+    Route::post('/cancel',            [PaymentController::class, 'cancel'])  ->name('cancel');
+    Route::get('/success',            [PaymentController::class, 'success']) ->name('success');
+    Route::get('/failed',             [PaymentController::class, 'failed'])  ->name('failed');
+    Route::get('/history',            [PaymentController::class, 'history']) ->name('history');
+});
 
 
 

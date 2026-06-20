@@ -7,8 +7,7 @@
             <div class="relative">
 
                 <!-- Logo chính -->
-                <div
-                    class="w-9 h-9 rounded-xl
+                <div class="w-9 h-9 rounded-xl
                     bg-linear-to-br from-blue-600 to-indigo-600
                     flex items-center justify-center shadow-sm">
 
@@ -17,8 +16,7 @@
                 </div>
 
                 <!-- Icon vai trò -->
-                <div
-                    class="absolute -bottom-1 -right-1
+                <div class="absolute -bottom-1 -right-1
                     w-4 h-4 rounded-full
                     bg-blue-500 border-2 border-white
                     flex items-center justify-center shadow-sm">
@@ -29,8 +27,7 @@
 
             </div>
 
-            <span
-                class="text-xl font-bold
+            <span class="text-xl font-bold
                  bg-linear-to-r from-blue-600 to-indigo-600
                  bg-clip-text text-transparent">
 
@@ -81,19 +78,28 @@
             </a>
 
             <!-- Thanh toán -->
-            <a href="#"
-                class="px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
-                <i class="fas fa-credit-card mr-1 text-xs"></i> Thanh toán
-            </a>
+            @auth
+                    <a href="{{ route('payment.wallet') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium
+                          {{ request()->routeIs('payment.*')
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600' }}">
+                        <i class="fas fa-coins w-4 text-center"></i>
+                        <span class="flex-1">Ví Xu</span>
+                        @php $xuBal = Auth::user()->wallet?->balance ?? 0; @endphp
+                        <span class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-700' }}
+                                 font-semibold px-2 py-0.5 rounded-full">
+                            {{ number_format($xuBal) }}
+                        </span>
+                    </a>
+            @endauth
 
             <!-- Nút đăng lớp nổi bật -->
             @auth
                 @if (auth()->user()->role === 'student' || auth()->user()->role === 'both')
-                    <a href="{{ route('create-class.step1') }}"
-                        class="ml-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white
-                                              px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
-                                              hover:shadow-md hover:from-blue-700 hover:to-indigo-700
-                                              transition-all duration-200">
+                    <a href="{{ route('create-class.step1') }}" class="ml-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white
+                                                      px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
+                                                      hover:shadow-md hover:from-blue-700 hover:to-indigo-700
+                                                      transition-all duration-200">
                         <i class="fas fa-plus mr-1"></i> Đăng lớp
                     </a>
                 @endif
@@ -106,11 +112,10 @@
             @auth
                 <x-partials.user-dropdown />
             @else
-                <a href="{{ route('login') }}"
-                    class="bg-linear-to-r from-blue-600 to-indigo-600 text-white
-                                  px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
-                                  hover:shadow-md hover:from-blue-700 hover:to-indigo-700
-                                  transition-all duration-200">
+                <a href="{{ route('login') }}" class="bg-linear-to-r from-blue-600 to-indigo-600 text-white
+                                      px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
+                                      hover:shadow-md hover:from-blue-700 hover:to-indigo-700
+                                      transition-all duration-200">
                     Đăng nhập
                 </a>
             @endauth

@@ -29,4 +29,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /** Lấy ví, tự tạo nếu chưa có */
+    public function getOrCreateWallet(): Wallet
+    {
+        return $this->wallet ?? $this->wallet()->create([
+            'balance' => 0, 'frozen_balance' => 0, 'total_topped_up' => 0,
+        ]);
+    }
 }
