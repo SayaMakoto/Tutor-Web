@@ -72,25 +72,6 @@
 
         <div class="border-t border-gray-100 my-2"></div>
 
-        {{-- Ví Xu (chỉ hiển thị khi đã login) --}}
-        @auth
-        <a href="{{ route('payment.wallet') }}"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium
-                  {{ request()->routeIs('payment.*')
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600' }}">
-            <i class="fas fa-coins w-4 text-center"></i>
-            <span class="flex-1">Ví Xu</span>
-            @php $xuBal = Auth::user()->wallet?->balance ?? 0; @endphp
-            <span class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-700' }}
-                         font-semibold px-2 py-0.5 rounded-full">
-                {{ number_format($xuBal) }}
-            </span>
-        </a>
-        @endauth
-
-        <div class="border-t border-gray-100 my-2"></div>
-
         <!-- Giới thiệu -->
         <a href="{{ route('about') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium

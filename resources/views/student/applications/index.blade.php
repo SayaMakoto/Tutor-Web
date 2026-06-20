@@ -23,7 +23,7 @@
         {{-- Tips --}}
         @if (!$applications->isEmpty())
             <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-start gap-3">
-                <i class="fas fa-lightbulb text-amber-500 mt-0.5 flex-shrink-0"></i>
+                <i class="fas fa-lightbulb text-amber-500 mt-0.5 shrink-0"></i>
                 <p class="text-amber-700 text-sm">
                     <strong>Gợi ý:</strong> Xem hồ sơ gia sư trước khi chấp nhận. Sau khi chọn, hệ thống sẽ
                     <strong>tạm khóa phí</strong> trong ví gia sư — Xu chỉ bị trừ thực tế sau bảo hành 7–15 ngày.

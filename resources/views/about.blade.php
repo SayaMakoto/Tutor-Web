@@ -4,7 +4,8 @@
 @section('content')
 
     {{-- Hero Section --}}
-    <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700
+    <div
+        class="relative bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700
                 rounded-2xl overflow-hidden text-white text-center px-8 py-16 mb-10">
         <div class="absolute top-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         <div class="absolute bottom-0 right-0 w-64 h-64 bg-white/5 rounded-full translate-x-1/3 translate-y-1/3"></div>
@@ -40,7 +41,8 @@
 
     {{-- 3 Core Values --}}
     <div class="grid md:grid-cols-3 gap-5 mb-10">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
                 <i class="fas fa-bullseye text-indigo-600 text-xl"></i>
             </div>
@@ -50,7 +52,8 @@
                 chuyên môn và khu vực, giảm thiểu thời gian tìm kiếm.
             </p>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
                 <i class="fas fa-shield-halved text-emerald-600 text-xl"></i>
             </div>
@@ -60,7 +63,8 @@
                 cả hai bên yên tâm khi hợp tác.
             </p>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-4">
                 <i class="fas fa-rocket text-amber-600 text-xl"></i>
             </div>
@@ -74,7 +78,7 @@
 
     {{-- For Students & Tutors --}}
     <div class="grid md:grid-cols-2 gap-6 mb-10">
-        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 p-8 rounded-2xl">
+        <div class="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 p-8 rounded-2xl">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
                     <i class="fas fa-user-graduate text-white"></i>
@@ -82,19 +86,19 @@
                 <h2 class="text-xl font-bold text-blue-800">Dành cho Học viên</h2>
             </div>
             <ul class="space-y-3 text-gray-700 text-sm">
-                @foreach(['Tìm gia sư theo môn học, khu vực, trình độ', 'Đăng yêu cầu tìm lớp nhanh chóng', 'Theo dõi đơn ứng tuyển minh bạch', 'Tiết kiệm thời gian và chi phí'] as $item)
+                @foreach (['Tìm gia sư theo môn học, khu vực, trình độ', 'Đăng yêu cầu tìm lớp nhanh chóng', 'Theo dõi đơn ứng tuyển minh bạch', 'Tiết kiệm thời gian và chi phí'] as $item)
                     <li class="flex items-center gap-2">
-                        <i class="fas fa-check-circle text-blue-500 flex-shrink-0"></i> {{ $item }}
+                        <i class="fas fa-check-circle text-blue-500 shrink-0"></i> {{ $item }}
                     </li>
                 @endforeach
             </ul>
             <a href="{{ route('classes.index') }}"
-               class="mt-5 inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
+                class="mt-5 inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition">
                 <i class="fas fa-search"></i> Tìm gia sư ngay
             </a>
         </div>
 
-        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 p-8 rounded-2xl">
+        <div class="bg-linear-to-br from-emerald-50 to-teal-50 border border-emerald-100 p-8 rounded-2xl">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center">
                     <i class="fas fa-chalkboard-teacher text-white"></i>
@@ -102,14 +106,14 @@
                 <h2 class="text-xl font-bold text-emerald-800">Dành cho Gia sư</h2>
             </div>
             <ul class="space-y-3 text-gray-700 text-sm">
-                @foreach(['Tìm lớp phù hợp với chuyên môn', 'Quản lý hồ sơ và ứng tuyển dễ dàng', 'Mở rộng cơ hội giảng dạy', 'Xây dựng uy tín cá nhân'] as $item)
+                @foreach (['Tìm lớp phù hợp với chuyên môn', 'Quản lý hồ sơ và ứng tuyển dễ dàng', 'Mở rộng cơ hội giảng dạy', 'Xây dựng uy tín cá nhân'] as $item)
                     <li class="flex items-center gap-2">
-                        <i class="fas fa-check-circle text-emerald-500 flex-shrink-0"></i> {{ $item }}
+                        <i class="fas fa-check-circle text-emerald-500 shrink-0"></i> {{ $item }}
                     </li>
                 @endforeach
             </ul>
             <a href="{{ route('register.tutor') }}"
-               class="mt-5 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition">
+                class="mt-5 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition">
                 <i class="fas fa-user-plus"></i> Đăng ký làm Gia sư
             </a>
         </div>
@@ -128,7 +132,7 @@
         </p>
         <div class="flex justify-center gap-3 mt-6">
             <a href="{{ route('student.home') }}"
-               class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600
+                class="inline-flex items-center gap-2 bg-linear-to-r from-blue-600 to-indigo-600
                       text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
                 <i class="fas fa-arrow-right"></i> Bắt đầu ngay
             </a>

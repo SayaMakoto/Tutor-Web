@@ -2,22 +2,25 @@
 
 @section('content')
     {{-- Full-page gradient background with decorative circles --}}
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 relative overflow-hidden px-4">
+    <div
+        class="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 relative overflow-hidden px-4">
 
         {{-- Decorative background circles --}}
-        <div class="absolute top-[-80px] left-[-80px] w-64 h-64 bg-white/10 rounded-full pointer-events-none"></div>
-        <div class="absolute bottom-[-100px] right-[-60px] w-80 h-80 bg-white/10 rounded-full pointer-events-none"></div>
-        <div class="absolute top-1/2 left-[-120px] w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
+        <div class="absolute -top-20 -left-20 w-64 h-64 bg-white/10 rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-25 -right-15 w-80 h-80 bg-white/10 rounded-full pointer-events-none"></div>
+        <div class="absolute top-1/2 -left-30 w-48 h-48 bg-white/5 rounded-full pointer-events-none"></div>
 
         {{-- Card --}}
         <div class="relative z-10 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
 
             {{-- Logo --}}
             <div class="flex flex-col items-center mb-6">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mb-3">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mb-3">
                     <i class="fa-solid fa-graduation-cap text-white text-2xl"></i>
                 </div>
-                <span class="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">
+                <span
+                    class="text-2xl font-extrabold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">
                     GiaSu247
                 </span>
             </div>
@@ -72,7 +75,7 @@
 
                 {{-- Submit --}}
                 <button type="submit"
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
+                    class="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
                     <i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập
                 </button>
             </form>
@@ -80,7 +83,8 @@
             {{-- Register link --}}
             <p class="text-center text-sm text-gray-500 mt-6">
                 Chưa có tài khoản?
-                <a href="{{ route('role') }}" class="text-blue-600 hover:text-indigo-600 font-semibold hover:underline transition">
+                <a href="{{ route('role') }}"
+                    class="text-blue-600 hover:text-indigo-600 font-semibold hover:underline transition">
                     Đăng ký ngay
                 </a>
             </p>

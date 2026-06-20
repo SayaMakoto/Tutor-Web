@@ -213,7 +213,7 @@ Route::get('/about', [AboutController::class, 'index'])
 // =======================
 // PAYMENT (Ví Xu)
 // =======================
-Route::middleware('auth')->prefix('payment')->name('payment.')->group(function () {
+Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment.')->group(function () {
     Route::get('/wallet',             [PaymentController::class, 'wallet'])  ->name('wallet');
     Route::get('/topup',              [PaymentController::class, 'topup'])   ->name('topup');
     Route::post('/create',            [PaymentController::class, 'create'])  ->name('create');

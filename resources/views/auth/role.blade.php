@@ -1,17 +1,19 @@
 @extends('layouts.auth')
 @section('title', 'Chọn vai trò')
 @section('content')
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-700 via-indigo-600 to-blue-600 relative overflow-hidden px-4 py-10">
+    <div
+        class="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-700 via-indigo-600 to-blue-600 relative overflow-hidden px-4 py-10">
 
         {{-- Decorative circles --}}
-        <div class="absolute top-[-60px] right-[-60px] w-64 h-64 bg-white/10 rounded-full pointer-events-none"></div>
-        <div class="absolute bottom-[-80px] left-[-80px] w-80 h-80 bg-white/10 rounded-full pointer-events-none"></div>
+        <div class="absolute -top-15 -right-15 w-64 h-64 bg-white/10 rounded-full pointer-events-none"></div>
+        <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-white/10 rounded-full pointer-events-none"></div>
 
         <div class="relative z-10 bg-white rounded-2xl shadow-2xl p-10 w-full max-w-2xl">
 
             {{-- Header --}}
             <div class="text-center mb-8">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mx-auto mb-3">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg mx-auto mb-3">
                     <i class="fa-solid fa-graduation-cap text-white text-2xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800">Bạn muốn đăng ký với vai trò gì?</h1>
@@ -24,7 +26,8 @@
                 <a href="{{ route('register.student') }}"
                     class="group border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 rounded-2xl p-6 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg block">
 
-                    <div class="w-16 h-16 rounded-full bg-blue-100 group-hover:bg-blue-200 flex items-center justify-center mx-auto mb-4 transition">
+                    <div
+                        class="w-16 h-16 rounded-full bg-blue-100 group-hover:bg-blue-200 flex items-center justify-center mx-auto mb-4 transition">
                         <i class="fa-solid fa-user-graduate text-blue-600 text-2xl"></i>
                     </div>
 
@@ -50,7 +53,8 @@
                 <a href="{{ route('register.tutor') }}"
                     class="group border-2 border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50 rounded-2xl p-6 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg block">
 
-                    <div class="w-16 h-16 rounded-full bg-emerald-100 group-hover:bg-emerald-200 flex items-center justify-center mx-auto mb-4 transition">
+                    <div
+                        class="w-16 h-16 rounded-full bg-emerald-100 group-hover:bg-emerald-200 flex items-center justify-center mx-auto mb-4 transition">
                         <i class="fa-solid fa-chalkboard-teacher text-emerald-600 text-2xl"></i>
                     </div>
 

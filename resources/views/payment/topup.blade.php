@@ -1,29 +1,45 @@
 @php
     // Xác định role hiện tại để chọn layout & màu chủ thể phù hợp
     $isTutor = Auth::user()->role === 'tutor';
-    $layout  = $isTutor ? 'layouts.tutor' : 'layouts.student';
+    $layout = $isTutor ? 'layouts.tutor' : 'layouts.student';
 
     // Bộ class màu dùng chung — đổi 1 chỗ, áp dụng toàn trang
     $theme = $isTutor
         ? [
-            'gradFrom' => 'from-green-600', 'gradTo' => 'to-emerald-700',
-            'text'     => 'text-green-600', 'text500' => 'text-green-500', 'text700' => 'text-green-700',
-            'bg50'     => 'bg-green-50',    'bg100'   => 'bg-green-100',
-            'border400' => 'border-green-400', 'border500' => 'border-green-500',
-            'ring400'   => 'focus:ring-green-400',
-            'btnGradFrom' => 'from-green-600', 'btnGradTo' => 'to-emerald-600',
-            'btnHoverFrom' => 'hover:from-green-700', 'btnHoverTo' => 'hover:to-emerald-700',
-            'badgeBg' => 'bg-green-600', 'badgeText' => 'text-white',
+            'gradFrom' => 'from-green-600',
+            'gradTo' => 'to-emerald-700',
+            'text' => 'text-green-600',
+            'text500' => 'text-green-500',
+            'text700' => 'text-green-700',
+            'bg50' => 'bg-green-50',
+            'bg100' => 'bg-green-100',
+            'border400' => 'border-green-400',
+            'border500' => 'border-green-500',
+            'ring400' => 'focus:ring-green-400',
+            'btnGradFrom' => 'from-green-600',
+            'btnGradTo' => 'to-emerald-600',
+            'btnHoverFrom' => 'hover:from-green-700',
+            'btnHoverTo' => 'hover:to-emerald-700',
+            'badgeBg' => 'bg-green-600',
+            'badgeText' => 'text-white',
         ]
         : [
-            'gradFrom' => 'from-blue-600', 'gradTo' => 'to-indigo-600',
-            'text'     => 'text-blue-600', 'text500' => 'text-blue-500', 'text700' => 'text-blue-700',
-            'bg50'     => 'bg-blue-50',    'bg100'   => 'bg-blue-100',
-            'border400' => 'border-blue-400', 'border500' => 'border-blue-500',
-            'ring400'   => 'focus:ring-blue-400',
-            'btnGradFrom' => 'from-blue-600', 'btnGradTo' => 'to-indigo-600',
-            'btnHoverFrom' => 'hover:from-blue-700', 'btnHoverTo' => 'hover:to-indigo-700',
-            'badgeBg' => 'bg-blue-600', 'badgeText' => 'text-white',
+            'gradFrom' => 'from-blue-600',
+            'gradTo' => 'to-indigo-600',
+            'text' => 'text-blue-600',
+            'text500' => 'text-blue-500',
+            'text700' => 'text-blue-700',
+            'bg50' => 'bg-blue-50',
+            'bg100' => 'bg-blue-100',
+            'border400' => 'border-blue-400',
+            'border500' => 'border-blue-500',
+            'ring400' => 'focus:ring-blue-400',
+            'btnGradFrom' => 'from-blue-600',
+            'btnGradTo' => 'to-indigo-600',
+            'btnHoverFrom' => 'hover:from-blue-700',
+            'btnHoverTo' => 'hover:to-indigo-700',
+            'badgeBg' => 'bg-blue-600',
+            'badgeText' => 'text-white',
         ];
 @endphp
 @extends($layout)
@@ -46,7 +62,7 @@
 
         {{-- Số dư hiện tại --}}
         <div
-            class="bg-gradient-to-r {{ $theme['gradFrom'] }} {{ $theme['gradTo'] }} rounded-2xl px-6 py-4 flex items-center justify-between text-white">
+            class="bg-linear-to-r {{ $theme['gradFrom'] }} {{ $theme['gradTo'] }} rounded-2xl px-6 py-4 flex items-center justify-between text-white">
             <div class="flex items-center gap-3">
                 <i class="fas fa-wallet text-white/70"></i>
                 <span class="text-sm text-white/80">Số dư hiện tại</span>
@@ -70,16 +86,18 @@
                     ];
                 @endphp
 
-                @foreach($presets as $preset)
-                    <button type="button" onclick="selectPreset({{ $preset['xu'] }}, {{ $preset['vnd'] }}, this)" class="preset-btn relative border-2 border-gray-200 rounded-xl p-4 text-left
+                @foreach ($presets as $preset)
+                    <button type="button" onclick="selectPreset({{ $preset['xu'] }}, {{ $preset['vnd'] }}, this)"
+                        class="preset-btn relative border-2 border-gray-200 rounded-xl p-4 text-left
                                    hover:{{ $theme['border400'] }} hover:{{ $theme['bg50'] }} transition-all duration-150 group">
-                        @if($preset['popular'])
+                        @if ($preset['popular'])
                             <span
                                 class="absolute -top-2 -right-2 {{ $theme['badgeBg'] }} {{ $theme['badgeText'] }} text-xs px-2 py-0.5 rounded-full font-semibold">
                                 Phổ biến
                             </span>
                         @endif
-                        <p class="text-2xl font-bold text-gray-800 group-hover:{{ $theme['text700'] }}">{{ $preset['xu'] }}</p>
+                        <p class="text-2xl font-bold text-gray-800 group-hover:{{ $theme['text700'] }}">
+                            {{ $preset['xu'] }}</p>
                         <p class="text-xs text-gray-400 mt-0.5">Xu</p>
                         <div class="mt-2 pt-2 border-t border-gray-100">
                             <p class="text-sm font-semibold {{ $theme['text'] }}">{{ $preset['label'] }}</p>
@@ -96,8 +114,9 @@
                 </label>
                 <div class="flex gap-2">
                     <div class="relative flex-1">
-                        <input type="number" id="customXu" min="50" max="10000" step="50" placeholder="Tối thiểu 50 Xu"
-                            oninput="updateCustomAmount(this.value)" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm
+                        <input type="number" id="customXu" min="50" max="10000" step="50"
+                            placeholder="Tối thiểu 50 Xu" oninput="updateCustomAmount(this.value)"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm
                                       focus:ring-2 {{ $theme['ring400'] }} focus:border-transparent focus:outline-none">
                         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Xu</span>
                     </div>
@@ -116,26 +135,30 @@
 
             <div class="space-y-3">
                 {{-- QR VNPAY --}}
-                <label class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
+                <label
+                    class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
                       hover:border-gray-300 hover:bg-gray-50
                       has-[:checked]:{{ $theme['border500'] }} has-[:checked]:{{ $theme['bg50'] }}">
                     <input type="radio" name="method" value="qr" checked class="{{ $theme['text'] }}">
-                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
                         <i class="fas fa-qrcode {{ $theme['text'] }} text-xl"></i>
                     </div>
                     <div class="flex-1">
                         <p class="font-semibold text-gray-800 text-sm">Quét mã QR</p>
                         <p class="text-xs text-gray-500">VNPAY QR — Ngân hàng / Ví điện tử</p>
                     </div>
-                    <span class="text-xs {{ $theme['bg100'] }} {{ $theme['text700'] }} px-2 py-0.5 rounded-full font-medium">Khuyên dùng</span>
+                    <span
+                        class="text-xs {{ $theme['bg100'] }} {{ $theme['text700'] }} px-2 py-0.5 rounded-full font-medium">Khuyên
+                        dùng</span>
                 </label>
 
                 {{-- ATM --}}
-                <label class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
+                <label
+                    class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
                       hover:border-gray-300 hover:bg-gray-50
                       has-[:checked]:{{ $theme['border500'] }} has-[:checked]:{{ $theme['bg50'] }}">
                     <input type="radio" name="method" value="atm" class="{{ $theme['text'] }}">
-                    <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                         <i class="fas fa-building-columns text-gray-500 text-lg"></i>
                     </div>
                     <div class="flex-1">
@@ -145,11 +168,12 @@
                 </label>
 
                 {{-- Quốc tế --}}
-                <label class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
+                <label
+                    class="flex items-center gap-4 p-4 border-2 border-gray-200 rounded-xl cursor-pointer transition
                       hover:border-gray-300 hover:bg-gray-50
                       has-[:checked]:{{ $theme['border500'] }} has-[:checked]:{{ $theme['bg50'] }}">
                     <input type="radio" name="method" value="intl" class="{{ $theme['text'] }}">
-                    <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
                         <i class="fab fa-cc-visa text-gray-500 text-xl"></i>
                     </div>
                     <div class="flex-1">
@@ -183,7 +207,8 @@
                 <input type="hidden" name="coin_amount" id="hiddenCoin" value="">
                 <input type="hidden" name="payment_method" id="hiddenMethod" value="qr">
 
-                <button type="submit" id="submitBtn" disabled class="w-full bg-gradient-to-r {{ $theme['btnGradFrom'] }} {{ $theme['btnGradTo'] }} text-white
+                <button type="submit" id="submitBtn" disabled
+                    class="w-full bg-linear-to-r {{ $theme['btnGradFrom'] }} {{ $theme['btnGradTo'] }} text-white
                            py-4 rounded-xl font-bold text-base shadow-sm
                            hover:shadow-lg {{ $theme['btnHoverFrom'] }} {{ $theme['btnHoverTo'] }}
                            transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
@@ -199,7 +224,7 @@
             </form>
 
         </div>
-@endsection
+    @endsection
 
     @push('scripts')
         <script>

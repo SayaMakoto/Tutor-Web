@@ -7,8 +7,9 @@
             <div class="relative">
 
                 <!-- Logo chính -->
-                <div class="w-9 h-9 rounded-xl
-                    bg-gradient-to-br from-green-600 to-emerald-600
+                <div
+                    class="w-9 h-9 rounded-xl
+                    bg-linear-to-br from-green-600 to-emerald-600
                     flex items-center justify-center shadow-sm">
 
                     <i class="fas fa-graduation-cap text-white text-base"></i>
@@ -16,7 +17,8 @@
                 </div>
 
                 <!-- Icon vai trò -->
-                <div class="absolute -bottom-1 -right-1
+                <div
+                    class="absolute -bottom-1 -right-1
                     w-4 h-4 rounded-full
                     bg-green-500 border-2 border-white
                     flex items-center justify-center shadow-sm">
@@ -27,8 +29,9 @@
 
             </div>
 
-            <span class="text-xl font-bold
-                 bg-gradient-to-r from-green-600 to-emerald-600
+            <span
+                class="text-xl font-bold
+                 bg-linear-to-r from-green-600 to-emerald-600
                  bg-clip-text text-transparent">
 
                 GiaSu247
@@ -41,7 +44,8 @@
         <nav class="hidden md:flex items-center space-x-1 font-medium text-gray-600">
 
             <!-- Dashboard -->
-            <a href="{{ route('tutor.home') }}" class="px-3 py-2 rounded-lg hover:bg-green-50 hover:text-green-600
+            <a href="{{ route('tutor.home') }}"
+                class="px-3 py-2 rounded-lg hover:bg-green-50 hover:text-green-600
                        transition-all duration-150 text-sm">
 
                 <i class="fas fa-home mr-1 text-xs"></i>
@@ -51,7 +55,8 @@
             <!-- Dropdown quản lý lớp -->
             <div class="relative group">
 
-                <button class="flex items-center gap-1 px-3 py-2 rounded-lg
+                <button
+                    class="flex items-center gap-1 px-3 py-2 rounded-lg
                            hover:bg-green-50 hover:text-green-600
                            transition-all duration-150 text-sm">
 
@@ -68,7 +73,8 @@
 
                     <div class="bg-white border border-gray-100 shadow-xl rounded-xl w-56 p-1.5 z-50">
 
-                        <a href="{{ route('tutor.classes.index') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg
+                        <a href="{{ route('tutor.classes.index') }}"
+                            class="flex items-center gap-2 px-3 py-2.5 rounded-lg
                                    hover:bg-green-50 hover:text-green-600
                                    transition text-sm">
 
@@ -77,7 +83,8 @@
                             Lớp đang tuyển
                         </a>
 
-                        <a href="{{ route('tutor.classes.assigned') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg
+                        <a href="{{ route('tutor.classes.assigned') }}"
+                            class="flex items-center gap-2 px-3 py-2.5 rounded-lg
                                    hover:bg-green-50 hover:text-green-600
                                    transition text-sm">
 
@@ -93,7 +100,8 @@
             </div>
 
             <!-- Thu nhập -->
-            <a href="#" class="px-3 py-2 rounded-lg hover:bg-green-50 hover:text-green-600
+            <a href="#"
+                class="px-3 py-2 rounded-lg hover:bg-green-50 hover:text-green-600
                        transition-all duration-150 text-sm">
 
                 <i class="fas fa-wallet mr-1 text-xs"></i>
@@ -101,6 +109,23 @@
                 Thu nhập
             </a>
 
+            <!-- Thanh toán -->
+            @auth
+                <a href="{{ route('payment.wallet') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium
+                          {{ request()->routeIs('payment.*')
+                              ? 'bg-green-600 text-white shadow-sm'
+                              : 'text-gray-600 hover:bg-green-50 hover:text-green-600' }}">
+                    <i class="fas fa-coins w-4 text-center"></i>
+                    <span class="flex-1">Ví Xu</span>
+                    @php $xuBal = Auth::user()->wallet?->balance ?? 0; @endphp
+                    <span
+                        class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700' }}
+                                 font-semibold px-2 py-0.5 rounded-full">
+                        {{ number_format($xuBal) }}
+                    </span>
+                </a>
+            @endauth
         </nav>
 
         <!-- Right side -->
@@ -109,10 +134,9 @@
             @auth
 
                 <x-partials.user-dropdown />
-
             @else
-
-                <a href="{{ route('login') }}" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white
+                <a href="{{ route('login') }}"
+                    class="bg-linear-to-r from-green-600 to-emerald-600 text-white
                                px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
                                hover:shadow-md hover:from-green-700 hover:to-emerald-700
                                transition-all duration-200">

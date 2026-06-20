@@ -1,12 +1,12 @@
 @php
-    $tutor     = auth()->user()->tutor;
-    $wallet    = auth()->user()?->wallet;
+    $tutor = auth()->user()->tutor;
+    $wallet = auth()->user()?->wallet;
     $xuBalance = $wallet?->balance ?? 0;
 @endphp
 
 <aside
     class="w-64 bg-white border-r border-gray-100 shadow-sm
-           sticky top-[57px] h-[calc(100vh-57px)]
+           sticky top-14.25 h-[calc(100vh-57px)]
            p-5 hidden md:flex flex-col gap-2 overflow-y-auto">
 
     {{-- User Info --}}
@@ -16,16 +16,14 @@
             <img src="{{ Auth::user()->avatar
                 ? asset('storage/' . Auth::user()->avatar)
                 : 'https://i.pravatar.cc/40?u=' . Auth::user()->id }}"
-                class="w-10 h-10 rounded-full object-cover border-2 border-green-200"
-                alt="Avatar">
+                class="w-10 h-10 rounded-full object-cover border-2 border-green-200" alt="Avatar">
 
             <div class="min-w-0">
                 <p class="text-sm font-semibold text-gray-800 truncate">
                     {{ Auth::user()->name }}
                 </p>
 
-                <span
-                    class="text-xs bg-green-100 text-green-600 font-medium px-2 py-0.5 rounded-full">
+                <span class="text-xs bg-green-100 text-green-600 font-medium px-2 py-0.5 rounded-full">
                     Gia sư
                 </span>
             </div>
@@ -124,7 +122,8 @@
 
             <span class="flex-1">Ví Xu</span>
 
-            <span class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700' }}
+            <span
+                class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700' }}
                          font-semibold px-2 py-0.5 rounded-full">
                 {{ number_format($xuBalance) }}
             </span>
@@ -134,7 +133,6 @@
 
         <!-- Cập nhật hồ sơ -->
         @if ($tutor && $tutor->status === 'pending')
-
             <a href="{{ route('tutor.profile.edit') }}"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-xl
                        transition-all duration-150 text-sm font-medium
@@ -147,7 +145,6 @@
                 <span>Cập nhật hồ sơ</span>
 
             </a>
-
         @endif
 
 

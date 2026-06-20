@@ -403,7 +403,7 @@
 
     {{-- CTA --}}
     <div
-        class="relative bg-gradient-to-br
+        class="relative bg-linear-to-br
                from-green-600 via-emerald-600 to-teal-700
                text-white p-10 rounded-2xl text-center overflow-hidden">
 
