@@ -11,7 +11,13 @@ class ClassRequestController extends Controller
 {
     public function index(FilterRequest $request)
     {
-        $query = ClassRequest::where('student_id', auth()->user()->student->id);
+        $student = auth()->user()?->student;
+
+        if (!$student) {
+            abort(403, 'Tài khoản này không phải học viên. Xin vui lòng đăng ký tài khoản học viên.');
+        }
+
+        $query = ClassRequest::where('student_id', $student->id);
 
         $query->when($request->filled('id'), function ($q) use ($request) {
             $q->where('id', $request->id);

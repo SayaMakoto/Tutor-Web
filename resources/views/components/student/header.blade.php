@@ -7,8 +7,9 @@
             <div class="relative">
 
                 <!-- Logo chính -->
-                <div class="w-9 h-9 rounded-xl
-                    bg-gradient-to-br from-blue-600 to-indigo-600
+                <div
+                    class="w-9 h-9 rounded-xl
+                    bg-linear-to-br from-blue-600 to-indigo-600
                     flex items-center justify-center shadow-sm">
 
                     <i class="fas fa-graduation-cap text-white text-base"></i>
@@ -16,7 +17,8 @@
                 </div>
 
                 <!-- Icon vai trò -->
-                <div class="absolute -bottom-1 -right-1
+                <div
+                    class="absolute -bottom-1 -right-1
                     w-4 h-4 rounded-full
                     bg-blue-500 border-2 border-white
                     flex items-center justify-center shadow-sm">
@@ -27,8 +29,9 @@
 
             </div>
 
-            <span class="text-xl font-bold
-                 bg-gradient-to-r from-blue-600 to-indigo-600
+            <span
+                class="text-xl font-bold
+                 bg-linear-to-r from-blue-600 to-indigo-600
                  bg-clip-text text-transparent">
 
                 GiaSu247
@@ -86,7 +89,8 @@
             <!-- Nút đăng lớp nổi bật -->
             @auth
                 @if (auth()->user()->role === 'student' || auth()->user()->role === 'both')
-                    <a href="{{ route('create-class.step1') }}" class="ml-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white
+                    <a href="{{ route('create-class.step1') }}"
+                        class="ml-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white
                                               px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
                                               hover:shadow-md hover:from-blue-700 hover:to-indigo-700
                                               transition-all duration-200">
@@ -102,7 +106,8 @@
             @auth
                 <x-partials.user-dropdown />
             @else
-                <a href="{{ route('login') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white
+                <a href="{{ route('login') }}"
+                    class="bg-linear-to-r from-blue-600 to-indigo-600 text-white
                                   px-5 py-2 rounded-xl font-semibold text-sm shadow-sm
                                   hover:shadow-md hover:from-blue-700 hover:to-indigo-700
                                   transition-all duration-200">
