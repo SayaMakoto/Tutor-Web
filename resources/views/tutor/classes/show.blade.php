@@ -13,7 +13,19 @@
         $scheduleArr = $class->schedule ? explode(',', $class->schedule) : [];
         $scheduleArr = array_map('trim', $scheduleArr);
         $timeValue = $class->time ?? '—';
-        $totalWeeks = $class->weeks ?? 1;
+        $weeksStr = $class->weeks ?? '1 tuần';
+        $totalWeeks = 1;
+        if (preg_match('/(\d+)\s*(tuần|tháng)/i', $weeksStr, $matches)) {
+            $val = intval($matches[1]);
+            $unit = mb_strtolower(trim($matches[2]));
+            if ($unit === 'tháng') {
+                $totalWeeks = intval(round($val * 4.33));
+            } else {
+                $totalWeeks = $val;
+            }
+        } else if (is_numeric($weeksStr)) {
+            $totalWeeks = intval($weeksStr);
+        }
     @endphp
 
     <div class="py-6 max-w-5xl mx-auto px-4 space-y-6" x-data="{ currentWeek: 1, totalWeeks: parseInt('{{ $totalWeeks }}') || 1 }">
@@ -98,7 +110,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 font-medium">Thời lượng lớp học</p>
-                                <p class="font-semibold text-gray-700">{{ $totalWeeks }} tuần</p>
+                                <p class="font-semibold text-gray-700">{{ $class->weeks ?? '—' }}</p>
                             </div>
                         </div>
                     </div>

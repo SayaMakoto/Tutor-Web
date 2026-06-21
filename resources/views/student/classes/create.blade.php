@@ -5,11 +5,16 @@
 @extends('layouts.student')
 
 @section('content')
-    <div class="min-h-screen bg-gray-50 py-10">
-        <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl p-8">
+    <div class="min-h-screen bg-gray-50/50 py-10">
+        <div class="max-w-4xl mx-auto bg-white shadow-sm border border-gray-100 rounded-2xl p-6 md:p-10">
 
             {{-- STEP PROGRESS --}}
-            <div class="flex items-center justify-between mb-10">
+            <div class="relative flex items-center justify-between mb-12 max-w-3xl mx-auto px-4 select-none">
+                <!-- Background progress bar line -->
+                <div class="absolute left-8 top-5 right-8 h-0.5 bg-gray-150 z-0">
+                    <div class="h-full bg-blue-600 transition-all duration-300" style="width: {{ (($step - 1) / 4) * 100 }}%">
+                    </div>
+                </div>
 
                 @php
                     $steps = [
@@ -22,31 +27,30 @@
                 @endphp
 
                 @foreach ($steps as $key => $label)
-                    <div class="flex flex-col items-center relative flex-1">
+                    <div class="flex flex-col items-center relative z-10">
                         {{-- Step circle --}}
                         <div
-                            class="w-10 h-10 flex items-center justify-center rounded-full 
-                        {{ $step == $key ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600' }}">
-                            {{ $key }}
+                            class="w-10 h-10 flex items-center justify-center rounded-full font-bold text-xs border-2 transition-all duration-300 
+                            {{ $step > $key ? 'bg-blue-600 border-blue-600 text-white shadow-sm' : ($step == $key ? 'bg-white border-blue-600 text-blue-600 shadow-md ring-4 ring-blue-50' : 'bg-white border-gray-200 text-gray-400') }}">
+                            @if ($step > $key)
+                                <i class="fas fa-check"></i>
+                            @else
+                                {{ $key }}
+                            @endif
                         </div>
                         {{-- Label dưới nút --}}
-                        <p class="mt-2 text-sm {{ $step == $key ? 'text-blue-600 font-medium' : 'text-gray-500' }}">
+                        <p
+                            class="mt-2.5 text-[11px] font-bold uppercase tracking-wider text-center {{ $step == $key ? 'text-blue-600' : 'text-gray-400' }}">
                             {{ $label }}
                         </p>
-
-                        {{-- Arrow to next step --}}
-                        @if ($key != count($steps))
-                            <div class="absolute top-2 right-[-50%] w-full flex justify-center">
-                                <span class="text-gray-400 font-bold">→</span>
-                            </div>
-                        @endif
                     </div>
                 @endforeach
-
             </div>
 
             {{-- STEP CONTENT --}}
-            @yield('step-content')
+            <div class="mt-8">
+                @yield('step-content')
+            </div>
 
         </div>
     </div>
