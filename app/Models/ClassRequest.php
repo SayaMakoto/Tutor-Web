@@ -75,6 +75,12 @@ class ClassRequest extends Model
         return $this->student?->user?->name;
     }
 
+    public function getTutorIdAttribute()
+    {
+        return $this->tutorClass?->tutor_id;
+    }
+
+
     public const STATUSES = [
         'pending' => [
             'label' => 'Đang chờ duyệt',

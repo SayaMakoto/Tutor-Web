@@ -15,10 +15,14 @@ class CreateClassController extends Controller
 {
     public function step1()
     {
-        $grades = Grade::with('subjects')
+        $grades = Grade::with(['subjects' => function($q) {
+                $q->where('is_approved', true);
+            }])
+            ->where('is_approved', true)
             ->orderBy('sort_order')
             ->get();
         $subjects = Subject::with(['grades:id'])
+            ->where('is_approved', true)
             ->get()
             ->unique('id');
 
@@ -141,7 +145,10 @@ class CreateClassController extends Controller
             'create_class' => array_merge($stepData, [
                 'weeks' => $request->weeks,
                 'schedule' => implode(', ', $request->schedule),
+                'schedule_days' => $request->schedule,
                 'time' => $timeRange,
+                'time_start' => $request->time_start,
+                'time_end' => $request->time_end,
             ])
         ]);
 
@@ -199,31 +206,59 @@ class CreateClassController extends Controller
             return redirect()->route('create-class.step1');
         }
 
-        ClassRequest::create([
+        // 1. Tạo ngành học tự nhập (chờ duyệt) nếu có
+        $gradeId = null;
+        if (!empty($data['grade_request'])) {
+            $grade = Grade::create([
+                'name' => $data['grade_request'],
+                'status' => true,
+                'is_approved' => false,
+            ]);
+            $gradeId = $grade->id;
+        } else {
+            $gradeId = $data['grade_id'] ?? null;
+        }
+
+        // 2. Tạo môn học tự nhập (chờ duyệt) nếu có
+        $subjectId = null;
+        if (!empty($data['subject_request'])) {
+            $subject = Subject::create([
+                'name' => $data['subject_request'],
+                'status' => true,
+                'is_approved' => false,
+            ]);
+            $subjectId = $subject->id;
+        } else {
+            $subjectId = $data['subject_id'] ?? null;
+        }
+
+        // 3. Tạo ClassRequest
+        $classRequest = ClassRequest::create([
             'student_id' => auth()->user()->student->id,
-
-            'grade_id' => $data['grade_request'] ? null : ($data['grade_id'] ?? null),
-            'subject_id' => $data['subject_request'] ? null : ($data['subject_id'] ?? null),
-
-            'grade_request' => $data['grade_request'] ?? null,
-            'subject_request' => $data['subject_request'] ?? null,
-
+            'grade_id' => $gradeId,
+            'subject_id' => $subjectId,
             'degree' => $data['degree'] ?? null,
             'experience' => $data['experience'] ?? null,
             'gender' => $data['gender'] ?? null,
             'age_range' => $data['age_range'] ?? null,
             'fee' => $data['fee'] ?? null,
             'description' => $data['description'] ?? null,
-
             'study_type' => $data['study_type'] ?? null,
             'location' => $data['location'] ?? null,
-
             'weeks' => $data['weeks'] ?? null,
-            'schedule' => $data['schedule'] ?? null,
-            'time' => $data['time'] ?? null,
-
             'status' => 'pending'
         ]);
+
+        // 4. Lưu lịch học chi tiết vào bảng class_schedules
+        if (!empty($data['schedule_days'])) {
+            foreach ($data['schedule_days'] as $day) {
+                $classRequest->schedules()->create([
+                    'day_of_week' => $day,
+                    'start_time' => $data['time_start'] ?? '00:00',
+                    'end_time' => $data['time_end'] ?? '00:00',
+                ]);
+            }
+        }
 
         session()->forget('create_class');
 

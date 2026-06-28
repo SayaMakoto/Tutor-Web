@@ -47,10 +47,23 @@ class Tutor extends Model
         return $this->hasMany(TutorDocument::class);
     }
 
+    public function classes()
+    {
+        return $this->hasMany(TutorClass::class, 'tutor_id');
+    }
+
     public function classRequests()
     {
-        return $this->hasMany(ClassRequest::class, 'tutor_id');
+        return $this->hasManyThrough(
+            ClassRequest::class,
+            TutorClass::class,
+            'tutor_id',          // Foreign key on TutorClass table...
+            'id',                // Foreign key on ClassRequest table...
+            'id',                // Local key on Tutor table...
+            'class_request_id'   // Local key on TutorClass table...
+        );
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -61,7 +74,6 @@ class Tutor extends Model
     public static function statusOptions()
     {
         return [
-            'draft' => 'Mới tạo',
             'pending' => 'Chờ duyệt',
             'approved' => 'Đã duyệt',
             'rejected' => 'Từ chối',
@@ -71,7 +83,6 @@ class Tutor extends Model
     public static function statusColors()
     {
         return [
-            'draft' => 'bg-gray-100 text-gray-700',
             'pending' => 'bg-yellow-100 text-yellow-700',
             'approved' => 'bg-green-100 text-green-700',
             'rejected' => 'bg-red-100 text-red-700',

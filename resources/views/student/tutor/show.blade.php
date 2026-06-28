@@ -13,11 +13,13 @@
 
         // Lớp đã hoàn thành (dữ liệu thật từ DB)
         $completedClasses = $tutor
-            ->classRequests()
+            ->classes()
             ->where('status', 'completed')
-            ->with(['subject', 'grade'])
+            ->with(['classRequest.subject', 'classRequest.grade'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(fn($tutorClass) => $tutorClass->classRequest);
+
 
         // Môn dạy (relation many-to-many hoặc hasMany)
         $subjects = $tutor->subjects ?? collect();

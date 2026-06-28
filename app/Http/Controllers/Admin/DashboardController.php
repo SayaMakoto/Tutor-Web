@@ -13,8 +13,9 @@ class DashboardController extends Controller
 
         //Đếm số lượng lớp đang hoạt động
         $countActiveClasses = \App\Models\ClassRequest::where('status', 'assigned')
-            ->whereNotNull('tutor_id')
+            ->whereHas('tutorClass')
             ->count();
+
 
         //Đếm số lượng gia sư đang hoạt động
         $countTutors = \App\Models\User::where('role', 'tutor')->count();

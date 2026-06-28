@@ -46,7 +46,8 @@ class ClassRequestController extends Controller
         $class_request->load([
             'subject',
             'grade',
-            'tutor.user'
+            'tutor.user',
+            'schedules'
         ]);
 
         return view('student.classes.show', [
@@ -79,9 +80,11 @@ class ClassRequestController extends Controller
         }
 
         // Không cho hủy nếu đang payment_pending hoặc completed
-        if (in_array($class_request->status, ['payment_pending', 'completed'])) {
+        $tutorClass = $class_request->tutorClass;
+        if ($tutorClass && in_array($tutorClass->status, ['payment_pending', 'completed'])) {
             return back()->with('error', 'Không thể hủy lớp ở trạng thái này.');
         }
+
 
         $class_request->update([
             'status' => 'cancelled'

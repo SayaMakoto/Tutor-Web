@@ -38,7 +38,14 @@
                                         <i class="fas fa-layer-group text-indigo-500 text-xs"></i>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-gray-800">{{ $grade->name }}</p>
+                                        <p class="font-semibold text-gray-800 flex items-center gap-2">
+                                            {{ $grade->name }}
+                                            @if(!$grade->is_approved)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-100">
+                                                    Chờ duyệt
+                                                </span>
+                                            @endif
+                                        </p>
                                         <p class="text-xs text-gray-400">ID #{{ $grade->id }}</p>
                                     </div>
                                 </div>
@@ -55,6 +62,16 @@
                             </td>
                             <td class="px-5 py-3.5 text-center">
                                 <div class="flex items-center justify-center gap-2">
+                                    @if(!$grade->is_approved)
+                                        <form action="{{ route('admin.grades.approve', $grade->id) }}" method="POST" class="inline">
+                                            @csrf @method('PATCH')
+                                            <button type="submit"
+                                                    class="w-8 h-8 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center transition"
+                                                    title="Duyệt ngành học">
+                                                <i class="fas fa-check text-xs"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     <a href="{{ route('admin.grades.edit', $grade->id) }}"
                                        class="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition"
                                        title="Sửa">

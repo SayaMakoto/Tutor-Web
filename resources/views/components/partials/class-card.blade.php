@@ -2,13 +2,13 @@
 
 @php
     // Tên lớp học
-    $className = $classRequest->subject?->name ?? ($classRequest->subject_request ?? 'Chưa xác định');
+    $className = $classRequest->subject?->name ?? 'Chưa xác định';
 
     // Mã lớp học
     $classCode = $classRequest->id;
 
     // Ngành học
-    $gradeName = $classRequest->grade?->name ?? ($classRequest->grade_request ?? 'Chưa xác định');
+    $gradeName = $classRequest->grade?->name ?? 'Chưa xác định';
 
     // Học phí
     $fee = $classRequest->fee ?? 0;

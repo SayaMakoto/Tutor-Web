@@ -127,6 +127,12 @@ class AdminSubjectController extends Controller
             ->with('success', 'Đã xóa vĩnh viễn môn học!');
     }
 
+    public function approve(Subject $subject)
+    {
+        $subject->update(['is_approved' => true]);
+        return back()->with('success', 'Đã duyệt môn học thành công.');
+    }
+
     public function toggleStatus(Subject $subject)
     {
         $subject->status = $subject->status == 1 ? 0 : 1;

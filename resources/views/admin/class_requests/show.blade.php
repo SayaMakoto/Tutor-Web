@@ -4,7 +4,12 @@
 @section('content')
     @php
         $days        = ['T2','T3','T4','T5','T6','T7','CN'];
-        $scheduleArr = $classRequest->schedule ? array_map('trim', explode(',', $classRequest->schedule)) : [];
+        $scheduleArr = $classRequest->schedules->pluck('day_of_week')->toArray();
+        
+        $scheduleMap = [];
+        foreach ($classRequest->schedules as $sched) {
+            $scheduleMap[$sched->day_of_week] = \Carbon\Carbon::parse($sched->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($sched->end_time)->format('H:i');
+        }
     @endphp
 
     {{-- Breadcrumb --}}
@@ -40,16 +45,18 @@
                     <div>
                         <p class="text-xs text-gray-400 mb-1">Môn học</p>
                         @if($classRequest->subject_id)
-                            <p class="font-semibold text-emerald-700 flex items-center gap-1.5">
-                                <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
-                                {{ $classRequest->subject?->name }}
-                            </p>
-                        @elseif($classRequest->subject_request)
-                            <p class="font-semibold text-amber-700 flex items-center gap-1.5">
-                                <i class="fas fa-triangle-exclamation text-amber-500 text-xs"></i>
-                                {{ $classRequest->subject_request }}
-                                <span class="text-xs text-amber-500 font-normal">(chưa có)</span>
-                            </p>
+                            @if($classRequest->subject?->is_approved)
+                                <p class="font-semibold text-emerald-700 flex items-center gap-1.5">
+                                    <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                    {{ $classRequest->subject?->name }}
+                                </p>
+                            @else
+                                <p class="font-semibold text-amber-700 flex items-center gap-1.5">
+                                    <i class="fas fa-triangle-exclamation text-amber-500 text-xs"></i>
+                                    {{ $classRequest->subject?->name }}
+                                    <span class="text-xs text-amber-500 font-normal">(chưa duyệt)</span>
+                                </p>
+                            @endif
                         @else
                             <p class="text-gray-400 text-sm">Không xác định</p>
                         @endif
@@ -59,16 +66,18 @@
                     <div>
                         <p class="text-xs text-gray-400 mb-1">Ngành học</p>
                         @if($classRequest->grade_id)
-                            <p class="font-semibold text-emerald-700 flex items-center gap-1.5">
-                                <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
-                                {{ $classRequest->grade?->name }}
-                            </p>
-                        @elseif($classRequest->grade_request)
-                            <p class="font-semibold text-amber-700 flex items-center gap-1.5">
-                                <i class="fas fa-triangle-exclamation text-amber-500 text-xs"></i>
-                                {{ $classRequest->grade_request }}
-                                <span class="text-xs text-amber-500 font-normal">(chưa có)</span>
-                            </p>
+                            @if($classRequest->grade?->is_approved)
+                                <p class="font-semibold text-emerald-700 flex items-center gap-1.5">
+                                    <i class="fas fa-check-circle text-emerald-500 text-xs"></i>
+                                    {{ $classRequest->grade?->name }}
+                                </p>
+                            @else
+                                <p class="font-semibold text-amber-700 flex items-center gap-1.5">
+                                    <i class="fas fa-triangle-exclamation text-amber-500 text-xs"></i>
+                                    {{ $classRequest->grade?->name }}
+                                    <span class="text-xs text-amber-500 font-normal">(chưa duyệt)</span>
+                                </p>
+                            @endif
                         @else
                             <p class="text-gray-400 text-sm">Không xác định</p>
                         @endif
@@ -93,36 +102,36 @@
                 </div>
             </div>
 
-            {{-- Thêm môn/ngành chưa có --}}
-            @if($classRequest->subject_request && !$classRequest->subject_id)
+            {{-- Thêm môn/ngành chưa duyệt --}}
+            @if($classRequest->subject && !$classRequest->subject->is_approved)
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                     <div class="flex items-center gap-2 mb-3">
                         <i class="fas fa-triangle-exclamation text-amber-500"></i>
-                        <p class="font-semibold text-amber-800 text-sm">Môn học chưa có trong hệ thống</p>
+                        <p class="font-semibold text-amber-800 text-sm">Hiện chưa có môn học trong hệ thống</p>
                     </div>
                     <form action="{{ route('admin.class-requests.create-subject', $classRequest->id) }}" method="POST" class="flex gap-2">
                         @csrf
-                        <input type="text" name="name" value="{{ old('name', $classRequest->subject_request) }}" required
+                        <input type="text" name="name" value="{{ old('name', $classRequest->subject->name) }}" required
                                class="flex-1 border border-amber-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
                         <button class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition">
-                            <i class="fas fa-plus mr-1"></i> Thêm môn học
+                            <i class="fas fa-plus mr-1"></i> Thêm ngay
                         </button>
                     </form>
                 </div>
             @endif
 
-            @if($classRequest->grade_request && !$classRequest->grade_id)
+            @if($classRequest->grade && !$classRequest->grade->is_approved)
                 <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                     <div class="flex items-center gap-2 mb-3">
                         <i class="fas fa-triangle-exclamation text-amber-500"></i>
-                        <p class="font-semibold text-amber-800 text-sm">Ngành học chưa có trong hệ thống</p>
+                        <p class="font-semibold text-amber-800 text-sm">Hiện chưa có ngành học trong hệ thống</p>
                     </div>
                     <form action="{{ route('admin.class-requests.create-grade', $classRequest->id) }}" method="POST" class="flex gap-2">
                         @csrf
-                        <input type="text" name="name" value="{{ old('name', $classRequest->grade_request) }}" required
+                        <input type="text" name="name" value="{{ old('name', $classRequest->grade->name) }}" required
                                class="flex-1 border border-amber-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none">
                         <button class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-semibold transition">
-                            <i class="fas fa-plus mr-1"></i> Thêm ngành học
+                            <i class="fas fa-plus mr-1"></i> Thêm ngay
                         </button>
                     </form>
                 </div>
@@ -139,7 +148,7 @@
                         <div class="rounded-xl p-2 text-xs {{ $active ? 'bg-violet-50 border border-violet-200' : 'bg-gray-50 border border-gray-100' }}">
                             <div class="font-bold {{ $active ? 'text-violet-700' : 'text-gray-400' }} mb-1">{{ $day }}</div>
                             <div class="text-xs {{ $active ? 'text-violet-600' : 'text-gray-300' }}">
-                                {{ $active ? ($classRequest->time ?? '—') : '—' }}
+                                {{ $active ? ($scheduleMap[$day] ?? '—') : '—' }}
                             </div>
                         </div>
                     @endforeach

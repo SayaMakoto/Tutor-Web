@@ -297,6 +297,10 @@ Route::prefix('admin')
             'subjects/{subject}/toggle-status',
             [AdminSubjectController::class, 'toggleStatus']
         )->name('subjects.toggleStatus');
+        Route::patch(
+            'subjects/{subject}/approve',
+            [AdminSubjectController::class, 'approve']
+        )->name('subjects.approve');
         Route::get('subjects/trash', [AdminSubjectController::class, 'trash'])
             ->name('subjects.trash');
         Route::post('subjects/{id}/restore', [AdminSubjectController::class, 'restore'])
@@ -310,6 +314,10 @@ Route::prefix('admin')
             'grades/{grade}/toggle-status',
             [AdminGradeController::class, 'toggleStatus']
         )->name('grades.toggleStatus');
+        Route::patch(
+            'grades/{grade}/approve',
+            [AdminGradeController::class, 'approve']
+        )->name('grades.approve');
         Route::get('grades/trash', [AdminGradeController::class, 'trash'])
             ->name('grades.trash');
         Route::post('grades/{id}/restore', [AdminGradeController::class, 'restore'])

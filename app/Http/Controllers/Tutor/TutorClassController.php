@@ -21,6 +21,7 @@ class TutorClassController extends Controller
 
     public function show(ClassRequest $class)
     {
+        $class->load(['subject', 'grade', 'student.user', 'schedules']);
         return view('tutor.classes.show', compact('class'));
     }
 
@@ -58,10 +59,13 @@ class TutorClassController extends Controller
     {
         $tutorId = auth()->user()->tutor->id;
 
-        $assignedClasses = ClassRequest::where('tutor_id', $tutorId)
-            ->where('status', 'assigned')
-            ->latest()
-            ->get();
+        $assignedClasses = ClassRequest::whereHas('tutorClass', function ($query) use ($tutorId) {
+            $query->where('tutor_id', $tutorId);
+        })
+        ->where('status', 'assigned')
+        ->latest()
+        ->get();
+
 
         return view('tutor.classes.assigned', compact('assignedClasses'));
     }

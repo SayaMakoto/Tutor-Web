@@ -60,7 +60,8 @@ class AdminClassRequestController extends Controller
             ->with([
                 'student.user',
                 'grade',
-                'subject'
+                'subject',
+                'schedules'
             ])
             ->findOrFail($id);
 
@@ -71,9 +72,11 @@ class AdminClassRequestController extends Controller
     {
         $classRequest = ClassRequest::findOrFail($id);
 
-        if ($classRequest->status === 'completed') {
+        $tutorClass = $classRequest->tutorClass;
+        if ($tutorClass && $tutorClass->status === 'completed') {
             return back()->withErrors('Lớp đã hoàn thành, không thể thay đổi trạng thái.');
         }
+
 
         $classRequest->update([
             'status' => $request->status
@@ -119,21 +122,19 @@ class AdminClassRequestController extends Controller
 
         $name = ucwords(trim($request->name));
 
-        $subject = Subject::firstOrCreate([
-            'name' => $name
-        ]);
-
-        // 🔥 nếu classRequest có grade_id thì gán luôn
-        if ($classRequest->grade_id) {
-            $subject->grades()->syncWithoutDetaching([
-                $classRequest->grade_id
+        if ($classRequest->subject) {
+            $classRequest->subject->update([
+                'name' => $name,
+                'is_approved' => true
             ]);
-        }
 
-        $classRequest->update([
-            'subject_id' => $subject->id,
-            'subject_request' => null
-        ]);
+            // 🔥 nếu classRequest có grade_id thì gán luôn
+            if ($classRequest->grade_id) {
+                $classRequest->subject->grades()->syncWithoutDetaching([
+                    $classRequest->grade_id
+                ]);
+            }
+        }
 
         return back()->with('success', 'Đã thêm môn học vào hệ thống.');
     }
@@ -144,21 +145,19 @@ class AdminClassRequestController extends Controller
 
         $name = ucwords(trim($request->name));
 
-        $grade = Grade::firstOrCreate([
-            'name' => $name
-        ]);
-
-        // 🔥 nếu đã có subject thì gán ngược lại
-        if ($classRequest->subject_id) {
-            $grade->subjects()->syncWithoutDetaching([
-                $classRequest->subject_id
+        if ($classRequest->grade) {
+            $classRequest->grade->update([
+                'name' => $name,
+                'is_approved' => true
             ]);
-        }
 
-        $classRequest->update([
-            'grade_id' => $grade->id,
-            'grade_request' => null
-        ]);
+            // 🔥 nếu đã có subject thì gán ngược lại
+            if ($classRequest->subject_id) {
+                $classRequest->grade->subjects()->syncWithoutDetaching([
+                    $classRequest->subject_id
+                ]);
+            }
+        }
 
         return back()->with('success', 'Đã thêm ngành học vào hệ thống.');
     }

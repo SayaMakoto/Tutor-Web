@@ -38,7 +38,14 @@
                                         <i class="fas fa-book text-violet-500 text-xs"></i>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-gray-800">{{ $subject->name }}</p>
+                                        <p class="font-semibold text-gray-800 flex items-center gap-2">
+                                            {{ $subject->name }}
+                                            @if(!$subject->is_approved)
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-100">
+                                                    Chờ duyệt
+                                                </span>
+                                            @endif
+                                        </p>
                                         <p class="text-xs text-gray-400">ID #{{ $subject->id }}</p>
                                     </div>
                                 </div>
@@ -54,6 +61,16 @@
                             </td>
                             <td class="px-5 py-3.5 text-center">
                                 <div class="flex items-center justify-center gap-2">
+                                    @if(!$subject->is_approved)
+                                        <form action="{{ route('admin.subjects.approve', $subject->id) }}" method="POST" class="inline">
+                                            @csrf @method('PATCH')
+                                            <button type="submit"
+                                                    class="w-8 h-8 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center transition"
+                                                    title="Duyệt môn học">
+                                                <i class="fas fa-check text-xs"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                     <a href="{{ route('admin.subjects.edit', $subject->id) }}"
                                        class="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition"
                                        title="Sửa">

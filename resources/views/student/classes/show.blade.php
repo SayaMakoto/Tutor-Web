@@ -4,15 +4,21 @@
 
 @section('content')
     @php
-        $subjectName = $class->subject?->name ?? ($class->subject_request ?? 'Chưa xác định');
-        $gradeName = $class->grade?->name ?? ($class->grade_request ?? 'Chưa xác định');
+        $subjectName = $class->subject?->name ?? 'Chưa xác định';
+        $gradeName = $class->grade?->name ?? 'Chưa xác định';
         $tutor = $class->tutor;
         $user = $tutor?->user;
 
         $days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
-        $scheduleArr = $class->schedule ? explode(',', $class->schedule) : [];
-        $scheduleArr = array_map('trim', $scheduleArr);
-        $timeValue = $class->time ?? '—';
+        $scheduleArr = $class->schedules->pluck('day_of_week')->toArray();
+        
+        $firstSchedule = $class->schedules->first();
+        if ($firstSchedule) {
+            $timeValue = \Carbon\Carbon::parse($firstSchedule->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($firstSchedule->end_time)->format('H:i');
+        } else {
+            $timeValue = '—';
+        }
+        
         $weeksStr = $class->weeks ?? '1 tuần';
         $totalWeeks = 1;
         if (preg_match('/(\d+)\s*(tuần|tháng)/i', $weeksStr, $matches)) {

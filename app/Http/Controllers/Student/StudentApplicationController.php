@@ -37,9 +37,15 @@ class StudentApplicationController extends Controller
 
         // gán gia sư cho lớp
         $application->classRequest()->update([
-            'status' => 'assigned',
-            'tutor_id' => $application->tutor_id
+            'status' => 'assigned'
         ]);
+
+        \App\Models\TutorClass::create([
+            'class_request_id' => $application->class_request_id,
+            'tutor_id' => $application->tutor_id,
+            'status' => 'payment_pending',
+        ]);
+
 
         // (OPTIONAL) reject các application khác của cùng class
         Application::where('class_request_id', $application->class_request_id)
