@@ -1,105 +1,111 @@
 @extends('layouts.admin')
-@section('title', 'Quản lý Đơn nhận lớp')
+@section('title', 'Quản lý đơn nhận lớp')
+
 @section('content')
-    <div class="bg-white p-6 rounded-2xl shadow-md">
 
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">
-                Quản lý Đơn nhận lớp
-            </h2>
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-800">Đơn nhận lớp</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Lịch sử gia sư ứng tuyển nhận lớp</p>
         </div>
+    </div>
 
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm">
-                        <th class="p-3">Mã đơn</th>
-                        <th class="p-3">Mã gia sư</th>
-                        <th class="p-3">Mã lớp</th>
-                        <th class="p-3">Tin nhắn</th>
-                        <th class="p-3">Trạng thái</th>
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gia sư</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Lớp</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Tin nhắn</th>
                     </tr>
                 </thead>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse ($applications as $app)
+                        <tr class="hover:bg-gray-50/70 transition">
 
-                <tbody class="divide-y">
-                    @foreach ($applications as $app)
-                        <tr class="hover:bg-gray-50">
-
-                            {{-- ID --}}
-                            <td class="p-3 font-semibold text-gray-700">
-                                #{{ $app->id }}
-                            </td>
-
-                            {{-- Tutor ID --}}
-                            <td class="p-3">
-                                {{ $app->tutor_id }}
-                            </td>
-
-                            {{-- Class ID --}}
-                            <td class="p-3">
-                                {{ $app->class_request_id }}
-                            </td>
-
-                            {{-- Message --}}
-                            <td class="p-3">
-                                <button onclick="openMessage({{ $app->id }})"
-                                    class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-xs hover:bg-blue-200">
-                                    Xem tin nhắn
-                                </button>
-
-                                {{-- Popup --}}
-                                <div id="modal-{{ $app->id }}"
-                                    class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-
-                                    <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-lg relative">
-
-                                        <h3 class="text-lg font-semibold mb-3">
-                                            Nội dung tin nhắn
-                                        </h3>
-
-                                        <p class="text-sm text-gray-700 whitespace-pre-line">
-                                            {{ $app->message ?? 'Không có nội dung.' }}
-                                        </p>
-
-                                        <button onclick="closeMessage({{ $app->id }})"
-                                            class="mt-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm">
-                                            Đóng
-                                        </button>
+                            {{-- Tutor --}}
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-2">
+                                    <img src="{{ $app->tutor?->user?->avatar
+                                        ? asset('storage/' . $app->tutor->user->avatar)
+                                        : 'https://ui-avatars.com/api/?name=' . urlencode($app->tutor?->user?->name ?? 'T') . '&background=7c3aed&color=fff' }}"
+                                         class="w-8 h-8 rounded-full object-cover flex-shrink-0" alt="avatar">
+                                    <div>
+                                        <p class="font-semibold text-gray-800 text-sm">{{ $app->tutor?->user?->name ?? '—' }}</p>
+                                        <p class="text-xs text-gray-400">ID: {{ $app->tutor_id }}</p>
                                     </div>
                                 </div>
                             </td>
 
+                            {{-- Class --}}
+                            <td class="px-5 py-3.5">
+                                <a href="{{ route('admin.class-requests.show', $app->class_request_id) }}"
+                                   class="inline-flex items-center gap-1 font-mono text-xs bg-gray-100 text-gray-600
+                                          px-2.5 py-1 rounded-lg hover:bg-violet-100 hover:text-violet-700 transition">
+                                    #{{ $app->class_request_id }}
+                                    <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            </td>
+
                             {{-- Status --}}
-                            <td class="p-3">
-                                <span class="px-2 py-1 text-xs rounded-full {{ $app->status_color }}">
+                            <td class="px-5 py-3.5">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $app->status_color }}">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
                                     {{ $app->status_label }}
                                 </span>
                             </td>
 
+                            {{-- Message --}}
+                            <td class="px-5 py-3.5 text-center">
+                                @if($app->message)
+                                    <button onclick="document.getElementById('msg-{{ $app->id }}').classList.replace('hidden','flex')"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold transition">
+                                        <i class="fas fa-eye text-xs"></i> Xem
+                                    </button>
+
+                                    {{-- Message Modal --}}
+                                    <div id="msg-{{ $app->id }}" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+                                        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
+                                            <div class="flex items-center gap-3 mb-4">
+                                                <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                                    <i class="fas fa-message text-blue-600"></i>
+                                                </div>
+                                                <h3 class="font-bold text-gray-800">Tin nhắn ứng tuyển</h3>
+                                            </div>
+                                            <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-line leading-relaxed mb-4">{{ $app->message }}</div>
+                                            <div class="flex justify-end">
+                                                <button onclick="document.getElementById('msg-{{ $app->id }}').classList.replace('flex','hidden')"
+                                                        class="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition">
+                                                    Đóng
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-xs text-gray-300">—</span>
+                                @endif
+                            </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-5 py-12 text-center">
+                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                    <i class="fas fa-handshake text-gray-300 text-xl"></i>
+                                </div>
+                                <p class="text-gray-500 font-medium text-sm">Chưa có đơn nhận lớp nào</p>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
-
             </table>
-
-            <div class="mt-6">
+        </div>
+        @if($applications->hasPages())
+            <div class="px-5 py-3 border-t border-gray-100">
                 {{ $applications->links() }}
             </div>
-
-        </div>
+        @endif
     </div>
 
-    {{-- Script mở / đóng modal --}}
-    <script>
-        function openMessage(id) {
-            document.getElementById('modal-' + id).classList.remove('hidden');
-            document.getElementById('modal-' + id).classList.add('flex');
-        }
-
-        function closeMessage(id) {
-            document.getElementById('modal-' + id).classList.remove('flex');
-            document.getElementById('modal-' + id).classList.add('hidden');
-        }
-    </script>
 @endsection

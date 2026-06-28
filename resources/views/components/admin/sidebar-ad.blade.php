@@ -1,118 +1,124 @@
-<aside class="w-64 bg-white shadow-md p-6 hidden md:block">
-    <h2 class="text-lg font-bold mb-6 text-gray-700">
-        Quản trị
-    </h2>
+<aside class="w-64 bg-white border-r border-gray-100 shadow-sm sticky top-14 h-[calc(100vh-56px)]
+             hidden md:flex flex-col overflow-y-auto">
 
-    <ul class="space-y-3">
+    {{-- Nav --}}
+    <nav class="flex-1 p-4 space-y-0.5">
 
-        <!-- Dashboard -->
-        <li>
-            <a href="{{ route('admin.home') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-200">
-                Dashboard
-            </a>
-        </li>
+        {{-- Dashboard --}}
+        <a href="{{ route('admin.home') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.home')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-gauge-high w-4 text-center"></i>
+            <span>Dashboard</span>
+        </a>
 
-        <!-- QUẢN LÝ HỆ THỐNG -->
-        <li>
-            <button onclick="toggleAdminMenu()"
-                class="w-full flex justify-between items-center px-3 py-2 rounded-lg hover:bg-gray-200">
-                <span class="font-semibold text-gray-700">Quản lý hệ thống</span>
-                <span id="adminArrow" class="transition-transform">▼</span>
-            </button>
+        {{-- ─── Người dùng ─────────────────────────── --}}
+        <div class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Người dùng</p>
+        </div>
 
-            <ul id="adminMenu" class="hidden mt-2 ml-4 space-y-2 border-l border-gray-200 pl-4">
+        <a href="{{ route('admin.users.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.users.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-users w-4 text-center"></i>
+            <span>Tất cả người dùng</span>
+        </a>
 
-                <li>
-                    <a href="{{ route('admin.users.index') }}" class="block py-1 hover:text-blue-600">
-                        Người dùng
-                    </a>
-                </li>
+        <a href="{{ route('admin.students.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.students.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-user-graduate w-4 text-center"></i>
+            <span>Học viên</span>
+        </a>
 
-                <li>
-                    <a href="{{ route('admin.students.index') }}" class="block py-1 hover:text-blue-600">
-                        Học viên
-                    </a>
-                </li>
+        <a href="{{ route('admin.tutors.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.tutors.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-chalkboard-teacher w-4 text-center"></i>
+            <span>Gia sư</span>
+        </a>
 
-                <li>
-                    <a href="{{ route('admin.tutors.index') }}" class="block py-1 hover:text-blue-600">
-                        Gia sư
-                    </a>
-                </li>
+        {{-- ─── Quản lý lớp ───────────────────────── --}}
+        <div class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Quản lý lớp</p>
+        </div>
 
-            </ul>
-        </li>
+        <a href="{{ route('admin.class-requests.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.class-requests.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-file-lines w-4 text-center"></i>
+            <span>Đơn đăng lớp</span>
+        </a>
 
-        <!-- QUẢN LÝ LỚP -->
-        <li>
-            <button onclick="toggleClassMenu()"
-                class="w-full flex justify-between items-center px-3 py-2 rounded-lg hover:bg-gray-200">
-                <span class="font-semibold text-gray-700">Quản lý lớp</span>
-                <span id="classArrow" class="transition-transform">▼</span>
-            </button>
+        <a href="{{ route('admin.applications.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.applications.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-handshake w-4 text-center"></i>
+            <span>Đơn nhận lớp</span>
+        </a>
 
-            <ul id="classMenu" class="hidden mt-2 ml-4 space-y-2 border-l border-gray-200 pl-4">
+        {{-- ─── Danh mục ──────────────────────────── --}}
+        <div class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Danh mục</p>
+        </div>
 
-                <li>
-                    <a href="{{ route('admin.applications.index') }}" class="block py-1 hover:text-blue-600">
-                        Đơn nhận lớp
-                    </a>
-                </li>
+        <a href="{{ route('admin.grades.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.grades.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-layer-group w-4 text-center"></i>
+            <span>Ngành học</span>
+        </a>
 
-                <li>
-                    <a href="{{ route('admin.class-requests.index') }}" class="block py-1 hover:text-blue-600">
-                        Đơn đăng lớp
-                    </a>
-                </li>
+        <a href="{{ route('admin.subjects.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.subjects.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-book w-4 text-center"></i>
+            <span>Môn học</span>
+        </a>
 
-            </ul>
-        </li>
+        {{-- ─── Hỗ trợ ─────────────────────────────── --}}
+        <div class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Hỗ trợ</p>
+        </div>
 
-        <!-- DANH MỤC -->
-        <li>
-            <button onclick="toggleCategoryMenu()"
-                class="w-full flex justify-between items-center px-3 py-2 rounded-lg hover:bg-gray-200">
-                <span class="font-semibold text-gray-700">Danh mục</span>
-                <span id="categoryArrow" class="transition-transform">▼</span>
-            </button>
+        <a href="{{ route('admin.contacts.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.contacts.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-envelope w-4 text-center"></i>
+            <span>Liên hệ</span>
+        </a>
 
-            <ul id="categoryMenu" class="hidden mt-2 ml-4 space-y-2 border-l border-gray-200 pl-4">
+    </nav>
 
-                <li>
-                    <a href="{{ route('admin.grades.index') }}" class="block py-1 hover:text-blue-600">
-                        Ngành học
-                    </a>
-                </li>
+    {{-- Footer sidebar --}}
+    <div class="p-4 border-t border-gray-100">
+        <div class="flex items-center gap-2 px-3 py-2 bg-violet-50 rounded-xl">
+            <div class="w-7 h-7 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-shield-halved text-violet-600 text-xs"></i>
+            </div>
+            <div class="min-w-0">
+                <p class="text-xs font-semibold text-violet-800 truncate">Quản trị viên</p>
+                <p class="text-[10px] text-violet-500 truncate">{{ Auth::user()->email }}</p>
+            </div>
+        </div>
+    </div>
 
-                <li>
-                    <a href="{{ route('admin.subjects.index') }}" class="block py-1 hover:text-blue-600">
-                        Môn học
-                    </a>
-                </li>
-
-            </ul>
-        </li>
-
-        <!-- LIÊN HỆ -->
-        <li>
-            <a href="{{ route('admin.contacts.index') }}" class="block px-3 py-2 rounded-lg hover:bg-gray-200">
-                Liên hệ
-            </a>
-        </li>
-
-        <!-- TÀI CHÍNH -->
-        <li>
-            <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-200">
-                Thanh toán
-            </a>
-        </li>
-
-        <!-- ĐÁNH GIÁ -->
-        <li>
-            <a href="#" class="block px-3 py-2 rounded-lg hover:bg-gray-200">
-                Đánh giá
-            </a>
-        </li>
-
-    </ul>
 </aside>

@@ -1,158 +1,147 @@
 @extends('layouts.admin')
-@section('title', 'Chi tiết học viên')
+@section('title', 'Chi tiết học viên — ' . $student->user->name)
+
 @section('content')
     @php
-        $user = $student->user;
-
-        $classes = $student
-            ->classRequests()
-            ->with(['subject', 'grade'])
-            ->latest()
-            ->get();
-
+        $user    = $student->user;
+        $classes = $student->classRequests()->with(['subject','grade'])->latest()->get();
         $reviews = $student->reviews()->with('tutor.user')->latest()->get();
+        $backRoute = request('from') === 'users' ? route('admin.users.index') : route('admin.students.index');
     @endphp
 
-    <div class="max-w-6xl mx-auto space-y-6">
+    {{-- Breadcrumb --}}
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <a href="{{ $backRoute }}" class="hover:text-violet-600 transition">
+            {{ request('from') === 'users' ? 'Người dùng' : 'Học viên' }}
+        </a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-gray-800 font-medium">{{ $user->name }}</span>
+    </div>
 
-        {{-- HEADER --}}
-        <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-gray-800">
-                Chi tiết học viên
-            </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            @php
-                $backRoute = request('from') === 'users' ? route('admin.users.index') : route('admin.students.index');
-            @endphp
-
-            <a href="{{ $backRoute }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-                <x-heroicon-o-arrow-left class="w-5 h-5 text-gray-600" />
-                Quay lại
-            </a>
-        </div>
-
-        {{-- PROFILE --}}
-        <div class="bg-white p-6 rounded-2xl shadow grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            {{-- AVATAR --}}
-            <div class="flex flex-col items-center">
+        {{-- Cột trái: Profile --}}
+        <div class="space-y-5">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
                 <img src="{{ $user->avatar
                     ? asset('storage/' . $user->avatar)
-                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
-                    class="w-32 h-32 rounded-full object-cover border">
+                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=1d4ed8&color=fff' }}"
+                     class="w-24 h-24 rounded-2xl object-cover mx-auto mb-4 shadow-md" alt="avatar">
 
-                <h3 class="mt-3 text-lg font-bold">{{ $user->name }}</h3>
+                <h2 class="text-lg font-bold text-gray-800">{{ $user->name }}</h2>
+                <span class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                    <i class="fas fa-user-graduate text-xs"></i> Học viên
+                </span>
             </div>
 
-            {{-- INFO --}}
-            <div class="md:col-span-2 space-y-3 text-sm">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6">
-
-                    <p class="flex gap-2">
-                        <span class="font-semibold w-32">👤 Họ tên:</span>
-                        <span>{{ $user->name }}</span>
-                    </p>
-
-                    <p class="flex gap-2">
-                        <span class="font-semibold w-32">📧 Email:</span>
-                        <span>{{ $user->email }}</span>
-                    </p>
-
-                    <p class="flex gap-2">
-                        <span class="font-semibold w-32">📞 SĐT:</span>
-                        <span>{{ $user->phone ?? '—' }}</span>
-                    </p>
-
-                    <p class="flex gap-2">
-                        <span class="font-semibold w-32">🎂 Ngày sinh:</span>
-                        <span>{{ $user->date_of_birth ?? '—' }}</span>
-                    </p>
-
+            {{-- Thông tin liên lạc --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fas fa-address-card text-blue-500"></i> Thông tin cá nhân
+                </h3>
+                <div class="space-y-3">
+                    @foreach([
+                        ['fas fa-envelope',  'Email',     $user->email],
+                        ['fas fa-phone',     'SĐT',       $user->phone ?? '—'],
+                        ['fas fa-cake-candles','Ngày sinh',$user->date_of_birth ?? '—'],
+                        ['fas fa-venus-mars','Giới tính', $user->gender ?? '—'],
+                    ] as [$icon, $label, $value])
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="{{ $icon }} text-blue-500 text-xs"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs text-gray-400">{{ $label }}</p>
+                                <p class="font-medium text-gray-700 text-sm truncate">{{ $value }}</p>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-
             </div>
         </div>
 
-        {{-- CLASS REQUESTS --}}
-        <div class="bg-white p-6 rounded-2xl shadow">
+        {{-- Cột phải --}}
+        <div class="lg:col-span-2 space-y-5">
 
-            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                <x-heroicon-o-book-open class="w-5 h-5 text-blue-500" />
-                Các lớp học đã đăng
-            </h3>
-
-            @forelse($classes as $class)
-                <div class="border rounded-lg p-3 mb-3 flex justify-between">
-
-                    <div>
-                        <p class="font-semibold">
-                            {{ $class->subject?->name }} - {{ $class->grade?->name }}
-                        </p>
-
-                        <p class="text-sm text-gray-500">
-                            Học phí: {{ number_format($class->fee) }}đ
-                        </p>
-                    </div>
-
-                    @php
-                        $statusLabel = match ($class->status) {
-                            'pending' => 'Chờ duyệt',
-                            'assigned' => 'Đã nhận',
-                            'completed' => 'Hoàn thành',
-                            'cancelled' => 'Đã huỷ',
-                            default => 'Không rõ',
-                        };
-
-                        $statusColor = match ($class->status) {
-                            'pending' => 'bg-yellow-100 text-yellow-700',
-                            'assigned' => 'bg-blue-100 text-blue-700',
-                            'completed' => 'bg-green-100 text-green-700',
-                            'cancelled' => 'bg-red-100 text-red-700',
-                            default => 'bg-gray-100 text-gray-700',
-                        };
-                    @endphp
-
-                    <span class="px-2 py-1 text-xs rounded-full {{ $statusColor }}">
-                        {{ $statusLabel }}
+            {{-- Các lớp đã đăng --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fas fa-book-open text-blue-500"></i>
+                    Lớp học đã đăng
+                    <span class="ml-auto text-xs bg-blue-50 text-blue-600 font-semibold px-2 py-0.5 rounded-full">
+                        {{ $classes->count() }}
                     </span>
-                </div>
-            @empty
-                <p class="text-gray-500 text-sm">Chưa có lớp học nào</p>
-            @endforelse
+                </h3>
 
+                @forelse($classes as $class)
+                    @php
+                        $statusMap = [
+                            'pending'   => ['label' => 'Chờ duyệt',  'bg' => 'bg-amber-100',   'text' => 'text-amber-700'],
+                            'assigned'  => ['label' => 'Đã nhận',    'bg' => 'bg-blue-100',    'text' => 'text-blue-700'],
+                            'completed' => ['label' => 'Hoàn thành', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700'],
+                            'cancelled' => ['label' => 'Đã huỷ',     'bg' => 'bg-red-100',     'text' => 'text-red-700'],
+                        ];
+                        $sc = $statusMap[$class->status] ?? ['label' => 'Không rõ', 'bg' => 'bg-gray-100', 'text' => 'text-gray-700'];
+                    @endphp
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-2">
+                        <div>
+                            <p class="font-semibold text-gray-800 text-sm">
+                                {{ $class->subject?->name ?? '—' }}
+                                @if($class->grade)
+                                    <span class="text-gray-400 font-normal">— {{ $class->grade->name }}</span>
+                                @endif
+                            </p>
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                {{ number_format($class->fee) }}đ/giờ ·
+                                <a href="{{ route('admin.class-requests.show', $class->id) }}"
+                                   class="text-violet-500 hover:underline">Xem chi tiết</a>
+                            </p>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $sc['bg'] }} {{ $sc['text'] }}">
+                            {{ $sc['label'] }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-folder-open text-gray-200 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-400">Chưa có lớp học nào</p>
+                    </div>
+                @endforelse
+            </div>
+
+            {{-- Đánh giá gia sư --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fas fa-star text-amber-400"></i>
+                    Đánh giá đã gửi
+                    <span class="ml-auto text-xs bg-amber-50 text-amber-600 font-semibold px-2 py-0.5 rounded-full">
+                        {{ $reviews->count() }}
+                    </span>
+                </h3>
+
+                @forelse($reviews as $review)
+                    <div class="bg-gray-50 rounded-xl p-4 mb-2">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <p class="font-semibold text-gray-800 text-sm">
+                                Gia sư: {{ $review->tutor->user->name ?? '—' }}
+                            </p>
+                            <div class="flex items-center gap-0.5 text-amber-400">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fas fa-star text-xs {{ $i <= $review->rating ? '' : 'opacity-25' }}"></i>
+                                @endfor
+                                <span class="text-xs text-gray-400 ml-1">{{ $review->rating }}/5</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">{{ $review->comment ?? 'Không có nhận xét.' }}</p>
+                    </div>
+                @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-star text-gray-200 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-400">Chưa có đánh giá nào</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
-
-        {{-- REVIEWS --}}
-        <div class="bg-white p-6 rounded-2xl shadow">
-
-            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                <x-heroicon-o-chat-bubble-left-right class="w-5 h-5 text-purple-500" />
-                Bình luận / đánh giá gia sư
-            </h3>
-
-            @forelse($reviews as $review)
-                <div class="border rounded-lg p-3 mb-3">
-
-                    <p class="font-semibold">
-                        Gia sư: {{ $review->tutor->user->name ?? '—' }}
-                    </p>
-
-                    <p class="text-yellow-500 text-sm">
-                        ⭐ {{ $review->rating }}/5
-                    </p>
-
-                    <p class="text-sm text-gray-600 mt-1">
-                        {{ $review->comment }}
-                    </p>
-
-                </div>
-            @empty
-                <p class="text-gray-500 text-sm">Chưa có đánh giá nào</p>
-            @endforelse
-
-        </div>
-
     </div>
+
 @endsection
