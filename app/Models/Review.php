@@ -9,6 +9,7 @@ class Review extends Model
 {
     use SoftDeletes;
     protected $fillable = [
+        'class_id',
         'student_id',
         'tutor_id',
         'rating',
@@ -23,5 +24,10 @@ class Review extends Model
     public function tutor()
     {
         return $this->belongsTo(Tutor::class);
+    }
+
+    public function tutorClass()
+    {
+        return $this->belongsTo(TutorClass::class, 'class_id');
     }
 }

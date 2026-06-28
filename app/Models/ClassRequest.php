@@ -11,13 +11,9 @@ class ClassRequest extends Model
 
     protected $fillable = [
         'student_id',
-        'tutor_id',
 
         'grade_id',
-        'grade_request',
-
         'subject_id',
-        'subject_request',
 
         'degree',
         'experience',
@@ -30,8 +26,6 @@ class ClassRequest extends Model
         'location',
 
         'weeks',
-        'schedule',
-        'time',
 
         'status'
     ];
@@ -40,9 +34,26 @@ class ClassRequest extends Model
         return $this->belongsTo(Student::class);
     }
 
+    public function tutorClass()
+    {
+        return $this->hasOne(TutorClass::class, 'class_request_id');
+    }
+
     public function tutor()
     {
-        return $this->belongsTo(Tutor::class);
+        return $this->hasOneThrough(
+            Tutor::class,
+            TutorClass::class,
+            'class_request_id', // Khóa ngoại trên TutorClass
+            'id',               // Khóa ngoại trên Tutor (khóa chính)
+            'id',               // Khóa nội trên ClassRequest (khóa chính)
+            'tutor_id'          // Khóa nội trên TutorClass
+        );
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(ClassSchedule::class, 'class_request_id');
     }
 
     public function subject()
@@ -80,14 +91,6 @@ class ClassRequest extends Model
         'assigned' => [
             'label' => 'Đã có gia sư',
             'color' => 'bg-blue-100 text-blue-800',
-        ],
-        'payment_pending' => [
-            'label' => 'Chờ thanh toán',
-            'color' => 'bg-orange-100 text-orange-800',
-        ],
-        'completed' => [
-            'label' => 'Hoàn thành',
-            'color' => 'bg-emerald-100 text-emerald-800',
         ],
         'cancelled' => [
             'label' => 'Đã hủy',

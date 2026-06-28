@@ -14,7 +14,9 @@ return new class extends Migration {
             $table->enum('gender', ['male', 'female'])->nullable(); //Giới tính
             $table->string('email')->unique(); //Email
             $table->string('phone')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->string('password'); //Mật khẩu
+            $table->string('avatar')->nullable();
             $table->enum('role', ['student', 'tutor', 'admin', 'both'])->default('student'); //Trạng thái
 
             $table->timestamps(); //created_at và updated_at

@@ -14,12 +14,8 @@ return new class extends Migration {
             $table->id(); // ID của yêu cầu lớp học
 
             $table->foreignId('student_id')->constrained()->cascadeOnDelete(); // Người tạo lớp
-            $table->foreignId('tutor_id')->nullable()->constrained('tutors')->nullOnDelete(); // Gia sư nhận lớp
             $table->foreignId('subject_id')->nullable()->constrained(); // Môn học
             $table->foreignId('grade_id')->nullable()->constrained(); // Ngành học
-
-            $table->string('subject_request')->nullable(); // Dành cho trường hợp môn học không có trong danh sách
-            $table->string('grade_request')->nullable(); // Dành cho trường hợp ngành học không có trong danh sách
 
             $table->string('degree'); //Trình độ của gia sư
             $table->string('experience'); // Kinh nghiệm gia sư
@@ -32,17 +28,13 @@ return new class extends Migration {
             $table->string('location')->nullable(); // Địa điểm học (nếu có)
 
             $table->string('weeks'); // Số tuần học
-            $table->string('schedule'); // Ngày học (VD: Thứ 2,4,6)
-            $table->string('time'); // Thời gian học (VD: 18:00-20:00)
 
-            $table->enum('status', ['pending', 'approved', 'rejected', 'assigned', 'payment_pending', 'completed', 'cancelled'])->default('pending'); //Trạng thái
+            $table->enum('status', ['pending', 'approved', 'rejected', 'assigned', 'cancelled'])->default('pending'); //Trạng thái
             // pending: Đang chờ duyệt
             // approved: Yêu cầu đã được duyệt và đang mở để gia sư ứng tuyển
             // rejected: Yêu cầu đã bị từ chối
-            // assigned: Đã có gia sư nhận lớp
-            // payment_pending: Đang chờ thanh toán từ học sinh
-            // completed: Lớp học đã hoàn thành
-            // cancelled: Lớp học đã bị hủy
+            // assigned: Đã có gia sư nhận lớp (lớp học đã được tạo)
+            // cancelled: Yêu cầu đã bị hủy
 
             $table->timestamps(); // created_at và updated_at
             $table->softDeletes(); // deleted_at

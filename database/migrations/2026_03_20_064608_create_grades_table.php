@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('name');   //Tiểu học, THCS, THPT, Cao đẳng, Đại học, Công nghệ thông tin,...
             $table->string('sort_order')->nullable(); // Sắp xếp hiển thị (1, 2, 3,...)
             $table->boolean('status')->default(1); // Trạng thái
+            $table->boolean('is_approved')->default(true);
             
             $table->timestamps(); //created_at và updated_at
             $table->softDeletes(); //deleted_at

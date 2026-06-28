@@ -17,7 +17,9 @@ class User extends Authenticatable
         'gender',
         'email',
         'password',
-        'role'
+        'role',
+        'avatar',
+        'date_of_birth'
     ];
 
     public function tutor()

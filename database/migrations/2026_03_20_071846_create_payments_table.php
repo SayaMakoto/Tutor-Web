@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('payments', function (Blueprint $table) {
             $table->id(); //id
 
-            $table->foreignId('tutor_id')->constrained()->cascadeOnDelete(); //id gia sư
-            $table->foreignId('class_request_id')->constrained()->cascadeOnDelete(); //id đơn đăng lớp
+            $table->foreignId('tutor_id')->nullable()->constrained()->cascadeOnDelete(); //id gia sư (nullable)
+            $table->foreignId('class_id')->nullable()->constrained('classes')->cascadeOnDelete(); //id lớp học (nullable)
 
             $table->decimal('amount', 10, 2); // Số tiền thanh toán
 

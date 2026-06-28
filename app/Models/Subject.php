@@ -11,6 +11,7 @@ class Subject extends Model
     protected $fillable = [
         'name',
         'status',
+        'is_approved',
     ];
 
     public function tutors()

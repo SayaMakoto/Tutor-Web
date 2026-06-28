@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->text('message');
+            $table->text('admin_reply')->nullable();
+            $table->enum('status', ['pending', 'replied'])->default('pending');
             $table->timestamps();
         });
     }

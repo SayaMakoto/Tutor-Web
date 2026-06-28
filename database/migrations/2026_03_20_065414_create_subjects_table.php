@@ -12,6 +12,7 @@ return new class extends Migration {
 
             $table->string('name'); //Tên môn học
             $table->boolean('status')->default(true); //Trạng thái
+            $table->boolean('is_approved')->default(true);
             
             $table->timestamps(); //created_at và updated_at
             $table->softDeletes(); //deleted_at

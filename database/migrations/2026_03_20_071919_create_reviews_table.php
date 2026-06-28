@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id(); //id
 
+            $table->foreignId('class_id')->constrained('classes')->cascadeOnDelete(); // liên kết lớp học
             $table->foreignId('student_id')->constrained()->cascadeOnDelete(); //id học viên
             $table->foreignId('tutor_id')->constrained()->cascadeOnDelete(); //id gia sư
 
@@ -21,6 +22,8 @@ return new class extends Migration {
 
             $table->timestamps(); //created_at và updated_at
             $table->softDeletes(); //deleted_at
+
+            $table->unique('class_id'); // Ràng buộc duy nhất mỗi lớp học chỉ có 1 review
         });
     }
 
