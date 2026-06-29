@@ -39,6 +39,19 @@
     <x-admin.footer-admin />
 
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    @if(session('rejected_alert'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Đã từ chối gia sư',
+            html: `Hồ sơ gia sư đã bị từ chối.<br><br><b>Lưu ý:</b> Tài khoản này sẽ bị xóa tự động sau 5 phút kể từ lúc này.<br>Bạn vẫn có thể đổi lại trạng thái trong vòng 5 phút nếu có sai sót.`,
+            confirmButtonText: 'Đã hiểu'
+        });
+    </script>
+    @endif
+
     @stack('scripts')
 
 </body>

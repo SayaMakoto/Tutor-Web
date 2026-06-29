@@ -80,6 +80,21 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
+            $deletedUser = User::onlyTrashed()->where('email', $request->email)->first();
+            if ($deletedUser && Hash::check($request->password, $deletedUser->password)) {
+                
+                // Xóa cứng (force delete) sau khi họ đã thấy thông báo
+                $tutor = Tutor::withTrashed()->where('user_id', $deletedUser->id)->first();
+                if ($tutor) {
+                    $tutor->forceDelete();
+                }
+                $deletedUser->forceDelete();
+
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị xoá do hồ sơ gia sư không đạt yêu cầu.'
+                ])->withInput();
+            }
+
             return back()->withErrors([
                 'email' => 'Email hoặc mật khẩu không đúng.'
             ])->withInput();
@@ -88,6 +103,11 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
+
+        if ($user->role === 'tutor' && $user->tutor && $user->tutor->status === 'rejected') {
+            Auth::logout();
+            return redirect()->route('login')->with('rejected', true);
+        }
 
         return match ($user->role) {
             'admin' => redirect()->route('admin.home'),

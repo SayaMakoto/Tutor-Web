@@ -114,8 +114,9 @@
                             <i class="fas fa-briefcase text-emerald-500 text-xs"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400">Kinh nghiệm</p>
-                            <p class="font-medium text-gray-800 text-sm">{{ $tutor->experience ?? 0 }} năm</p>
+                            <p class="font-medium text-gray-800 text-sm">
+                                {{ $tutor->experience ? $tutor->experience . ' năm' : 'Chưa có kinh nghiệm' }}
+                            </p>
                         </div>
                     </div>
                 </div>

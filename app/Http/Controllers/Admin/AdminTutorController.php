@@ -38,6 +38,10 @@ class AdminTutorController extends Controller
             'status' => $request->status
         ]);
 
+        if ($request->status === 'rejected') {
+            return back()->with('rejected_alert', true);
+        }
+
         return back()->with('success', 'Đã cập nhật trạng thái gia sư.');
     }
 }

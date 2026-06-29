@@ -17,6 +17,7 @@
                     <tr>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Người gửi</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Thời gian</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Hành động</th>
                     </tr>
                 </thead>
@@ -43,6 +44,11 @@
                                         Đã phản hồi
                                     </span>
                                 @endif
+                            </td>
+
+                            {{-- Time --}}
+                            <td class="px-5 py-3.5">
+                                <p class="font-semibold text-gray-400">{{ $contact->created_at->format('d/m/Y H:i') }}</p>
                             </td>
 
                             {{-- Actions --}}

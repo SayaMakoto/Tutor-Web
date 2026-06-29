@@ -165,7 +165,7 @@
                 <div class="space-y-3 text-sm">
                     @foreach([
                         ['fas fa-graduation-cap','Học vấn',     $classRequest->degree     ?? '—'],
-                        ['fas fa-briefcase',     'Kinh nghiệm', $classRequest->experience ?? '—'],
+                        ['fas fa-briefcase',     'Kinh nghiệm', $classRequest->experience ? $classRequest->experience . ' năm' : 'Chưa có kinh nghiệm'],
                         ['fas fa-venus-mars',    'Giới tính',   $classRequest->gender_label],
                         ['fas fa-child',         'Độ tuổi',     $classRequest->age_range  ?? 'Không yêu cầu'],
                     ] as [$icon, $label, $value])

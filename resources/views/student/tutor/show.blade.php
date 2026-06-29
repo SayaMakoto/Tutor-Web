@@ -99,7 +99,7 @@
                     </p>
 
                     <p class="text-sm text-gray-600 mt-1">
-                        Kinh nghiệm: {{ $tutor->experience ?? 'Chưa cập nhật' }}
+                        Kinh nghiệm: {{ $tutor->experience ? $tutor->experience . ' năm' : 'Chưa có kinh nghiệm' }}
                     </p>
                 </div>
 

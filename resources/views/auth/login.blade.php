@@ -98,4 +98,20 @@
 
         </div>
     </div>
+
+    @if(session('rejected'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tài khoản bị từ chối',
+            html: `
+                Hồ sơ gia sư của bạn không đạt yêu cầu và đã bị từ chối.<br><br>
+                Vui lòng liên hệ Ban Quản Trị nếu bạn có thắc mắc.<br>
+                <b>Lưu ý:</b> Tài khoản của bạn sẽ tự động bị xóa sau 5 phút kể từ lúc từ chối.
+            `,
+            confirmButtonText: 'Đã hiểu'
+        });
+    </script>
+    @endif
 @endsection

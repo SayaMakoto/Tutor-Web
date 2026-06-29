@@ -178,7 +178,7 @@
                                 </div>
                                 <div class="p-2 bg-gray-50 rounded-xl">
                                     <span class="text-gray-400 block mb-0.5">Kinh nghiệm</span>
-                                    <span class="font-bold text-gray-700 block">{{ $tutor->experience }} năm</span>
+                                    <span class="font-bold text-gray-700 block">{{ $tutor->experience ? $tutor->experience . ' năm' : 'Chưa có kinh nghiệm' }}</span>
                                 </div>
                             </div>
                         </div>
