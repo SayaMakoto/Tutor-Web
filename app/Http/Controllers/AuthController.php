@@ -145,6 +145,45 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function forgotPasswordStore(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Không tìm thấy tài khoản với email này.']);
+        }
+
+        // Mock xác thực: Bỏ qua bước gửi email, chuyển thẳng đến trang đặt lại mật khẩu
+        return redirect()->route('reset-password')->with('reset_email', $request->email);
+    }
+
+    public function resetPassword()
+    {
+        if (!session('reset_email') && !session('_old_input')) {
+            return redirect()->route('forgot-password');
+        }
+        return view('auth.reset-password');
+    }
+
+    public function resetPasswordStore(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+        
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Không tìm thấy tài khoản.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('login')->with('success', 'Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
+    }
+
     public function adminLogout(Request $request)
     {
         Auth::guard('admin')->logout();

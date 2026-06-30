@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TutorDocument;
 use App\Models\Subject;
@@ -118,5 +119,31 @@ class ProfileController extends Controller
         $document->delete();
 
         return back()->with('success', 'Xóa tài liệu thành công!');
+    }
+
+    public function changePassword()
+    {
+        $user = Auth::user();
+        $layout = $user->role === 'tutor' ? 'layouts.tutor' : 'layouts.student';
+        return view('profile.change-password', compact('layout'));
+    }
+
+    public function changePasswordStore(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+        
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Mật khẩu đã được thay đổi thành công!');
     }
 }

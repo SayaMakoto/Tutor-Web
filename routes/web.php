@@ -95,6 +95,15 @@ Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->name('login.store');
+
+    // Forgot Password
+    Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPasswordStore'])
+        ->name('forgot-password.store');
+        
+    // Reset Password
+    Route::get('/reset-password', [AuthController::class, 'resetPassword'])->name('reset-password');
+    Route::post('/reset-password', [AuthController::class, 'resetPasswordStore'])->name('reset-password.store');
 });
 
 // =========================
@@ -196,6 +205,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/profile/documents/{id}', [ProfileController::class, 'deleteDocument'])
         ->name('profile.documents.destroy');
+
+    // Change Password
+    Route::get('/change-password', [ProfileController::class, 'changePassword'])
+        ->name('change-password');
+    Route::post('/change-password', [ProfileController::class, 'changePasswordStore'])
+        ->name('change-password.store');
 });
 
 Route::middleware('auth')->group(function () {

@@ -64,13 +64,16 @@
                     </div>
                 </div>
 
-                {{-- Remember me --}}
-                <div class="flex items-center mb-6">
+                {{-- Remember me & Forgot Password --}}
+                <div class="flex items-center justify-between mb-6">
                     <label class="flex items-center gap-2 cursor-pointer select-none group">
                         <input type="checkbox" name="remember"
                             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400 cursor-pointer">
                         <span class="text-sm text-gray-600 group-hover:text-gray-800 transition">Ghi nhớ đăng nhập</span>
                     </label>
+                    <a href="{{ route('forgot-password') }}" class="text-sm text-blue-600 hover:text-indigo-600 font-medium hover:underline transition">
+                        Quên mật khẩu?
+                    </a>
                 </div>
 
                 {{-- Submit --}}

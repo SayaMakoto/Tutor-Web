@@ -39,6 +39,10 @@
             @endif
         </a>
 
+        <a href="{{ route('change-password') }}" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 text-gray-700 hover:text-blue-600 transition font-medium text-sm">
+            <i class="fas fa-lock text-gray-400 text-sm"></i> Đổi mật khẩu
+        </a>
+
         <div class="border-t border-gray-100 my-1"></div>
 
         <form method="POST" action="{{ route('logout') }}">
