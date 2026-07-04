@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends($layout)
 @section('title', 'Thông tin gia sư - ' . ($tutor->user->name ?? 'Gia sư'))
 @section('content')
     @php

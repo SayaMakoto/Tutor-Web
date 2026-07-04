@@ -12,12 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function ($middleware) {
 
         $middleware->redirectGuestsTo(function ($request) {
-
             if ($request->is('admin') || $request->is('admin/*')) {
                 return route('admin.login');
             }
-
             return route('login');
+        });
+
+        // Khi admin guard đã đăng nhập mà cố vào /admin/login → về admin.home
+        $middleware->redirectUsersTo(function ($request) {
+            if ($request->is('admin/login') || $request->is('admin/login/*')) {
+                return route('admin.home');
+            }
+            return route('student.home');
         });
 
         $middleware->alias([

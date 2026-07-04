@@ -66,12 +66,34 @@ class AuthController extends Controller
         ]);
 
         if (auth()->check()) {
-            return redirect()->route('home')
+            return redirect()->route('student.home')
                 ->with('success', 'Đăng ký gia sư thành công! Vui lòng chờ admin duyệt.');
         }
 
         return redirect()->route('login')
             ->with('success', 'Đăng ký gia sư thành công! Vui lòng đăng nhập.');
+    }
+
+    /**
+     * Học viên đã đăng nhập đăng ký thêm vai trò gia sư.
+     * Route: POST /become-tutor (middleware: auth, not.tutor)
+     */
+    public function becomeTutor(RegisterTutorRequest $request)
+    {
+        $user = auth()->user();
+
+        // Tạo hồ sơ gia sư và nâng role lên 'both'
+        Tutor::create([
+            'user_id'    => $user->id,
+            'bio'        => $request->bio,
+            'education'  => $request->education,
+            'experience' => $request->experience,
+        ]);
+
+        $user->update(['role' => 'both']);
+
+        return redirect()->route('student.home')
+            ->with('success', 'Đăng ký gia sư thành công! Vui lòng chờ admin duyệt hồ sơ của bạn.');
     }
 
 
@@ -186,9 +208,10 @@ class AuthController extends Controller
 
     public function adminLogout(Request $request)
     {
+        // Chỉ logout guard 'admin' — KHÔNG invalidate() toàn bộ session
+        // vì invalidate() sẽ xóa cả session của guard 'web' (student/tutor/both).
         Auth::guard('admin')->logout();
 
-        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');

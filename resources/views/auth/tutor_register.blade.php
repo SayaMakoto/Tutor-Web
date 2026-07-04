@@ -30,8 +30,22 @@
                 <p class="text-sm text-gray-500 mt-1">Chia sẻ kiến thức, tăng thu nhập của bạn</p>
             </div>
 
-            <form method="POST" action="{{ route('register.tutor.store') }}">
+            <form method="POST" action="{{ auth()->check() ? route('become-tutor.store') : route('register.tutor.store') }}">
                 @csrf
+
+                @auth
+                    {{-- Banner thông tin tài khoản hiện tại --}}
+                    <div class="flex items-center gap-3 mb-5 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                        <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-circle-user text-blue-500 text-lg"></i>
+                        </div>
+                        <div class="text-sm">
+                            <p class="font-semibold text-gray-800">{{ auth()->user()->name }}</p>
+                            <p class="text-gray-500">{{ auth()->user()->email }}</p>
+                        </div>
+                        <span class="ml-auto text-xs font-medium bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">Học viên</span>
+                    </div>
+                @endauth
 
                 @guest
 
@@ -172,9 +186,15 @@
 
             {{-- Back link --}}
             <div class="text-center mt-5">
-                <a href="{{ route('role') }}" class="text-xs text-gray-400 hover:text-gray-600 transition">
-                    <i class="fa-solid fa-arrow-left mr-1"></i>Quay lại chọn vai trò
-                </a>
+                @auth
+                    <a href="{{ route('student.home') }}" class="text-xs text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-arrow-left mr-1"></i>Quay lại trang chủ
+                    </a>
+                @else
+                    <a href="{{ route('role') }}" class="text-xs text-gray-400 hover:text-gray-600 transition">
+                        <i class="fa-solid fa-arrow-left mr-1"></i>Quay lại chọn vai trò
+                    </a>
+                @endauth
             </div>
 
         </div>

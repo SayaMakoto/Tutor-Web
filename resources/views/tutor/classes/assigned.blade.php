@@ -1,4 +1,4 @@
-@extends('layouts.tutor')
+@extends($layout)
 @section('title', 'Lớp đã được giao dạy')
 
 @section('content')

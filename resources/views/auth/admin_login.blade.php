@@ -10,7 +10,7 @@
     @vite(['resources/css/app.css'])
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-gray-900 via-violet-950 to-indigo-950 flex items-center justify-center p-4">
+<body class="min-h-screen bg-linear-to-br from-gray-900 via-violet-950 to-indigo-950 flex items-center justify-center p-4">
 
     {{-- Decorative circles --}}
     <div class="absolute top-0 left-0 w-72 h-72 bg-violet-500/10 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
@@ -20,7 +20,7 @@
 
         {{-- Logo --}}
         <div class="text-center mb-6">
-            <div class="w-14 h-14 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl
+            <div class="w-14 h-14 bg-linear-to-br from-violet-600 to-indigo-700 rounded-2xl
                         flex items-center justify-center mx-auto mb-3 shadow-lg shadow-violet-900/50">
                 <i class="fas fa-shield-halved text-white text-2xl"></i>
             </div>
@@ -33,7 +33,7 @@
 
             @if($errors->any())
                 <div class="bg-red-500/20 border border-red-500/30 rounded-xl px-4 py-3 mb-5 flex items-center gap-2">
-                    <i class="fas fa-triangle-exclamation text-red-400 text-sm flex-shrink-0"></i>
+                    <i class="fas fa-triangle-exclamation text-red-400 text-sm shrink-0"></i>
                     <p class="text-red-300 text-sm">{{ $errors->first() }}</p>
                 </div>
             @endif
@@ -71,7 +71,7 @@
 
                 {{-- Submit --}}
                 <button type="submit"
-                        class="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl
+                        class="w-full bg-linear-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl
                                font-semibold hover:from-violet-700 hover:to-indigo-700 hover:shadow-lg
                                hover:shadow-violet-900/50 transition-all mt-2">
                     <i class="fas fa-right-to-bracket mr-2 text-sm"></i> Đăng nhập

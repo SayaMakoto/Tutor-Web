@@ -24,7 +24,8 @@
                     <tr>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Gia sư</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Hành động</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+                            Hành động</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -37,7 +38,7 @@
                                     <img src="{{ $tutor->user->avatar
                                         ? asset('storage/' . $tutor->user->avatar)
                                         : 'https://ui-avatars.com/api/?name=' . urlencode($tutor->user->name) . '&background=7c3aed&color=fff' }}"
-                                         class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="avatar">
+                                        class="w-9 h-9 rounded-full object-cover flex-shrink-0" alt="avatar">
                                     <div>
                                         <p class="font-semibold text-gray-800">{{ $tutor->user->name }}</p>
                                         <p class="text-xs text-gray-400">{{ $tutor->user->email }}</p>
@@ -47,7 +48,8 @@
 
                             {{-- Status --}}
                             <td class="px-5 py-3.5">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $tutor->status_color }}">
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $tutor->status_color }}">
                                     <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
                                     {{ $tutor->status_label }}
                                 </span>
@@ -57,16 +59,16 @@
                             <td class="px-5 py-3.5 text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.tutors.show', $tutor->id) }}"
-                                       class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition"
-                                       title="Xem chi tiết">
+                                        class="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition"
+                                        title="Xem chi tiết">
                                         <i class="fas fa-eye text-xs"></i>
                                     </a>
                                     <button onclick="openModal({{ $tutor->id }}, '{{ $tutor->status }}')"
-                                            class="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition"
-                                            title="Đổi trạng thái">
+                                        class="w-8 h-8 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center transition"
+                                        title="Đổi trạng thái">
                                         <i class="fas fa-pencil text-xs"></i>
                                     </button>
-                                    
+
                                 </div>
                             </td>
                         </tr>
@@ -84,7 +86,7 @@
             </table>
         </div>
 
-        @if($tutors->hasPages())
+        @if ($tutors->hasPages())
             <div class="px-5 py-3 border-t border-gray-100">
                 {{ $tutors->links() }}
             </div>
@@ -106,7 +108,7 @@
                 @method('PUT')
                 <label class="block text-xs font-semibold text-gray-500 mb-1.5">Trạng thái mới</label>
                 <select name="status"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-5
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-5
                                focus:ring-2 focus:ring-violet-400 focus:border-transparent focus:outline-none bg-white">
                     @foreach (\App\Models\Tutor::statusOptions() as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
@@ -115,11 +117,11 @@
 
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="closeModal()"
-                            class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition">
+                        class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition">
                         Huỷ
                     </button>
                     <button type="submit"
-                            class="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold hover:shadow-md transition">
+                        class="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold hover:shadow-md transition">
                         Lưu thay đổi
                     </button>
                 </div>
@@ -130,22 +132,23 @@
 @endsection
 
 @push('scripts')
-<script>
-    function openModal(id, currentStatus) {
-        const modal = document.getElementById('statusModal');
-        const form  = document.getElementById('statusForm');
-        form.action = `/admin/tutors/${id}`;
-        form.querySelector('select').value = currentStatus;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-    function closeModal() {
-        const modal = document.getElementById('statusModal');
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    }
-    // Không dùng click-outside vì native <select> dropdown
-    // sẽ fire click lên backdrop → đóng modal sai
-    // Chỉ đóng qua nút Huỷ hoặc nút ×
-</script>
+    <script>
+        function openModal(id, currentStatus) {
+            const modal = document.getElementById('statusModal');
+            const form = document.getElementById('statusForm');
+            form.action = `/admin/tutors/${id}`;
+            form.querySelector('select').value = currentStatus;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('statusModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+        // Không dùng click-outside vì native <select> dropdown
+        // sẽ fire click lên backdrop → đóng modal sai
+        // Chỉ đóng qua nút Huỷ hoặc nút ×
+    </script>
 @endpush

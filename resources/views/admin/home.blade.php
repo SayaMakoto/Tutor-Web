@@ -13,13 +13,14 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
         {{-- Gia sư --}}
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-11 h-11 bg-violet-100 rounded-xl flex items-center justify-center">
                     <i class="fas fa-chalkboard-teacher text-violet-600 text-lg"></i>
                 </div>
                 <a href="{{ route('admin.tutors.index') }}"
-                   class="text-xs text-violet-600 hover:text-violet-800 font-medium hover:underline">
+                    class="text-xs text-violet-600 hover:text-violet-800 font-medium hover:underline">
                     Xem tất cả →
                 </a>
             </div>
@@ -28,13 +29,14 @@
         </div>
 
         {{-- Học viên --}}
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-11 h-11 bg-blue-100 rounded-xl flex items-center justify-center">
                     <i class="fas fa-user-graduate text-blue-600 text-lg"></i>
                 </div>
                 <a href="{{ route('admin.students.index') }}"
-                   class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">
+                    class="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline">
                     Xem tất cả →
                 </a>
             </div>
@@ -43,13 +45,15 @@
         </div>
 
         {{-- Lớp hoạt động --}}
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-11 h-11 bg-emerald-100 rounded-xl flex items-center justify-center">
                     <i class="fas fa-book-open text-emerald-600 text-lg"></i>
                 </div>
-                <a href="{{ route('admin.class-requests.index') }}"
-                   class="text-xs text-emerald-600 hover:text-emerald-800 font-medium hover:underline">
+                {{-- http://127.0.0.1:8000/admin/class-requests?status=assigned --}}
+                <a href="{{ route('admin.class-requests.index') }}?status=assigned"
+                    class="text-xs text-emerald-600 hover:text-emerald-800 font-medium hover:underline">
                     Xem tất cả →
                 </a>
             </div>
@@ -58,7 +62,8 @@
         </div>
 
         {{-- Doanh thu --}}
-        <div class="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
+        <div
+            class="bg-linear-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                 <i class="fas fa-coins text-white text-lg"></i>
@@ -83,7 +88,7 @@
                 <p class="text-3xl font-bold text-amber-600 mb-1">—</p>
                 <p class="text-xs text-gray-400 mb-4">đang chờ phê duyệt</p>
                 <a href="{{ route('admin.tutors.index') }}"
-                   class="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-800 transition">
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-800 transition">
                     Xem danh sách <i class="fas fa-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -101,7 +106,7 @@
                 <p class="text-3xl font-bold text-blue-600 mb-1">—</p>
                 <p class="text-xs text-gray-400 mb-4">yêu cầu mới hôm nay</p>
                 <a href="{{ route('admin.class-requests.index') }}"
-                   class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
                     Xem đơn đăng lớp <i class="fas fa-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -119,7 +124,7 @@
                 <p class="text-3xl font-bold text-rose-600 mb-1">—</p>
                 <p class="text-xs text-gray-400 mb-4">chưa được phản hồi</p>
                 <a href="{{ route('admin.contacts.index') }}"
-                   class="inline-flex items-center gap-2 text-sm font-semibold text-rose-600 hover:text-rose-800 transition">
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-rose-600 hover:text-rose-800 transition">
                     Xem liên hệ <i class="fas fa-arrow-right text-xs"></i>
                 </a>
             </div>

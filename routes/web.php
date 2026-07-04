@@ -114,6 +114,9 @@ Route::middleware(['auth', 'not.tutor'])->group(function () {
     Route::get('/become-tutor', function () {
         return view('auth.tutor_register');
     })->name('become-tutor');
+
+    Route::post('/become-tutor', [AuthController::class, 'becomeTutor'])
+        ->name('become-tutor.store');
 });
 
 // Đăng xuất
@@ -251,8 +254,10 @@ Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment
 // =======================
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Trang login admin
-    Route::middleware('guest')->group(function () {
+    // Trang login admin — dùng guest:admin thay vì guest
+    // để user web (student/tutor) đang login vẫn truy cập được trang này
+    // mà không bị redirect về trang chủ của họ.
+    Route::middleware('guest:admin')->group(function () {
         Route::view('/login', 'auth.admin_login')->name('login');
         Route::post('/login', [AuthController::class, 'adminLogin'])
             ->name('login.store');

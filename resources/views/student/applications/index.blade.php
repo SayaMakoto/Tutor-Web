@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends($layout)
 @section('title', 'Lời mời từ gia sư')
 
 @section('content')

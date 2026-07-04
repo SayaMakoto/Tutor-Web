@@ -17,7 +17,7 @@
         'btnHoverTo' => 'hover:to-emerald-700',
     ];
 @endphp
-@extends('layouts.tutor')
+@extends($layout)
 @section('title', 'Ví Xu của tôi')
 
 @section('content')

@@ -1,3 +1,13 @@
+@inject('tutorModel',       'App\Models\Tutor')
+@inject('classReqModel',    'App\Models\ClassRequest')
+@inject('contactModel',     'App\Models\Contact')
+
+@php
+    $pendingTutors      = $tutorModel::where('status', 'pending')->count();
+    $pendingClassReqs   = $classReqModel::where('status', 'pending')->count();
+    $pendingContacts    = $contactModel::where('status', 'pending')->count();
+@endphp
+
 <aside class="w-64 bg-white border-r border-gray-100 shadow-sm sticky top-14 h-[calc(100vh-56px)]
              hidden md:flex flex-col overflow-y-auto">
 
@@ -43,7 +53,13 @@
                      ? 'bg-violet-600 text-white shadow-sm'
                      : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
             <i class="fas fa-chalkboard-teacher w-4 text-center"></i>
-            <span>Gia sư</span>
+            <span class="flex-1">Gia sư</span>
+            @if($pendingTutors > 0)
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                             bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                    {{ $pendingTutors > 99 ? '99+' : $pendingTutors }}
+                </span>
+            @endif
         </a>
 
         {{-- ─── Quản lý lớp ───────────────────────── --}}
@@ -57,7 +73,13 @@
                      ? 'bg-violet-600 text-white shadow-sm'
                      : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
             <i class="fas fa-file-lines w-4 text-center"></i>
-            <span>Đơn đăng lớp</span>
+            <span class="flex-1">Đơn đăng lớp</span>
+            @if($pendingClassReqs > 0)
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                             bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                    {{ $pendingClassReqs > 99 ? '99+' : $pendingClassReqs }}
+                </span>
+            @endif
         </a>
 
         <a href="{{ route('admin.applications.index') }}"
@@ -103,7 +125,13 @@
                      ? 'bg-violet-600 text-white shadow-sm'
                      : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
             <i class="fas fa-envelope w-4 text-center"></i>
-            <span>Liên hệ</span>
+            <span class="flex-1">Liên hệ</span>
+            @if($pendingContacts > 0)
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                             bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                    {{ $pendingContacts > 99 ? '99+' : $pendingContacts }}
+                </span>
+            @endif
         </a>
 
     </nav>
@@ -122,3 +150,4 @@
     </div>
 
 </aside>
+

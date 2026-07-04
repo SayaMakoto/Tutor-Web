@@ -1,4 +1,4 @@
-@extends('layouts.tutor')
+@extends($layout)
 
 @section('title', 'Chi tiết lớp #' . $class->id)
 

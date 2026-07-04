@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends($layout)
 
 @section('content')
     @auth

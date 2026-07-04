@@ -2,7 +2,7 @@
     /** @var \Illuminate\Pagination\LengthAwarePaginator $classes */
 @endphp
 
-@extends('layouts.student')
+@extends($layout)
 @section('title', 'Danh sách lớp học')
 
 @section('content')

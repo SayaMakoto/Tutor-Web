@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends($layout)
 
 @section('title', 'Chi tiết lớp #' . $class->id)
 
