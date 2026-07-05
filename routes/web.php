@@ -130,8 +130,9 @@ Route::prefix('classes')->name('classes.')->group(function () {
     Route::get('/', [ClassRequestController::class, 'index'])->name('index');
 
     Route::middleware(['auth', 'role:student,both'])->group(function () {
-        Route::get('/{id}/edit', [ClassRequestController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [ClassRequestController::class, 'update'])->name('update');
+        Route::get('/{class_request}/edit', [ClassRequestController::class, 'edit'])->name('edit');
+        Route::put('/{class_request}', [ClassRequestController::class, 'update'])->name('update');
+        Route::post('/{class_request}/restore', [ClassRequestController::class, 'restore'])->name('restore');
         Route::delete('/{class_request}', [ClassRequestController::class, 'destroy'])->name('destroy');
     });
 

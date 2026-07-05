@@ -16,10 +16,17 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'grade_id' => 'required|exists:grades,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'degree' => 'nullable|string',
+            'experience' => 'nullable|string',
+            'gender' => 'nullable|string',
+            'age_range' => 'nullable|string',
+            'fee' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'budget' => 'required|numeric|min:0',
             'study_type' => 'required|in:online,offline',
+            'location' => 'nullable|string',
+            'weeks' => 'required|string',
         ];
     }
 }

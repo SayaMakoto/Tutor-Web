@@ -21,6 +21,7 @@
         
         $weeksStr = $class->weeks ?? '1 tuần';
         $totalWeeks = 1;
+        
         if (preg_match('/(\d+)\s*(tuần|tháng)/i', $weeksStr, $matches)) {
             $val = intval($matches[1]);
             $unit = mb_strtolower(trim($matches[2]));
@@ -148,8 +149,42 @@
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
                     <a href="{{ route('classes.index') }}"
                         class="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 bg-white hover:bg-gray-100 transition shadow-sm">
-                        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                        <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
+
+                    @php
+                        $isOwner = auth()->check() && auth()->user()->student?->id === $class->student_id;
+                        $canCancel = $isOwner && !in_array($class->status, ['cancelled', 'payment_pending', 'completed']);
+                        $canEdit = $isOwner && $class->status === 'pending';
+                        $canRestore = $isOwner && $class->status === 'cancelled';
+                    @endphp
+
+                    <div class="flex items-center gap-2">
+                        @if ($canEdit)
+                            <a href="{{ route('classes.edit', $class->id) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-xl text-sm font-semibold hover:bg-yellow-600 transition shadow-sm">
+                                <i class="fas fa-edit"></i> Sửa yêu cầu
+                            </a>
+                        @endif
+                        
+                        @if ($canRestore)
+                            <form action="{{ route('classes.restore', $class->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-semibold hover:bg-green-600 transition shadow-sm">
+                                    <i class="fas fa-undo"></i> Khôi phục
+                                </button>
+                            </form>
+                        @endif
+
+                        @if ($canCancel)
+                            <form action="{{ route('classes.destroy', $class->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn hủy lớp này?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-semibold hover:bg-red-600 hover:text-white transition shadow-sm">
+                                    <i class="fas fa-times"></i> Hủy lớp
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
 

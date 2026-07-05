@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\ClassRequest\FilterRequest;
 use App\Http\Requests\Frontend\ClassRequest\UpdateRequest;
 use App\Models\ClassRequest;
+use App\Models\Grade;
+use App\Models\Subject;
 
 class ClassRequestController extends Controller
 {
@@ -61,14 +63,21 @@ class ClassRequestController extends Controller
             abort(403);
         }
 
-        return view('frontend.classes.edit', compact('class_request'));
+        if ($class_request->status !== 'pending') {
+            return back()->with('error', 'Chỉ có thể chỉnh sửa yêu cầu đang chờ duyệt.');
+        }
+
+        $grades = Grade::all();
+        $subjects = Subject::all();
+
+        return view('student.classes.edit', compact('class_request', 'grades', 'subjects'));
     }
 
     public function update(UpdateRequest $request, ClassRequest $class_request)
     {
         $class_request->update($request->validated());
 
-        return redirect()->route('classes.index')
+        return redirect()->route('classes.show', $class_request->id)
             ->with('success', 'Cập nhật thành công');
     }
 
@@ -91,5 +100,22 @@ class ClassRequestController extends Controller
         ]);
 
         return back()->with('success', 'Lớp đã được hủy thành công.');
+    }
+
+    public function restore(ClassRequest $class_request)
+    {
+        if ($class_request->student_id != auth()->user()->student->id) {
+            abort(403);
+        }
+
+        if ($class_request->status !== 'cancelled') {
+            return back()->with('error', 'Chỉ có thể khôi phục lớp đã hủy.');
+        }
+
+        $class_request->update([
+            'status' => 'pending'
+        ]);
+
+        return back()->with('success', 'Đã khôi phục lớp thành công.');
     }
 }
