@@ -1,3 +1,10 @@
+@php
+    $pendingApplications = auth()->check()
+        ? \App\Models\Application::whereHas('classRequest.student', fn($q) => $q->where('user_id', auth()->id()))
+            ->where('status', 'pending')->count()
+        : 0;
+@endphp
+
 <header class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-6 py-3 flex justify-between items-center">
 
@@ -76,8 +83,14 @@
 
             <!-- Lời mời từ gia sư -->
             <a href="{{ route('student.applications.index') }}"
-                class="px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
+                class="relative px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-150 text-sm">
                 <i class="fas fa-envelope-open-text mr-1 text-xs"></i> Lời mời từ gia sư
+                @if($pendingApplications > 0)
+                    <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                                 bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                        {{ $pendingApplications > 99 ? '99+' : $pendingApplications }}
+                    </span>
+                @endif
             </a>
 
             <!-- Nút đăng lớp nổi bật -->

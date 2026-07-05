@@ -141,7 +141,9 @@
                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-5
                                focus:ring-2 focus:ring-violet-400 focus:border-transparent focus:outline-none bg-white">
                     @foreach (\App\Models\ClassRequest::statusOptions() as $key => $label)
-                        <option value="{{ $key }}">{{ $label }}</option>
+                        <option value="{{ $key }}" {{ in_array($key, ['assigned', 'cancelled']) ? 'disabled' : '' }}>
+                            {{ $label }}
+                        </option>
                     @endforeach
                 </select>
                 <div class="flex justify-end gap-2">

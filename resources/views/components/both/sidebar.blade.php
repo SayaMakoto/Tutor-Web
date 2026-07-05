@@ -2,6 +2,11 @@
     $tutor    = auth()->user()?->tutor;
     $wallet   = auth()->user()?->wallet;
     $xuBalance = $wallet?->balance ?? 0;
+
+    $pendingApplications = auth()->check()
+        ? \App\Models\Application::whereHas('classRequest.student', fn($q) => $q->where('user_id', auth()->id()))
+            ->where('status', 'pending')->count()
+        : 0;
 @endphp
 
 <aside class="w-64 bg-white border-r border-gray-100 shadow-sm
@@ -85,11 +90,17 @@
             {{-- Lời mời gia sư --}}
             <a href="{{ route('student.applications.index') }}"
                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150
-                      {{ request()->routeIs('student.applications.*')
-                         ? 'bg-blue-600 text-white shadow-sm'
-                         : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700' }}">
+                       {{ request()->routeIs('student.applications.*')
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700' }}">
                 <i class="fas fa-envelope-open-text w-4 text-center text-[13px]"></i>
-                <span>Lời mời gia sư</span>
+                <span class="flex-1">Lời mời gia sư</span>
+                @if($pendingApplications > 0)
+                    <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                                 bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                        {{ $pendingApplications > 99 ? '99+' : $pendingApplications }}
+                    </span>
+                @endif
             </a>
 
             {{-- Đăng lớp mới --}}

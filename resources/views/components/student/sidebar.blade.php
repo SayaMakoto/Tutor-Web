@@ -1,3 +1,10 @@
+@php
+    $pendingApplications = auth()->check()
+        ? \App\Models\Application::whereHas('classRequest.student', fn($q) => $q->where('user_id', auth()->id()))
+            ->where('status', 'pending')->count()
+        : 0;
+@endphp
+
 <aside
     class="w-64 bg-white border-r border-gray-100 shadow-sm sticky top-14.25 h-[calc(100vh-57px)] p-5 hidden md:flex flex-col gap-2 overflow-y-auto">
 
@@ -55,7 +62,13 @@
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600' }}">
             <i class="fas fa-envelope-open-text w-4 text-center"></i>
-            <span>Lời mời từ gia sư</span>
+            <span class="flex-1">Lời mời từ gia sư</span>
+            @if($pendingApplications > 0)
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full
+                             bg-red-500 text-white text-[10px] font-bold leading-none shadow-sm">
+                    {{ $pendingApplications > 99 ? '99+' : $pendingApplications }}
+                </span>
+            @endif
         </a>
 
         <!-- Đăng lớp -->
