@@ -162,10 +162,12 @@
 
 @push('scripts')
     <script>
+        const baseUrl = "{{ url('admin/class-requests') }}";
+
         function openModal(id, currentStatus) {
             const modal = document.getElementById('statusModal');
             const form = document.getElementById('statusForm');
-            form.action = `/admin/class-requests/${id}`;
+            form.action = `${baseUrl}/${id}`;
             form.querySelector('select').value = currentStatus;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
