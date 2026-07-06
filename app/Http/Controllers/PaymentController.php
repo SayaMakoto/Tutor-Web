@@ -55,8 +55,11 @@ class PaymentController extends Controller
             'payment_method' => 'required|in:qr,atm,intl',
         ]);
 
+        $routeMap = ['qr' => 'payment.qr', 'atm' => 'payment.atm', 'intl' => 'payment.intl'];
+        $routeName = $routeMap[$request->payment_method] ?? 'payment.qr';
+
         if (!$this->tablesExist()) {
-            // Chưa migrate: dùng session để preview QR
+            // Chưa migrate: dùng session để preview
             $orderRef = 'GS247-' . now()->format('Ymd') . '-' . strtoupper(Str::random(5));
             session([
                 'demo_order' => [
@@ -67,7 +70,7 @@ class PaymentController extends Controller
                     'expires_at' => now()->addMinutes(15)->toISOString(),
                 ]
             ]);
-            return redirect()->route('payment.qr', $orderRef);
+            return redirect()->route($routeName, $orderRef);
         }
 
         $coinAmount = (int) $request->coin_amount;
@@ -81,7 +84,7 @@ class PaymentController extends Controller
             'expires_at' => now()->addMinutes(15),
         ]);
 
-        return redirect()->route('payment.qr', $order->order_ref);
+        return redirect()->route($routeName, $order->order_ref);
     }
 
     // ─── Trang QR ─────────────────────────────────────────────
@@ -112,6 +115,60 @@ class PaymentController extends Controller
         return view('payment.qr', compact('order'));
     }
 
+    // ─── Trang ATM ────────────────────────────────────────────
+    public function atm(string $orderRef)
+    {
+        if (!$this->tablesExist()) {
+            $demo = session('demo_order', []);
+            $order = (object) array_merge([
+                'order_ref' => $orderRef,
+                'coin_amount' => 200,
+                'amount_vnd' => 200000,
+                'status' => 'pending',
+                'expires_at' => now()->addMinutes(15),
+            ], $demo);
+            $order->expires_at = \Carbon\Carbon::parse($order->expires_at);
+            return view('payment.atm', compact('order'));
+        }
+
+        $order = PaymentOrder::where('order_ref', $orderRef)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($order->status === 'success') {
+            return redirect()->route('payment.success')->with('order_ref', $orderRef);
+        }
+
+        return view('payment.atm', compact('order'));
+    }
+
+    // ─── Trang Thẻ quốc tế ────────────────────────────────────
+    public function intl(string $orderRef)
+    {
+        if (!$this->tablesExist()) {
+            $demo = session('demo_order', []);
+            $order = (object) array_merge([
+                'order_ref' => $orderRef,
+                'coin_amount' => 200,
+                'amount_vnd' => 200000,
+                'status' => 'pending',
+                'expires_at' => now()->addMinutes(15),
+            ], $demo);
+            $order->expires_at = \Carbon\Carbon::parse($order->expires_at);
+            return view('payment.intl', compact('order'));
+        }
+
+        $order = PaymentOrder::where('order_ref', $orderRef)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($order->status === 'success') {
+            return redirect()->route('payment.success')->with('order_ref', $orderRef);
+        }
+
+        return view('payment.intl', compact('order'));
+    }
+
     // ─── Mô phỏng Sandbox ─────────────────────────────────────
     public function simulate(Request $request)
     {
@@ -138,6 +195,21 @@ class PaymentController extends Controller
 
         $wallet = Auth::user()->fresh()->getOrCreateWallet();
         return view('payment.success', compact('order', 'wallet'));
+    }
+
+    // ─── Mô phỏng thất bại Sandbox ───────────────────────────
+    public function simulateFail(Request $request)
+    {
+        if (!$this->tablesExist()) {
+            return redirect()->route('payment.failed')
+                ->with('reason', 'Giao dịch thất bại (mô phỏng). Ngân hàng từ chối giao dịch.');
+        }
+
+        $order = PaymentOrder::where('order_ref', $request->order_ref)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $order->update(['status' => 'failed']);
     }
 
     // ─── AJAX Status check ────────────────────────────────────

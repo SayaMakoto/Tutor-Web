@@ -237,7 +237,10 @@ Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment
     Route::get('/topup',              [PaymentController::class, 'topup'])   ->name('topup');
     Route::post('/create',            [PaymentController::class, 'create'])  ->name('create');
     Route::get('/qr/{orderRef}',      [PaymentController::class, 'qr'])      ->name('qr');
+    Route::get('/atm/{orderRef}',     [PaymentController::class, 'atm'])     ->name('atm');
+    Route::get('/intl/{orderRef}',    [PaymentController::class, 'intl'])    ->name('intl');
     Route::post('/simulate',          [PaymentController::class, 'simulate'])->name('simulate');
+    Route::post('/simulate-fail',     [PaymentController::class, 'simulateFail'])->name('simulate.fail');
     Route::get('/status/{orderRef}',  [PaymentController::class, 'status'])  ->name('status');
     Route::post('/cancel',            [PaymentController::class, 'cancel'])  ->name('cancel');
     Route::get('/success',            [PaymentController::class, 'success']) ->name('success');

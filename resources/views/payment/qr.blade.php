@@ -127,6 +127,19 @@
                 </button>
             </form>
 
+            {{-- Simulate failed payment --}}
+            <form action="{{ route('payment.simulate.fail') }}" method="POST">
+                @csrf
+                <input type="hidden" name="order_ref" value="{{ $order->order_ref }}">
+                <button type="submit"
+                    class="w-full bg-white border-2 border-red-200 text-red-600
+                           py-3 rounded-xl font-semibold text-sm hover:bg-red-50 transition
+                           flex items-center justify-center gap-2">
+                    <i class="fas fa-xmark-circle"></i>
+                    Mô phỏng thanh toán thất bại (Sandbox)
+                </button>
+            </form>
+
             {{-- Check status --}}
             <button onclick="checkStatus()"
                 class="w-full bg-white border-2 {{ $theme['border200'] }} {{ $theme['text'] }}
