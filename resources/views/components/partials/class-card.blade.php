@@ -13,8 +13,9 @@
     // Học phí
     $fee = $classRequest->fee ?? 0;
 
-    // Địa chỉ
-    $address = $classRequest->location ?? 'Chưa xác định';
+    // Địa chỉ (Ẩn chi tiết nếu chưa có quyền xem)
+    $canViewDetails = auth()->check() && $classRequest->canViewContactDetails(auth()->user());
+    $address = $canViewDetails ? ($classRequest->location ?? 'Chưa xác định') : $classRequest->masked_location;
 
     // Trạng thái
     $statusLabel = $classRequest->status_label;
@@ -25,13 +26,16 @@
     $cancelUrl = $cancelRoute ? route($cancelRoute, $classRequest->id) : route('classes.destroy', $classRequest);
 
     // Quyền hiển thị nút Chi tiết và Hủy
-    $isPaymentPending = $classRequest->status === 'payment_pending';
-    $isCompleted = $classRequest->status === 'completed';
-    $canCancel = $showCancel && !in_array($classRequest->status, ['cancelled', 'payment_pending', 'completed']);
+    $tutorClass = $classRequest->tutorClass;
+    $isPaymentPending = $tutorClass && $tutorClass->status === 'payment_pending';
+    $isCompleted = $tutorClass && $tutorClass->status === 'completed';
+    
+    // Nút hủy lớp dành cho Học viên
+    $canCancel = $showCancel && !in_array($classRequest->status, ['cancelled']) && (!$tutorClass || $tutorClass->status !== 'completed');
 
-    // Kiểm tra nếu lớp đã được giao cho tutor hiện tại
-    $currentTutorId = auth()->user()->tutor?->id;
-    $isAssignedToCurrentTutor = $classRequest->tutor_id === $currentTutorId && $classRequest->status === 'assigned';
+    // Kiểm tra nếu lớp đã được giao cho gia sư hiện tại
+    $currentTutorId = auth()->check() ? auth()->user()->tutor?->id : null;
+    $isAssignedToCurrentTutor = $tutorClass && $tutorClass->tutor_id === $currentTutorId;
 
     // Icon môn học theo tên môn học
     $iconMap = [
@@ -106,23 +110,29 @@
                 </a>
             @endif
 
-            {{-- Nếu lớp đã được giao cho gia sư hiện tại --}}
-            @if ($isAssignedToCurrentTutor)
-                <a href="#"
+            {{-- Nếu đang chờ thanh toán --}}
+            @if ($isPaymentPending)
+                @if ($currentTutorId && $tutorClass->tutor_id === $currentTutorId)
+                    <a href="{{ $detailUrl }}"
+                        class="flex-1 text-center px-4 py-2 bg-emerald-600 text-white rounded-xl 
+                              hover:bg-emerald-700 text-sm font-semibold transition-colors duration-150">
+                        <i class="fas fa-credit-card mr-1"></i> Thanh toán nhận lớp
+                    </a>
+                @else
+                    <span class="flex-1 text-center px-4 py-2 bg-gray-100 text-gray-500 rounded-xl text-sm font-semibold">
+                        Chờ thanh toán
+                    </span>
+                @endif
+
+            {{-- Nếu lớp đã hoạt động và được giao cho gia sư hiện tại --}}
+            @elseif ($isAssignedToCurrentTutor && $tutorClass->status === 'active')
+                <a href="{{ $detailUrl }}"
                     class="flex-1 text-center px-4 py-2 bg-indigo-600 text-white rounded-xl 
                           hover:bg-indigo-700 text-sm font-semibold transition-colors duration-150">
-                    <i class="fas fa-calendar-alt mr-1"></i> Lịch dạy
+                    <i class="fas fa-calendar-alt mr-1"></i> Đang nhận dạy
                 </a>
 
-                {{-- Nếu đang chờ thanh toán --}}
-            @elseif ($isPaymentPending)
-                <a href="#"
-                    class="flex-1 text-center px-4 py-2 bg-emerald-600 text-white rounded-xl 
-                          hover:bg-emerald-700 text-sm font-semibold transition-colors duration-150">
-                    <i class="fas fa-credit-card mr-1"></i> Thanh toán
-                </a>
-
-                {{-- Nếu được phép hủy --}}
+            {{-- Nếu được phép hủy (dành cho học viên hủy lớp) --}}
             @elseif ($canCancel)
                 <form action="{{ $cancelUrl }}" method="POST"
                     onsubmit="return confirm('Bạn có chắc muốn hủy lớp này?');" class="flex-1">

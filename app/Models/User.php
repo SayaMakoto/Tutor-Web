@@ -40,8 +40,18 @@ class User extends Authenticatable
     /** Lấy ví, tự tạo nếu chưa có */
     public function getOrCreateWallet(): Wallet
     {
-        return $this->wallet ?? $this->wallet()->create([
-            'balance' => 0, 'frozen_balance' => 0, 'total_topped_up' => 0,
+        if ($this->relationLoaded('wallet') && $this->wallet) {
+            return $this->wallet;
+        }
+
+        $wallet = $this->wallet()->firstOrCreate([], [
+            'balance' => 0,
+            'frozen_balance' => 0,
+            'total_topped_up' => 0,
         ]);
+
+        $this->setRelation('wallet', $wallet);
+
+        return $wallet;
     }
 }

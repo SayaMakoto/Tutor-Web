@@ -77,23 +77,52 @@
 
         </div>
 
-        {{-- Hướng dẫn sử dụng --}}
-        <div class="{{ $theme['bg50'] }} border {{ $theme['border'] }} rounded-2xl p-5 flex items-start gap-4">
-            <div class="w-10 h-10 {{ $theme['bg100'] }} rounded-xl flex items-center justify-center shrink-0">
-                <i class="fas fa-circle-info {{ $theme['text'] }}"></i>
+        {{-- Hướng dẫn và Hoàn tiền --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{-- Hướng dẫn sử dụng --}}
+            <div class="{{ $theme['bg50'] }} border {{ $theme['border'] }} rounded-2xl p-5 flex items-start gap-4 h-full">
+                <div class="w-10 h-10 {{ $theme['bg100'] }} rounded-xl flex items-center justify-center shrink-0">
+                    <i class="fas fa-circle-info {{ $theme['text'] }}"></i>
+                </div>
+                <div>
+                    <p class="font-semibold {{ $theme['textDark'] }} text-sm mb-1">Cơ chế Ví Xu hoạt động như thế nào?</p>
+                    <ul class="{{ $theme['text700'] }} text-xs space-y-1.5">
+                        <li><i class="fas fa-check-circle mr-1"></i> <strong>1 Xu = 1.000 VNĐ</strong> — Nạp tiền thật đổi lấy Xu</li>
+                        <li><i class="fas fa-check-circle mr-1"></i> Khi học viên chọn bạn, hệ thống <strong>tạm khóa Xu</strong> (chưa trừ thật)</li>
+                        <li><i class="fas fa-check-circle mr-1"></i> Sau bảo hành 7–15 ngày, Xu mới được <strong>khấu trừ thực tế</strong></li>
+                        <li><i class="fas fa-check-circle mr-1"></i> Nếu lớp vỡ trong bảo hành, Xu được <strong>hoàn trả 100%</strong></li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <p class="font-semibold {{ $theme['textDark'] }} text-sm mb-1">Cơ chế Ví Xu hoạt động như thế nào?</p>
-                <ul class="{{ $theme['text700'] }} text-xs space-y-1">
-                    <li><i class="fas fa-check-circle mr-1"></i> <strong>1 Xu = 1.000 VNĐ</strong> — Nạp tiền thật để đổi
-                        lấy Xu</li>
-                    <li><i class="fas fa-check-circle mr-1"></i> Khi học viên chọn bạn, hệ thống <strong>tạm khóa
-                            Xu</strong> (chưa trừ thật)</li>
-                    <li><i class="fas fa-check-circle mr-1"></i> Sau bảo hành 7–15 ngày, Xu mới được <strong>khấu trừ thực
-                            tế</strong></li>
-                    <li><i class="fas fa-check-circle mr-1"></i> Nếu lớp vỡ trong bảo hành, Xu được <strong>hoàn trả
-                            100%</strong></li>
-                </ul>
+
+            {{-- Yêu cầu hoàn tiền (Rút xu) --}}
+            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between h-full">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-sm mb-1 flex items-center gap-2">
+                        <i class="fas fa-reply-all text-red-500"></i> Yêu cầu hoàn tiền (Rút xu)
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-4">Hoàn số xu khả dụng của bạn thành tiền mặt</p>
+                </div>
+                
+                <form action="{{ route('payment.refund') }}" method="POST" class="space-y-3" id="refundForm">
+                    @csrf
+                    <div>
+                        <div class="relative">
+                            <input type="number" name="coin_amount" id="refundXu" min="1" max="{{ $wallet->balance ?? 0 }}" required
+                                placeholder="Nhập số xu muốn hoàn (Tối đa: {{ number_format($wallet->balance ?? 0) }})"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-red-400 focus:border-transparent focus:outline-none">
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Xu</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-xs text-gray-400" id="refundVndText">= 0 VNĐ</span>
+                            <span class="text-xs text-gray-400">1 Xu = 1.000 VNĐ</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-xl font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fas fa-rotate-left"></i> Hoàn Xu
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -140,11 +169,11 @@
                                     'sign' => '+',
                                 ],
                                 'release' => [
-                                    'icon' => 'fas fa-lock-open',
-                                    'color' => 'text-indigo-600',
-                                    'bg' => 'bg-indigo-50',
-                                    'label' => 'Giải phóng',
-                                    'sign' => '+',
+                                    'icon' => 'fas fa-rotate-left',
+                                    'color' => 'text-red-500',
+                                    'bg' => 'bg-red-50',
+                                    'label' => 'Hoàn xu',
+                                    'sign' => '-',
                                 ],
                             ];
                             $cfg = $typeConfig[$txn->type] ?? $typeConfig['topup'];
@@ -160,7 +189,7 @@
                             </div>
                             <div class="text-right">
                                 <p
-                                    class="font-bold {{ in_array($txn->type, ['topup', 'refund', 'release']) ? 'text-emerald-600' : 'text-red-500' }} text-sm">
+                                    class="font-bold {{ in_array($txn->type, ['topup', 'refund']) ? 'text-emerald-600' : 'text-red-500' }} text-sm">
                                     {{ $cfg['sign'] }}{{ number_format($txn->amount) }} Xu
                                 </p>
                                 <p class="text-xs text-gray-400">{{ $txn->created_at->format('d/m/Y H:i') }}</p>
@@ -185,3 +214,19 @@
 
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const refundXuInput = document.getElementById('refundXu');
+            const refundVndText = document.getElementById('refundVndText');
+            if (refundXuInput && refundVndText) {
+                refundXuInput.addEventListener('input', function() {
+                    const xu = parseInt(this.value) || 0;
+                    const vnd = xu * 1000;
+                    refundVndText.textContent = '= ' + vnd.toLocaleString('vi-VN') + ' VNĐ';
+                });
+            }
+        });
+    </script>
+@endpush

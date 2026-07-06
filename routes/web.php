@@ -193,6 +193,10 @@ Route::prefix('tutor')
             ->name('classes.invite');
         Route::get('/assigned-classes', [TutorClassController::class, 'assigned'])
             ->name('classes.assigned');
+        Route::post('/classes/{class}/pay', [TutorClassController::class, 'pay'])
+            ->name('classes.pay');
+        Route::post('/classes/{class}/cancel', [TutorClassController::class, 'cancel'])
+            ->name('classes.cancel');
     });
 
 // =======================
@@ -246,6 +250,7 @@ Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment
     Route::get('/success',            [PaymentController::class, 'success']) ->name('success');
     Route::get('/failed',             [PaymentController::class, 'failed'])  ->name('failed');
     Route::get('/history',            [PaymentController::class, 'history']) ->name('history');
+    Route::post('/refund',            [PaymentController::class, 'refund'])  ->name('refund');
 });
 
 

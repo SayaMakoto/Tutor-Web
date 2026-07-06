@@ -253,4 +253,31 @@ class PaymentController extends Controller
     {
         return $this->wallet();
     }
+
+    // ─── Xử lý Hoàn Xu (Rút xu) ────────────────────────────────
+    public function refund(Request $request)
+    {
+        $wallet = $this->getWallet();
+        $maxCoins = $wallet->balance ?? 0;
+
+        $request->validate([
+            'coin_amount' => "required|integer|min:1|max:{$maxCoins}",
+        ], [
+            'coin_amount.required' => 'Vui lòng nhập số xu muốn hoàn.',
+            'coin_amount.integer' => 'Số xu muốn hoàn phải là số nguyên.',
+            'coin_amount.min' => 'Số xu muốn hoàn tối thiểu là 1 xu.',
+            'coin_amount.max' => 'Số xu muốn hoàn không được vượt quá số dư khả dụng.',
+        ]);
+
+        $coinAmount = (int) $request->coin_amount;
+
+        $walletService = new WalletService();
+        $success = $walletService->releaseBalance(Auth::user(), $coinAmount);
+
+        if ($success) {
+            return redirect()->route('payment.wallet')->with('success', "Yêu cầu hoàn thành công! Đã hoàn " . number_format($coinAmount) . " xu.");
+        }
+
+        return redirect()->route('payment.wallet')->with('error', 'Hoàn xu thất bại. Vui lòng kiểm tra lại số dư khả dụng.');
+    }
 }

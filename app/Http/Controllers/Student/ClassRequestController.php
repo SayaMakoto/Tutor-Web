@@ -88,18 +88,35 @@ class ClassRequestController extends Controller
             abort(403);
         }
 
-        // Không cho hủy nếu đang payment_pending hoặc completed
         $tutorClass = $class_request->tutorClass;
-        if ($tutorClass && in_array($tutorClass->status, ['payment_pending', 'completed'])) {
-            return back()->with('error', 'Không thể hủy lớp ở trạng thái này.');
+        
+        if ($tutorClass) {
+            if ($tutorClass->status === 'completed') {
+                return back()->with('error', 'Lớp học đã hoàn thành, không thể hủy.');
+            }
+            
+            if ($tutorClass->status === 'cancelled') {
+                return back()->with('error', 'Lớp học đã được hủy trước đó.');
+            }
+            
+            if ($tutorClass->status === 'active') {
+                // Hủy lớp học đang học thử (hoàn tiền 20% xu cho gia sư)
+                $tutorClass->update(['status' => 'cancelled']);
+                
+                $totalValueCoins = (int) round($class_request->total_value / 1000);
+                $walletService = new \App\Services\WalletService();
+                $walletService->cancelClassAndRefund($tutorClass->tutor->user, $totalValueCoins, $class_request->id);
+            } elseif ($tutorClass->status === 'payment_pending') {
+                // Hủy lớp khi gia sư chưa đóng phí
+                $tutorClass->update(['status' => 'cancelled']);
+            }
         }
-
 
         $class_request->update([
             'status' => 'cancelled'
         ]);
 
-        return back()->with('success', 'Lớp đã được hủy thành công.');
+        return back()->with('success', 'Lớp học và phân công gia sư đã được hủy thành công.');
     }
 
     public function restore(ClassRequest $class_request)

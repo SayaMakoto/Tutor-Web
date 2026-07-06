@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('payment_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('order_ref')->unique();
-            $table->decimal('amount_vnd', 15, 0);
-            $table->integer('coin_amount');
+            $table->unsignedBigInteger('amount_vnd');
+            $table->unsignedBigInteger('coin_amount');
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
-            $table->string('payment_method')->nullable();
+            $table->string('payment_method');
             $table->string('vnpay_txn_no')->nullable();
             $table->json('gateway_response')->nullable();
             $table->timestamp('expires_at')->nullable();

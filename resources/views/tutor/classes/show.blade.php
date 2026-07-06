@@ -11,14 +11,17 @@
 
         $days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
         $scheduleArr = $class->schedules->pluck('day_of_week')->toArray();
-        
+
         $firstSchedule = $class->schedules->first();
         if ($firstSchedule) {
-            $timeValue = \Carbon\Carbon::parse($firstSchedule->start_time)->format('H:i') . ' - ' . \Carbon\Carbon::parse($firstSchedule->end_time)->format('H:i');
+            $timeValue =
+                \Carbon\Carbon::parse($firstSchedule->start_time)->format('H:i') .
+                ' - ' .
+                \Carbon\Carbon::parse($firstSchedule->end_time)->format('H:i');
         } else {
             $timeValue = '—';
         }
-        
+
         $weeksStr = $class->weeks ?? '1 tuần';
         $totalWeeks = 1;
         if (preg_match('/(\d+)\s*(tuần|tháng)/i', $weeksStr, $matches)) {
@@ -29,7 +32,7 @@
             } else {
                 $totalWeeks = $val;
             }
-        } else if (is_numeric($weeksStr)) {
+        } elseif (is_numeric($weeksStr)) {
             $totalWeeks = intval($weeksStr);
         }
     @endphp
@@ -89,6 +92,12 @@
                             </div>
                         </div>
 
+                        @php
+                            $canViewContact = auth()->check() && $class->canViewContactDetails(auth()->user());
+                            $addressToDisplay = $canViewContact
+                                ? $class->location ?? 'Chưa xác định'
+                                : $class->masked_location;
+                        @endphp
                         <div class="flex items-center gap-3 sm:col-span-2">
                             <div
                                 class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600 shrink-0">
@@ -96,7 +105,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400 font-medium">Khu vực / Địa chỉ học</p>
-                                <p class="font-semibold text-gray-700">{{ $class->location ?? 'Chưa xác định' }}</p>
+                                <p class="font-semibold text-gray-700">{{ $addressToDisplay }}</p>
                             </div>
                         </div>
 
@@ -151,15 +160,28 @@
                         </h3>
 
                         @if ($studentUser)
-                            <div class="flex items-center gap-3 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                            @php
+                                $displayName = $canViewContact
+                                    ? $studentUser->name
+                                    : mb_substr($studentUser->name, 0, 1) . '***';
+                                $displayEmail = $canViewContact ? $studentUser->email : '******@giasu247.vn';
+                                $displayPhone = $canViewContact
+                                    ? $studentUser->phone ?? 'Chưa cập nhật'
+                                    : '09******** (Thanh toán để xem)';
+                            @endphp
+                            <div class="flex items-center gap-3 p-3 bg-gray-50/50 rounded-xl border border-gray-100 mb-3">
                                 <div class="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-gray-250">
                                     <img src="{{ $studentUser->avatar ? asset('storage/' . $studentUser->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($studentUser->name) . '&background=10B981&color=fff' }}"
                                         class="w-full h-full object-cover">
                                 </div>
                                 <div class="overflow-hidden">
-                                    <h4 class="font-bold text-gray-800 text-sm truncate">{{ $studentUser->name }}</h4>
-                                    <p class="text-[11px] text-gray-400 truncate">{{ $studentUser->email }}</p>
+                                    <h4 class="font-bold text-gray-800 text-sm truncate">{{ $displayName }}</h4>
+                                    <p class="text-[11px] text-gray-400 truncate">{{ $displayEmail }}</p>
                                 </div>
+                            </div>
+                            <div class="text-xs text-gray-650 flex items-center gap-2 px-3">
+                                <i class="fas fa-phone text-gray-400"></i>
+                                <span>{{ $displayPhone }}</span>
                             </div>
                         @else
                             <p class="text-xs text-gray-400">Không tìm thấy thông tin học viên.</p>
@@ -172,7 +194,18 @@
                             Hành động gia sư
                         </h3>
 
-                        @if ($class->status !== 'assigned')
+                        @php
+                            $tClass = $class->tutorClass;
+                            $tutor = auth()->user() ? auth()->user()->tutor : null;
+                            $isAssignedTutor = $tClass && $tutor && $tClass->tutor_id === $tutor->id;
+
+                            $totalValCoins = (int) round($class->total_value / 1000);
+                            $feeCoins = (int) round($totalValCoins * 0.25);
+                            $refundCoins = (int) round($totalValCoins * 0.2);
+                        @endphp
+
+                        @if (!$tClass)
+                            {{-- Lớp chưa được giao cho ai --}}
                             <div class="space-y-3">
                                 <p class="text-xs text-gray-500 leading-relaxed">
                                     Bạn có thể gửi một lời ứng tuyển kèm tin nhắn giới thiệu năng lực đến học viên này để đề
@@ -183,10 +216,72 @@
                                     <i class="fas fa-paper-plane"></i> Gửi lời mời nhận lớp
                                 </button>
                             </div>
+                        @elseif ($isAssignedTutor)
+                            {{-- Lớp được giao cho Gia sư hiện tại --}}
+                            @if ($tClass->status === 'payment_pending')
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-yellow-50 border border-yellow-100 rounded-xl space-y-2 text-xs">
+                                        <p class="font-bold text-yellow-800"><i class="fas fa-exclamation-triangle"></i> Bạn
+                                            được chọn làm Gia sư!</p>
+                                        <p class="text-gray-600">Vui lòng thanh toán phí nhận lớp để mở khóa thông tin liên
+                                            hệ học viên.</p>
+                                        <ul class="list-disc pl-4 text-[11px] text-gray-500 space-y-1">
+                                            <li>Tổng giá trị lớp học:
+                                                <strong>{{ number_format($class->total_value) }}đ</strong> (≈
+                                                {{ number_format($totalValCoins) }} Xu)
+                                            </li>
+                                            <li>Phí nhận lớp (25%): <strong
+                                                    class="text-yellow-700">{{ number_format($feeCoins) }} Xu</strong></li>
+                                            <li>Số xu được hoàn lại nếu hủy lớp thử (20%):
+                                                <strong>{{ number_format($refundCoins) }} Xu</strong>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <form action="{{ route('tutor.classes.pay', $class->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition shadow-sm hover:shadow-md">
+                                            <i class="fas fa-credit-card"></i> Thanh toán nhận lớp
+                                            ({{ number_format($feeCoins) }} Xu)
+                                        </button>
+                                    </form>
+                                </div>
+                            @elseif ($tClass->status === 'active')
+                                <div class="space-y-4">
+                                    <div class="p-4 bg-green-50 border border-green-150 rounded-xl space-y-2 text-xs">
+                                        <p class="font-bold text-green-800"><i class="fas fa-check-circle"></i> Đã nhận lớp
+                                            thành công!</p>
+                                        <p class="text-gray-600">Đã khóa tạm giữ <strong>{{ number_format($feeCoins) }}
+                                                Xu</strong> trong số dư đóng băng. Bạn có thể xem thông tin liên hệ và liên
+                                            lạc với học viên.</p>
+                                    </div>
+
+                                    <form action="{{ route('tutor.classes.cancel', $class->id) }}" method="POST"
+                                        onsubmit="return confirm('Bạn có chắc muốn hủy lớp trong thời gian học thử? Bạn sẽ được hoàn lại 20% giá trị lớp ({{ number_format($refundCoins) }} Xu), trung tâm giữ 5% phí.');">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-sm font-semibold transition">
+                                            <i class="fas fa-times-circle"></i> Yêu cầu hủy lớp (Hoàn 20% Xu)
+                                        </button>
+                                    </form>
+                                </div>
+                            @elseif ($tClass->status === 'cancelled')
+                                <div
+                                    class="p-4 bg-gray-50 border border-gray-100 rounded-xl text-center text-gray-500 text-xs font-semibold">
+                                    <i class="fas fa-times-circle mr-1"></i> Lớp học đã bị hủy.
+                                </div>
+                            @else
+                                <div
+                                    class="p-4 bg-blue-50 border border-blue-100 rounded-xl text-center text-blue-700 text-xs font-semibold">
+                                    <i class="fas fa-check-circle mr-1"></i> Lớp học hoàn thành hoặc đã đóng phí.
+                                </div>
+                            @endif
                         @else
+                            {{-- Lớp đã giao cho Gia sư khác --}}
                             <div
-                                class="p-4 bg-blue-50/50 border border-blue-100 rounded-xl text-center text-blue-700 text-xs font-semibold">
-                                <i class="fas fa-check-circle mr-1"></i> Lớp học đã được giao cho gia sư thành công.
+                                class="p-4 bg-gray-100 border border-gray-200 rounded-xl text-center text-gray-500 text-xs font-semibold">
+                                <i class="fas fa-lock mr-1"></i> Lớp học đã được giao cho gia sư khác.
                             </div>
                         @endif
                     </div>

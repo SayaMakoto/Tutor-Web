@@ -97,4 +97,73 @@ class WalletService
             ]);
         });
     }
+
+    /**
+     * Hoàn xu từ ví khả dụng (rút tiền)
+     */
+    public function releaseBalance(User $user, int $coinAmount): bool
+    {
+        $wallet = $user->getOrCreateWallet();
+
+        if ($wallet->balance < $coinAmount) {
+            return false;
+        }
+
+        DB::transaction(function () use ($wallet, $coinAmount) {
+            $wallet->decrement('balance', $coinAmount);
+
+            $wallet->transactions()->create([
+                'type'        => 'release',
+                'amount'      => $coinAmount,
+                'description' => "Hoàn xu khả dụng: Rút {$coinAmount} Xu",
+                'status'      => 'completed',
+            ]);
+        });
+
+        return true;
+    }
+
+    /**
+     * Hủy lớp học trong thời gian bảo hành và hoàn trả 20% xu, giữ lại 5% phí
+     */
+    public function cancelClassAndRefund(User $user, int $totalValueInCoins, int $classRequestId): void
+    {
+        $wallet = $user->getOrCreateWallet();
+
+        $frozenAmount = (int) round($totalValueInCoins * 0.25);
+        $refundAmount = (int) round($totalValueInCoins * 0.20);
+        $chargeAmount = $frozenAmount - $refundAmount;
+
+        DB::transaction(function () use ($wallet, $frozenAmount, $refundAmount, $chargeAmount, $classRequestId) {
+            // Giải phóng ví đóng băng (đảm bảo không bị âm)
+            $decrementAmount = min($wallet->frozen_balance, $frozenAmount);
+            if ($decrementAmount > 0) {
+                $wallet->decrement('frozen_balance', $decrementAmount);
+            }
+            
+            // Hoàn trả 20% vào ví khả dụng
+            $wallet->increment('balance', $refundAmount);
+
+            // Ghi nhận hóa đơn hoàn tiền 20%
+            $wallet->transactions()->create([
+                'type'             => 'refund',
+                'amount'           => $refundAmount,
+                'class_request_id' => $classRequestId,
+                'description'      => "Hoàn trả 20% phí nhận lớp #{$classRequestId} do hủy học thử",
+                'status'           => 'completed',
+            ]);
+
+            // Ghi nhận hóa đơn khấu trừ 5% phí dịch vụ
+            if ($chargeAmount > 0) {
+                $wallet->transactions()->create([
+                    'type'             => 'charge',
+                    'amount'           => $chargeAmount,
+                    'class_request_id' => $classRequestId,
+                    'description'      => "Khấu trừ 5% phí dịch vụ xử lý lớp #{$classRequestId}",
+                    'status'           => 'completed',
+                ]);
+            }
+        });
+    }
 }
+

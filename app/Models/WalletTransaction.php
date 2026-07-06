@@ -17,7 +17,7 @@ class WalletTransaction extends Model
         'hold'    => ['label' => 'Tạm giữ',     'color' => 'text-amber-600',   'sign' => '-'],
         'charge'  => ['label' => 'Khấu trừ',    'color' => 'text-red-500',     'sign' => '-'],
         'refund'  => ['label' => 'Hoàn tiền',   'color' => 'text-blue-600',    'sign' => '+'],
-        'release' => ['label' => 'Giải phóng',  'color' => 'text-indigo-600',  'sign' => '+'],
+        'release' => ['label' => 'Hoàn xu',     'color' => 'text-red-500',     'sign' => '-'],
     ];
 
     public function wallet(): BelongsTo
