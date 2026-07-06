@@ -24,4 +24,14 @@ class WalletTransaction extends Model
     {
         return $this->belongsTo(Wallet::class);
     }
+
+    public function classRequest(): BelongsTo
+    {
+        return $this->belongsTo(ClassRequest::class, 'class_request_id');
+    }
+
+    public function paymentOrder(): BelongsTo
+    {
+        return $this->belongsTo(PaymentOrder::class, 'payment_order_ref', 'order_ref');
+    }
 }

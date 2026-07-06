@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\AdminTutorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
+use App\Http\Controllers\Admin\AdminWalletTransactionController;
+use App\Http\Controllers\Admin\AdminPaymentOrderController;
 
 // STUDENT
 use App\Http\Controllers\ContactController;
@@ -359,4 +361,15 @@ Route::prefix('admin')
             ->name('contacts.index');
         Route::post('contacts/{id}/reply', [AdminContactController::class, 'reply'])
             ->name('contacts.reply');
+
+        // Quản lý tài chính
+        Route::get('wallet-transactions', [AdminWalletTransactionController::class, 'index'])
+            ->name('wallet-transactions.index');
+        Route::get('wallet-transactions/{id}', [AdminWalletTransactionController::class, 'show'])
+            ->name('wallet-transactions.show');
+
+        Route::get('payment-orders', [AdminPaymentOrderController::class, 'index'])
+            ->name('payment-orders.index');
+        Route::get('payment-orders/{id}', [AdminPaymentOrderController::class, 'show'])
+            ->name('payment-orders.show');
     });

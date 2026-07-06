@@ -91,6 +91,29 @@
             <span>Đơn nhận lớp</span>
         </a>
 
+        {{-- ─── Tài chính ─────────────────────────── --}}
+        <div class="pt-3 pb-1">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Tài chính</p>
+        </div>
+
+        <a href="{{ route('admin.wallet-transactions.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.wallet-transactions.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-money-bill-transfer w-4 text-center"></i>
+            <span>Lịch sử giao dịch</span>
+        </a>
+
+        <a href="{{ route('admin.payment-orders.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                  {{ request()->routeIs('admin.payment-orders.*')
+                     ? 'bg-violet-600 text-white shadow-sm'
+                     : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
+            <i class="fas fa-credit-card w-4 text-center"></i>
+            <span>Hóa đơn nạp xu</span>
+        </a>
+
         {{-- ─── Danh mục ──────────────────────────── --}}
         <div class="pt-3 pb-1">
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Danh mục</p>
