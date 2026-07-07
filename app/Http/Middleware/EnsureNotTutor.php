@@ -9,7 +9,7 @@ class EnsureNotTutor
     public function handle($request, Closure $next)
     {
         if (in_array(auth()->user()->role, ['tutor', 'both'])) {
-            return redirect()->route('home')
+            return redirect('/')
                 ->with('error', 'Bạn đã là gia sư rồi.');
         }
 
