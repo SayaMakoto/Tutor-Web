@@ -98,6 +98,12 @@ class AdminGradeController extends Controller
         return back()->with('delete_success', 'Đã xóa vĩnh viễn');
     }
 
+    public function approve(Grade $grade)
+    {
+        $grade->update(['is_approved' => true]);
+        return back()->with('success', 'Đã duyệt ngành học thành công.');
+    }
+
     public function toggleStatus(Grade $grade)
     {
         $grade->status = $grade->status == 1 ? 0 : 1;

@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends($layout)
 @section('title', 'Thông tin gia sư - ' . ($tutor->user->name ?? 'Gia sư'))
 @section('content')
     @php
@@ -13,11 +13,13 @@
 
         // Lớp đã hoàn thành (dữ liệu thật từ DB)
         $completedClasses = $tutor
-            ->classRequests()
+            ->classes()
             ->where('status', 'completed')
-            ->with(['subject', 'grade'])
+            ->with(['classRequest.subject', 'classRequest.grade'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(fn($tutorClass) => $tutorClass->classRequest);
+
 
         // Môn dạy (relation many-to-many hoặc hasMany)
         $subjects = $tutor->subjects ?? collect();
@@ -97,7 +99,7 @@
                     </p>
 
                     <p class="text-sm text-gray-600 mt-1">
-                        Kinh nghiệm: {{ $tutor->experience ?? 'Chưa cập nhật' }}
+                        Kinh nghiệm: {{ $tutor->experience ? $tutor->experience . ' năm' : 'Chưa có kinh nghiệm' }}
                     </p>
                 </div>
 

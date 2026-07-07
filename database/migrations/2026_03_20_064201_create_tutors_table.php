@@ -17,8 +17,7 @@ return new class extends Migration {
             $table->text('bio')->nullable(); //Giới thiệu bản thân
             $table->string('education'); //Học vấn
             $table->integer('experience'); // Số năm kinh nghiệm
-            $table->enum('status', ['draft', 'pending', 'approved', 'rejected'])->default('draft'); //Trạng thái
-            //draft: mới đăng ký, chưa hoàn thiện hồ sơ
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending'); //Trạng thái
             //pending: đang chờ duyệt hồ sơ
             //approved: hồ sơ đã được duyệt, có thể nhận lớp
             //rejected: hồ sơ bị từ chối, cần chỉnh sửa và nộp lại

@@ -17,6 +17,10 @@
             Quản trị viên
         </option>
 
+        <option value="both" {{ request('role') === 'both' ? 'selected' : '' }}>
+            GS &amp; HV (Cả hai)
+        </option>
+
     </select>
 
     @if (request('role'))

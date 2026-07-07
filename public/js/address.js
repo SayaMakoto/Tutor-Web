@@ -58,15 +58,34 @@ window.AddressAPI = function ({
     const addressSection = document.getElementById("addressSection");
     const studyRadios = document.querySelectorAll("input[name='study_type']");
 
-    studyRadios.forEach((radio) => {
-        radio.addEventListener("change", function () {
-            if (!addressSection) return;
+    if (addressSection) {
+        const inputs = addressSection.querySelectorAll("select, input");
 
-            if (this.value === "offline") {
-                addressSection.classList.remove("hidden");
+        const updateAddressSectionState = () => {
+            const checkedRadio = document.querySelector("input[name='study_type']:checked");
+            if (!checkedRadio) return;
+
+            if (checkedRadio.value === "offline") {
+                addressSection.classList.remove("opacity-50", "pointer-events-none");
+                inputs.forEach(input => {
+                    if (input.id !== "full_address") {
+                        input.removeAttribute("disabled");
+                    }
+                });
             } else {
-                addressSection.classList.add("hidden");
+                addressSection.classList.add("opacity-50", "pointer-events-none");
+                inputs.forEach(input => {
+                    input.setAttribute("disabled", "true");
+                });
             }
+        };
+
+        // Listen for changes
+        studyRadios.forEach((radio) => {
+            radio.addEventListener("change", updateAddressSectionState);
         });
-    });
+
+        // Initialize state on page load
+        updateAddressSectionState();
+    }
 };

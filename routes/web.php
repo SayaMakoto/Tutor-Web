@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\AdminTutorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
+use App\Http\Controllers\Admin\AdminWalletTransactionController;
+use App\Http\Controllers\Admin\AdminPaymentOrderController;
 
 // STUDENT
 use App\Http\Controllers\ContactController;
@@ -28,6 +30,9 @@ use App\Http\Controllers\Tutor\TutorProfileController;
 // AUTH
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+
+// PAYMENT
+use App\Http\Controllers\PaymentController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -92,6 +97,15 @@ Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
     Route::post('/login', [AuthController::class, 'login'])
         ->name('login.store');
+
+    // Forgot Password
+    Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPasswordStore'])
+        ->name('forgot-password.store');
+        
+    // Reset Password
+    Route::get('/reset-password', [AuthController::class, 'resetPassword'])->name('reset-password');
+    Route::post('/reset-password', [AuthController::class, 'resetPasswordStore'])->name('reset-password.store');
 });
 
 // =========================
@@ -102,6 +116,9 @@ Route::middleware(['auth', 'not.tutor'])->group(function () {
     Route::get('/become-tutor', function () {
         return view('auth.tutor_register');
     })->name('become-tutor');
+
+    Route::post('/become-tutor', [AuthController::class, 'becomeTutor'])
+        ->name('become-tutor.store');
 });
 
 // Đăng xuất
@@ -115,8 +132,9 @@ Route::prefix('classes')->name('classes.')->group(function () {
     Route::get('/', [ClassRequestController::class, 'index'])->name('index');
 
     Route::middleware(['auth', 'role:student,both'])->group(function () {
-        Route::get('/{id}/edit', [ClassRequestController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [ClassRequestController::class, 'update'])->name('update');
+        Route::get('/{class_request}/edit', [ClassRequestController::class, 'edit'])->name('edit');
+        Route::put('/{class_request}', [ClassRequestController::class, 'update'])->name('update');
+        Route::post('/{class_request}/restore', [ClassRequestController::class, 'restore'])->name('restore');
         Route::delete('/{class_request}', [ClassRequestController::class, 'destroy'])->name('destroy');
     });
 
@@ -177,6 +195,10 @@ Route::prefix('tutor')
             ->name('classes.invite');
         Route::get('/assigned-classes', [TutorClassController::class, 'assigned'])
             ->name('classes.assigned');
+        Route::post('/classes/{class}/pay', [TutorClassController::class, 'pay'])
+            ->name('classes.pay');
+        Route::post('/classes/{class}/cancel', [TutorClassController::class, 'cancel'])
+            ->name('classes.cancel');
     });
 
 // =======================
@@ -190,6 +212,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/profile/update', [ProfileController::class, 'update'])
         ->name('profile.update');
+
+    Route::delete('/profile/documents/{id}', [ProfileController::class, 'deleteDocument'])
+        ->name('profile.documents.destroy');
+
+    // Change Password
+    Route::get('/change-password', [ProfileController::class, 'changePassword'])
+        ->name('change-password');
+    Route::post('/change-password', [ProfileController::class, 'changePasswordStore'])
+        ->name('change-password.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -204,6 +235,26 @@ Route::middleware('auth')->group(function () {
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
 
+// =======================
+// PAYMENT (Ví Xu)
+// =======================
+Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment.')->group(function () {
+    Route::get('/wallet',             [PaymentController::class, 'wallet'])  ->name('wallet');
+    Route::get('/topup',              [PaymentController::class, 'topup'])   ->name('topup');
+    Route::post('/create',            [PaymentController::class, 'create'])  ->name('create');
+    Route::get('/qr/{orderRef}',      [PaymentController::class, 'qr'])      ->name('qr');
+    Route::get('/atm/{orderRef}',     [PaymentController::class, 'atm'])     ->name('atm');
+    Route::get('/intl/{orderRef}',    [PaymentController::class, 'intl'])    ->name('intl');
+    Route::post('/simulate',          [PaymentController::class, 'simulate'])->name('simulate');
+    Route::post('/simulate-fail',     [PaymentController::class, 'simulateFail'])->name('simulate.fail');
+    Route::get('/status/{orderRef}',  [PaymentController::class, 'status'])  ->name('status');
+    Route::post('/cancel',            [PaymentController::class, 'cancel'])  ->name('cancel');
+    Route::get('/success',            [PaymentController::class, 'success']) ->name('success');
+    Route::get('/failed',             [PaymentController::class, 'failed'])  ->name('failed');
+    Route::get('/history',            [PaymentController::class, 'history']) ->name('history');
+    Route::post('/refund',            [PaymentController::class, 'refund'])  ->name('refund');
+});
+
 
 
 
@@ -214,8 +265,10 @@ Route::get('/about', [AboutController::class, 'index'])
 // =======================
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Trang login admin
-    Route::middleware('guest')->group(function () {
+    // Trang login admin — dùng guest:admin thay vì guest
+    // để user web (student/tutor) đang login vẫn truy cập được trang này
+    // mà không bị redirect về trang chủ của họ.
+    Route::middleware('guest:admin')->group(function () {
         Route::view('/login', 'auth.admin_login')->name('login');
         Route::post('/login', [AuthController::class, 'adminLogin'])
             ->name('login.store');
@@ -275,6 +328,10 @@ Route::prefix('admin')
             'subjects/{subject}/toggle-status',
             [AdminSubjectController::class, 'toggleStatus']
         )->name('subjects.toggleStatus');
+        Route::patch(
+            'subjects/{subject}/approve',
+            [AdminSubjectController::class, 'approve']
+        )->name('subjects.approve');
         Route::get('subjects/trash', [AdminSubjectController::class, 'trash'])
             ->name('subjects.trash');
         Route::post('subjects/{id}/restore', [AdminSubjectController::class, 'restore'])
@@ -288,6 +345,10 @@ Route::prefix('admin')
             'grades/{grade}/toggle-status',
             [AdminGradeController::class, 'toggleStatus']
         )->name('grades.toggleStatus');
+        Route::patch(
+            'grades/{grade}/approve',
+            [AdminGradeController::class, 'approve']
+        )->name('grades.approve');
         Route::get('grades/trash', [AdminGradeController::class, 'trash'])
             ->name('grades.trash');
         Route::post('grades/{id}/restore', [AdminGradeController::class, 'restore'])
@@ -300,4 +361,15 @@ Route::prefix('admin')
             ->name('contacts.index');
         Route::post('contacts/{id}/reply', [AdminContactController::class, 'reply'])
             ->name('contacts.reply');
+
+        // Quản lý tài chính
+        Route::get('wallet-transactions', [AdminWalletTransactionController::class, 'index'])
+            ->name('wallet-transactions.index');
+        Route::get('wallet-transactions/{id}', [AdminWalletTransactionController::class, 'show'])
+            ->name('wallet-transactions.show');
+
+        Route::get('payment-orders', [AdminPaymentOrderController::class, 'index'])
+            ->name('payment-orders.index');
+        Route::get('payment-orders/{id}', [AdminPaymentOrderController::class, 'show'])
+            ->name('payment-orders.show');
     });

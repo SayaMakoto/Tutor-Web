@@ -1,4 +1,4 @@
-@extends('layouts.tutor')
+@extends($layout)
 @section('title', 'Lớp đang tuyển gia sư')
 @section('content')
     <div class="max-w-5xl mx-auto mt-6">

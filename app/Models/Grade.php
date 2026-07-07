@@ -9,7 +9,7 @@ class Grade extends Model
 {
    use SoftDeletes;
 
-   protected $fillable = ['name', 'sort_order', 'status'];
+   protected $fillable = ['name', 'sort_order', 'status', 'is_approved'];
 
    public function subjects()
    {

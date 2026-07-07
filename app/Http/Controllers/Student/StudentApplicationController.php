@@ -22,6 +22,10 @@ class StudentApplicationController extends Controller
 
     public function accept(Application $application)
     {
+        // Kiểm tra IDOR: đảm bảo ứng dụng thuộc về lớp của sinh viên đang đăng nhập
+        if ($application->classRequest->student_id !== auth()->user()->student->id) {
+            abort(403, 'Bạn không có quyền thực hiện hành động này.');
+        }
         // chỉ xử lý pending
         if ($application->status !== 'pending') {
             return back()->with('error', 'Lời mời đã được xử lý');
@@ -33,9 +37,15 @@ class StudentApplicationController extends Controller
 
         // gán gia sư cho lớp
         $application->classRequest()->update([
-            'status' => 'assigned',
-            'tutor_id' => $application->tutor_id
+            'status' => 'assigned'
         ]);
+
+        \App\Models\TutorClass::create([
+            'class_request_id' => $application->class_request_id,
+            'tutor_id' => $application->tutor_id,
+            'status' => 'payment_pending',
+        ]);
+
 
         // (OPTIONAL) reject các application khác của cùng class
         Application::where('class_request_id', $application->class_request_id)

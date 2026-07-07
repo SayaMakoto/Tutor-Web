@@ -66,12 +66,34 @@ class AuthController extends Controller
         ]);
 
         if (auth()->check()) {
-            return redirect('/')
+            return redirect()->route('student.home')
                 ->with('success', 'Đăng ký gia sư thành công! Vui lòng chờ admin duyệt.');
         }
 
         return redirect()->route('login')
             ->with('success', 'Đăng ký gia sư thành công! Vui lòng đăng nhập.');
+    }
+
+    /**
+     * Học viên đã đăng nhập đăng ký thêm vai trò gia sư.
+     * Route: POST /become-tutor (middleware: auth, not.tutor)
+     */
+    public function becomeTutor(RegisterTutorRequest $request)
+    {
+        $user = auth()->user();
+
+        // Tạo hồ sơ gia sư và nâng role lên 'both'
+        Tutor::create([
+            'user_id'    => $user->id,
+            'bio'        => $request->bio,
+            'education'  => $request->education,
+            'experience' => $request->experience,
+        ]);
+
+        $user->update(['role' => 'both']);
+
+        return redirect()->route('student.home')
+            ->with('success', 'Đăng ký gia sư thành công! Vui lòng chờ admin duyệt hồ sơ của bạn.');
     }
 
 
@@ -80,6 +102,21 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
+            $deletedUser = User::onlyTrashed()->where('email', $request->email)->first();
+            if ($deletedUser && Hash::check($request->password, $deletedUser->password)) {
+                
+                // Xóa cứng (force delete) sau khi họ đã thấy thông báo
+                $tutor = Tutor::withTrashed()->where('user_id', $deletedUser->id)->first();
+                if ($tutor) {
+                    $tutor->forceDelete();
+                }
+                $deletedUser->forceDelete();
+
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị xoá do hồ sơ gia sư không đạt yêu cầu.'
+                ])->withInput();
+            }
+
             return back()->withErrors([
                 'email' => 'Email hoặc mật khẩu không đúng.'
             ])->withInput();
@@ -94,8 +131,12 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        $request->session()->regenerate();
+        if ($user->role === 'tutor' && $user->tutor && $user->tutor->status === 'rejected') {
+            Auth::guard('web')->logout();
+            return redirect()->route('login')->with('rejected', true);
+        }
 
+        $request->session()->regenerate();
         return match ($user->role) {
             'tutor' => redirect()->route('tutor.home'),
             'student', 'both' => redirect()->route('student.home'),
@@ -132,11 +173,51 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function forgotPasswordStore(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Không tìm thấy tài khoản với email này.']);
+        }
+
+        // Mock xác thực: Bỏ qua bước gửi email, chuyển thẳng đến trang đặt lại mật khẩu
+        return redirect()->route('reset-password')->with('reset_email', $request->email);
+    }
+
+    public function resetPassword()
+    {
+        if (!session('reset_email') && !session('_old_input')) {
+            return redirect()->route('forgot-password');
+        }
+        return view('auth.reset-password');
+    }
+
+    public function resetPasswordStore(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+        
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Không tìm thấy tài khoản.']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('login')->with('success', 'Mật khẩu đã được đặt lại thành công. Vui lòng đăng nhập.');
+    }
+
     public function adminLogout(Request $request)
     {
+        // Chỉ logout guard 'admin' — KHÔNG invalidate() toàn bộ session
+        // vì invalidate() sẽ xóa cả session của guard 'web' (student/tutor/both).
         Auth::guard('admin')->logout();
 
-        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');

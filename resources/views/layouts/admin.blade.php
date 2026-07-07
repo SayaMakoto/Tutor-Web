@@ -5,44 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin - GiaSu247')</title>
-    @yield('scripts')
-    @vite(['resources/css/app.css', 'resources/js/admin.js'])
+    <title>@yield('title', 'Admin — GiaSu247')</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    @vite(['resources/css/app.css', 'resources/js/admin.js'])
+    @stack('styles')
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Header -->
+<body class="bg-gray-50 min-h-screen flex flex-col" style="font-family: 'Inter', sans-serif;">
+
+    {{-- Header --}}
     <x-admin.header-admin />
-    <div class="flex flex-1">
-        <!-- Sidebar -->
+
+    <div class="flex flex-1 overflow-hidden">
+        {{-- Sidebar --}}
         <x-admin.sidebar-ad />
-        <!-- Main -->
-        <main class="flex-1 p-6">
+
+        {{-- Main content --}}
+        <main class="flex-1 overflow-y-auto p-6 lg:p-8">
+
+            {{-- Flash messages --}}
             <x-alert type="success" :message="session('success')" />
-            <x-alert type="error" :message="session('error')" />
+            <x-alert type="error"   :message="session('error')"   />
             <x-alert type="warning" :message="session('warning')" />
-            <x-alert type="info" :message="session('info')" />
+            <x-alert type="info"    :message="session('info')"    />
 
             @yield('content')
         </main>
     </div>
-    <!-- Footer -->
+
+    {{-- Footer --}}
     <x-admin.footer-admin />
+
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    @if(session('rejected_alert'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Đã từ chối gia sư',
+            html: `Hồ sơ gia sư đã bị từ chối.<br><br><b>Lưu ý:</b> Tài khoản này sẽ bị xóa tự động sau 5 phút kể từ lúc này.<br>Bạn vẫn có thể đổi lại trạng thái trong vòng 5 phút nếu có sai sót.`,
+            confirmButtonText: 'Đã hiểu'
+        });
+    </script>
+    @endif
+
+    @stack('scripts')
+
 </body>
-
 </html>
-<script>
-    function toggleAdminMenu() {
-        document.getElementById('adminMenu').classList.toggle('hidden');
-    }
-
-    function toggleClassMenu() {
-        document.getElementById('classMenu').classList.toggle('hidden');
-    }
-
-    function toggleCategoryMenu() {
-        document.getElementById('categoryMenu').classList.toggle('hidden');
-    }
-</script>
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>

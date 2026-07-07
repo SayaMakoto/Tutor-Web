@@ -13,39 +13,17 @@ class TutorProfileController extends Controller
 {
     public function edit()
     {
-        $tutor = auth()->user()->tutor;
-
-        if (!$tutor) {
-            return redirect()
-                ->route('tutor.home')
-                ->with('error', 'Không tìm thấy hồ sơ gia sư.');
-        }
-
-        if ($tutor->status === 'draft') {
-            return redirect()
-                ->route('tutor.home')
-                ->with('warning', 'Phải chờ quản trị chấp nhận yêu cầu đăng ký.');
-        }
-
-        if ($tutor->status !== 'pending') {
-            return redirect()
-                ->route('tutor.home')
-                ->with('error', 'Bạn không có quyền cập nhật hồ sơ lúc này.');
-        }
-
-        $subjects = Subject::where('status', 1)->get();
-
-        return view('tutor.profile.edit', compact('tutor', 'subjects'));
+        return redirect()->route('profile.edit');
     }
 
     public function update(UpdateTutorProfileRequest $request)
     {
         $tutor = auth()->user()->tutor;
 
-        if (!$tutor || $tutor->status !== 'pending') {
+        if (!$tutor) {
             return redirect()
                 ->route('tutor.home')
-                ->with('error', 'Bạn không thể cập nhật hồ sơ ở trạng thái hiện tại.');
+                ->with('error', 'Không tìm thấy hồ sơ gia sư.');
         }
 
         try {
@@ -74,8 +52,8 @@ class TutorProfileController extends Controller
             });
 
             return redirect()
-                ->route('tutor.profile.edit')
-                ->with('success', 'Cập nhật hồ sơ thành công!');
+                ->route('profile.edit')
+                ->with('success', 'Cập nhật hồ sơ gia sư thành công!');
         } catch (\Exception $e) {
 
             Log::error('Update Tutor Profile Error: ' . $e->getMessage());

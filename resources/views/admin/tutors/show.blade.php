@@ -1,157 +1,224 @@
 @extends('layouts.admin')
-@section('title', 'Chi tiết gia sư')
+@section('title', 'Chi tiết gia sư — ' . $tutor->user->name)
+
 @section('content')
-    <div class="bg-white p-8 rounded-2xl shadow-md max-w-5xl mx-auto">
+    @php
+        $backRoute  = request('from') === 'users' ? route('admin.users.index') : route('admin.tutors.index');
+        $avgRating  = round($tutor->reviews->avg('rating'), 1);
+        $totalRevs  = $tutor->reviews->count();
+    @endphp
 
-        {{-- Nút quay lại --}}
-        @php
-            $backRoute = request('from') === 'users' ? route('admin.users.index') : route('admin.tutors.index');
-        @endphp
+    {{-- Breadcrumb --}}
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <a href="{{ $backRoute }}" class="hover:text-violet-600 transition">Danh sách gia sư</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-gray-800 font-medium">{{ $tutor->user->name }}</span>
+    </div>
 
-        <a href="{{ $backRoute }}"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-            <x-heroicon-o-arrow-left class="w-5 h-5 text-gray-600" />
-            Quay lại
-        </a>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {{-- ================= AVATAR + RATING ================= --}}
-        <div class="text-center">
+        {{-- Cột trái: Profile card --}}
+        <div class="space-y-5">
 
-            {{-- Avatar 3:4 --}}
-            @if ($tutor->user->avatar ?? false)
-                <div class="w-64 mx-auto aspect-3/4">
-                    <img src="{{ asset('storage/' . $tutor->user->avatar) }}"
-                        class="w-full h-full object-cover rounded-2xl shadow-lg">
-                </div>
-            @else
-                <div
-                    class="w-64 mx-auto aspect-3/4 
-                        flex items-center justify-center 
-                        bg-gray-100 rounded-2xl text-gray-500">
-                    Chưa có avatar
-                </div>
-            @endif
-
-            {{-- Đánh giá --}}
-            @php
-                $avgRating = round($tutor->reviews->avg('rating'), 1);
-                $totalReviews = $tutor->reviews->count();
-            @endphp
-
-            <div class="mt-4">
-                @if ($totalReviews > 0)
-                    <div class="text-yellow-500 text-lg">
-                        ★ {{ $avgRating }} / 5
-                    </div>
-                    <div class="text-sm text-gray-500">
-                        {{ $totalReviews }} đánh giá
-                    </div>
-                @else
-                    <div class="text-gray-500 text-sm">
-                        Chưa có đánh giá
-                    </div>
-                @endif
-            </div>
-
-            {{-- Trạng thái --}}
-            <div class="mt-3">
-                <span class="px-4 py-1 rounded-full text-sm {{ $tutor->status_color }}">
-                    {{ $tutor->status_label }}
-                </span>
-            </div>
-
-        </div>
-
-        {{-- ================= THÔNG TIN CÁ NHÂN ================= --}}
-        <div class="mt-10 space-y-6">
-
-            <div>
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">
-                    Thông tin cá nhân
-                </h3>
-
-                <p><strong>Tên:</strong> {{ $tutor->user->name }}</p>
-                <p><strong>Email:</strong> {{ $tutor->user->email }}</p>
-                <p class="mt-2">
-                    <strong>Giới thiệu:</strong><br>
-                    {{ $tutor->bio ?? 'Chưa cập nhật.' }}
-                </p>
-            </div>
-
-            {{-- ================= TRÌNH ĐỘ ================= --}}
-            <div>
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">
-                    Trình độ
-                </h3>
-
-                <p><strong>Học vấn:</strong> {{ $tutor->education ?? 'Chưa cập nhật.' }}</p>
-                <p><strong>Kinh nghiệm:</strong> {{ $tutor->experience ?? 'Chưa cập nhật.' }} năm</p>
-
-                <div class="mt-3">
-                    <strong>Môn có thể dạy:</strong>
-                    @if ($tutor->subjects->count())
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            @foreach ($tutor->subjects as $subject)
-                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                                    {{ $subject->name }}
-                                </span>
-                            @endforeach
-                        </div>
+            {{-- Avatar + Status card --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+                <div class="relative inline-block mb-4">
+                    @if($tutor->user->avatar)
+                        <img src="{{ asset('storage/' . $tutor->user->avatar) }}"
+                             class="w-28 h-28 rounded-2xl object-cover mx-auto shadow-md" alt="avatar">
                     @else
-                        <p class="text-gray-500 mt-1">Chưa đăng ký môn học.</p>
+                        <div class="w-28 h-28 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-200
+                                    flex items-center justify-center mx-auto shadow-md">
+                            <i class="fas fa-user text-violet-400 text-4xl"></i>
+                        </div>
                     @endif
                 </div>
+
+                <h2 class="text-lg font-bold text-gray-800">{{ $tutor->user->name }}</h2>
+                <p class="text-sm text-gray-400 mt-0.5">{{ $tutor->user->email }}</p>
+
+                <div class="mt-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold {{ $tutor->status_color }}">
+                        <span class="w-1.5 h-1.5 rounded-full bg-current opacity-70"></span>
+                        {{ $tutor->status_label }}
+                    </span>
+                </div>
+
+                {{-- Rating --}}
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    @if($totalRevs > 0)
+                        <div class="flex items-center justify-center gap-1 text-amber-500">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star text-sm {{ $i <= round($avgRating) ? '' : 'opacity-30' }}"></i>
+                            @endfor
+                        </div>
+                        <p class="text-sm font-bold text-gray-700 mt-1">{{ $avgRating }}/5</p>
+                        <p class="text-xs text-gray-400">{{ $totalRevs }} đánh giá</p>
+                    @else
+                        <p class="text-sm text-gray-400">Chưa có đánh giá</p>
+                    @endif
+                </div>
+
+                {{-- Quick action --}}
+                <button onclick="openStatusModal()"
+                        class="mt-4 w-full flex items-center justify-center gap-2
+                               bg-gradient-to-r from-violet-600 to-indigo-600 text-white
+                               py-2.5 rounded-xl text-sm font-semibold hover:shadow-md transition">
+                    <i class="fas fa-pen text-xs"></i> Đổi trạng thái
+                </button>
             </div>
 
-            {{-- ================= HỒ SƠ LIÊN QUAN ================= --}}
-            <div>
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">
-                    Hồ sơ liên quan
+            {{-- Tài liệu hồ sơ --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fas fa-file-lines text-violet-500"></i> Hồ sơ minh chứng
                 </h3>
-
-                @if ($tutor->documents->count())
+                @if($tutor->documents->count())
                     <ul class="space-y-2">
-                        @foreach ($tutor->documents as $doc)
+                        @foreach($tutor->documents as $doc)
                             <li>
                                 <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank"
-                                    class="text-blue-500 hover:underline">
-                                    Xem {{ $doc->type_label }}
+                                   class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline transition">
+                                    <i class="fas fa-file-pdf text-rose-400 flex-shrink-0"></i>
+                                    {{ $doc->type_label }}
                                 </a>
                             </li>
                         @endforeach
                     </ul>
                 @else
-                    <p class="text-gray-500">Chưa có hồ sơ nào được tải lên.</p>
+                    <p class="text-xs text-gray-400 text-center py-4">Chưa có tài liệu</p>
+                @endif
+            </div>
+        </div>
+
+        {{-- Cột phải: Info chi tiết --}}
+        <div class="lg:col-span-2 space-y-5">
+
+            {{-- Thông tin chuyên môn --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                    <i class="fas fa-graduation-cap text-violet-500"></i> Thông tin chuyên môn
+                </h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-certificate text-violet-500 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Học vấn / Bằng cấp</p>
+                            <p class="font-medium text-gray-800 text-sm">{{ $tutor->education ?? 'Chưa cập nhật' }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-briefcase text-emerald-500 text-xs"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800 text-sm">
+                                {{ $tutor->experience ? $tutor->experience . ' năm' : 'Chưa có kinh nghiệm' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                @if($tutor->bio)
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-xs font-semibold text-gray-500 mb-1.5">Giới thiệu bản thân</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">{{ $tutor->bio }}</p>
+                    </div>
                 @endif
             </div>
 
-            {{-- ================= ĐÁNH GIÁ ================= --}}
-            <div>
-                <h3 class="text-xl font-semibold mb-3 border-b pb-2">
-                    Đánh giá từ học viên
+            {{-- Môn dạy --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                    <i class="fas fa-book text-blue-500"></i> Môn có thể dạy
                 </h3>
+                @if($tutor->subjects->count())
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($tutor->subjects as $subject)
+                            <span class="px-3 py-1.5 bg-blue-50 border border-blue-100 text-blue-700 rounded-xl text-xs font-semibold">
+                                {{ $subject->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-sm text-gray-400">Chưa đăng ký môn học</p>
+                @endif
+            </div>
 
-                @if ($tutor->reviews->count())
-                    <div class="space-y-4">
-                        @foreach ($tutor->reviews as $review)
-                            <div class="p-4 bg-gray-50 rounded-xl border">
-                                <div class="flex justify-between items-center mb-2">
-                                    <strong>{{ $review->student->user->name }}</strong>
-                                    <span class="text-yellow-500">
-                                        ★ {{ $review->rating }}/5
-                                    </span>
+            {{-- Đánh giá --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                    <i class="fas fa-star text-amber-400"></i> Đánh giá từ học viên
+                </h3>
+                @if($tutor->reviews->count())
+                    <div class="space-y-3">
+                        @foreach($tutor->reviews as $review)
+                            <div class="bg-gray-50 rounded-xl p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <p class="font-semibold text-gray-800 text-sm">{{ $review->student->user->name }}</p>
+                                    <div class="flex items-center gap-0.5 text-amber-400">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star text-xs {{ $i <= $review->rating ? '' : 'opacity-30' }}"></i>
+                                        @endfor
+                                        <span class="text-xs text-gray-500 ml-1">{{ $review->rating }}/5</span>
+                                    </div>
                                 </div>
-                                <p class="text-gray-700 text-sm">
-                                    {{ $review->comment ?? 'Không có nhận xét.' }}
-                                </p>
+                                <p class="text-xs text-gray-600">{{ $review->comment ?? 'Không có nhận xét.' }}</p>
                             </div>
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-500">Chưa có đánh giá nào.</p>
+                    <div class="text-center py-8">
+                        <i class="fas fa-star text-gray-200 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-400">Chưa có đánh giá nào</p>
+                    </div>
                 @endif
             </div>
 
         </div>
     </div>
+
+    {{-- Status Modal --}}
+    <div id="statusModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-pen text-violet-600"></i>
+                </div>
+                <h3 class="text-base font-bold text-gray-800">Cập nhật trạng thái</h3>
+            </div>
+            <form action="{{ route('admin.tutors.update', $tutor->id) }}" method="POST">
+                @csrf @method('PUT')
+                <label class="block text-xs font-semibold text-gray-500 mb-1.5">Trạng thái mới</label>
+                <select name="status"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm mb-5
+                               focus:ring-2 focus:ring-violet-400 focus:border-transparent focus:outline-none bg-white">
+                    @foreach(\App\Models\Tutor::statusOptions() as $key => $label)
+                        <option value="{{ $key }}" {{ $tutor->status === $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeStatusModal()"
+                            class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-semibold transition">
+                        Huỷ
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold hover:shadow-md transition">
+                        Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
+
+@push('scripts')
+<script>
+    function openStatusModal()  { document.getElementById('statusModal').classList.replace('hidden','flex'); }
+    function closeStatusModal() { document.getElementById('statusModal').classList.replace('flex','hidden'); }
+    document.getElementById('statusModal').addEventListener('click', function(e){ if(e.target===this) closeStatusModal(); });
+</script>
+@endpush

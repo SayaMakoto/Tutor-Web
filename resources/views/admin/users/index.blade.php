@@ -1,99 +1,135 @@
 @extends('layouts.admin')
 @section('title', 'Quản lý người dùng')
+
 @section('content')
-    <x-alert type="success" :message="session('success')" />
-    <x-alert type="error" :message="$errors->first()" />
 
-    <div class="bg-white p-6 rounded-2xl shadow-md">
-
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">
-                Quản lý người dùng
-            </h2>
-
-            <x-admin.role-filter />
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-xl font-bold text-gray-800">Tất cả người dùng</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Danh sách toàn bộ tài khoản trong hệ thống</p>
         </div>
+        <x-admin.role-filter />
+    </div>
 
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-
-                <thead>
-                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm">
-                        <th class="p-3">Mã người dùng</th>
-                        <th class="p-3">Tên người dùng</th>
-                        <th class="p-3">Xem chi tiết</th>
-                        <th class="p-3">Vai trò</th>
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Người dùng</th>
+                        <th
+                            class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                            Email</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Vai
+                            trò</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Chi
+                            tiết</th>
                     </tr>
                 </thead>
-
-                <tbody class="divide-y">
+                <tbody class="divide-y divide-gray-50">
                     @foreach ($users as $user)
-                        <tr class="hover:bg-gray-50">
-
-                            {{-- ID --}}
-                            <td class="p-3 font-semibold text-gray-700">
-                                #{{ $user->id }}
-                            </td>
-
-                            {{-- Name --}}
-                            <td class="p-3">
+                        @php
+                            $roleConfig = match ($user->role) {
+                                'admin' => [
+                                    'label' => 'Admin',
+                                    'bg' => 'bg-rose-100',
+                                    'text' => 'text-rose-700',
+                                    'icon' => 'fas fa-shield-halved',
+                                ],
+                                'tutor' => [
+                                    'label' => 'Gia sư',
+                                    'bg' => 'bg-emerald-100',
+                                    'text' => 'text-emerald-700',
+                                    'icon' => 'fas fa-chalkboard-teacher',
+                                ],
+                                'student' => [
+                                    'label' => 'Học viên',
+                                    'bg' => 'bg-blue-100',
+                                    'text' => 'text-blue-700',
+                                    'icon' => 'fas fa-user-graduate',
+                                ],
+                                'both' => [
+                                    'label' => 'GS & HV',
+                                    'bg' => 'bg-purple-100',
+                                    'text' => 'text-purple-700',
+                                    'icon' => 'fas fa-user-tie',
+                                ],
+                                default => [
+                                    'label' => 'Khác',
+                                    'bg' => 'bg-gray-100',
+                                    'text' => 'text-gray-700',
+                                    'icon' => 'fas fa-user',
+                                ],
+                            };
+                        @endphp
+                        <tr class="hover:bg-gray-50/70 transition">
+                            <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-3">
                                     <img src="{{ $user->avatar
                                         ? asset('storage/' . $user->avatar)
-                                        : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
-                                        class="w-8 h-8 rounded-full object-cover border">
-
-                                    <span>{{ $user->name }}</span>
+                                        : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=7c3aed&color=fff' }}"
+                                        class="w-9 h-9 rounded-full object-cover shrink-0" alt="avatar">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ $user->name }}</p>
+                                        <p class="text-xs text-gray-400 sm:hidden">{{ $user->email }}</p>
+                                    </div>
                                 </div>
                             </td>
-
-                            {{-- Detail --}}
-                            <td class="p-3">
-                                @if ($user->role === 'student')
-                                    <a href="{{ route('admin.students.show', $user->student->id) }}?from=users"
-                                        class="text-blue-500 hover:text-blue-700">
-                                        Xem chi tiết
-                                    </a>
-                                @elseif ($user->role === 'tutor')
-                                    <a href="{{ route('admin.tutors.show', $user->tutor->id) }}?from=users"
-                                        class="text-blue-500 hover:text-blue-700">
-                                        Xem chi tiết
-                                    </a>
-                                @endif
+                            <td class="px-5 py-3.5 text-gray-500 text-sm hidden sm:table-cell">
+                                {{ $user->email }}
                             </td>
-
-                            {{-- Role --}}
-                            <td class="p-3">
-                                @php
-                                    $roleColor = match ($user->role) {
-                                        'admin' => 'bg-red-100 text-red-600',
-                                        'tutor' => 'bg-green-100 text-green-600',
-                                        'student' => 'bg-blue-100 text-blue-600',
-                                        default => 'bg-gray-100 text-gray-600',
-                                    };
-
-                                    $roleLabel = match ($user->role) {
-                                        'admin' => 'Quản trị viên',
-                                        'tutor' => 'Gia sư',
-                                        'student' => 'Học viên',
-                                        default => 'Không xác định',
-                                    };
-                                @endphp
-
-                                <span class="px-2 py-1 rounded-full text-xs {{ $roleColor }}">
-                                    {{ $roleLabel }}
+                            <td class="px-5 py-3.5 text-center">
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $roleConfig['bg'] }} {{ $roleConfig['text'] }}">
+                                    <i class="{{ $roleConfig['icon'] }} text-[10px]"></i>
+                                    {{ $roleConfig['label'] }}
                                 </span>
                             </td>
-
+                            <td class="px-5 py-3.5 text-center">
+                                @if ($user->role === 'both')
+                                    <div class="inline-flex items-center gap-1.5">
+                                        @if ($user->student)
+                                            <a href="{{ route('admin.students.show', $user->student->id) }}?from=users"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold transition"
+                                                title="Hồ sơ học viên">
+                                                <i class="fas fa-user-graduate text-xs"></i> Học viên
+                                            </a>
+                                        @endif
+                                        @if ($user->tutor)
+                                            <a href="{{ route('admin.tutors.show', $user->tutor->id) }}?from=users"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg text-xs font-semibold transition"
+                                                title="Hồ sơ gia sư">
+                                                <i class="fas fa-chalkboard-teacher text-xs"></i> Gia sư
+                                            </a>
+                                        @endif
+                                        @if (!$user->student && !$user->tutor)
+                                            <span class="text-xs text-gray-300">—</span>
+                                        @endif
+                                    </div>
+                                @elseif($user->role === 'student' && $user->student)
+                                    <a href="{{ route('admin.students.show', $user->student->id) }}?from=users"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-semibold transition">
+                                        <i class="fas fa-eye text-xs"></i> Xem
+                                    </a>
+                                @elseif($user->role === 'tutor' && $user->tutor)
+                                    <a href="{{ route('admin.tutors.show', $user->tutor->id) }}?from=users"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg text-xs font-semibold transition">
+                                        <i class="fas fa-eye text-xs"></i> Xem
+                                    </a>
+                                @else
+                                    <span class="text-xs text-gray-300">—</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
-
             </table>
-
-            <div class="mt-6">
+        </div>
+        @if ($users->hasPages())
+            <div class="px-5 py-3 border-t border-gray-100">
                 {{ $users->links() }}
             </div>
-        </div>
+        @endif
     </div>
+
 @endsection

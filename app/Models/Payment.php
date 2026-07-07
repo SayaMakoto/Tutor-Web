@@ -10,7 +10,7 @@ class Payment extends Model
     use SoftDeletes;
     protected $fillable = [
         'tutor_id',
-        'class_request_id',
+        'class_id',
         'amount',
         'status',
         'payment_method',
@@ -21,8 +21,8 @@ class Payment extends Model
         return $this->belongsTo(Tutor::class);
     }
 
-    public function classRequest()
+    public function tutorClass()
     {
-        return $this->belongsTo(ClassRequest::class);
+        return $this->belongsTo(TutorClass::class, 'class_id');
     }
 }
