@@ -38,7 +38,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.login.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.login.store') }}" method="POST" class="space-y-4" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
                 @csrf
 
                 {{-- Email --}}
@@ -70,11 +70,12 @@
                 </div>
 
                 {{-- Submit --}}
-                <button type="submit"
+                <button type="submit" :disabled="isSubmitting"
                         class="w-full bg-linear-to-r from-violet-600 to-indigo-600 text-white py-3 rounded-xl
                                font-semibold hover:from-violet-700 hover:to-indigo-700 hover:shadow-lg
-                               hover:shadow-violet-900/50 transition-all mt-2">
-                    <i class="fas fa-right-to-bracket mr-2 text-sm"></i> Đăng nhập
+                               hover:shadow-violet-900/50 transition-all mt-2 disabled:opacity-75 disabled:cursor-not-allowed">
+                    <span x-show="!isSubmitting"><i class="fas fa-right-to-bracket mr-2 text-sm"></i> Đăng nhập</span>
+                    <span x-show="isSubmitting" x-cloak><i class="fas fa-circle-notch fa-spin mr-2 text-sm"></i> Đang xử lý...</span>
                 </button>
             </form>
         </div>

@@ -31,7 +31,7 @@
                 <p class="text-sm text-gray-500 mt-1">Đăng nhập để tiếp tục</p>
             </div>
 
-            <form method="POST" action="{{ route('login.store') }}">
+            <form method="POST" action="{{ route('login.store') }}" x-data="{ isSubmitting: false }" @submit="isSubmitting = true">
                 @csrf
 
                 {{-- Email --}}
@@ -77,9 +77,10 @@
                 </div>
 
                 {{-- Submit --}}
-                <button type="submit"
-                    class="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
-                    <i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập
+                <button type="submit" :disabled="isSubmitting"
+                    class="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+                    <span x-show="!isSubmitting"><i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập</span>
+                    <span x-show="isSubmitting" x-cloak><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Đang xử lý...</span>
                 </button>
             </form>
 
@@ -110,7 +111,6 @@
             title: 'Tài khoản bị từ chối',
             html: `
                 Hồ sơ gia sư của bạn không đạt yêu cầu và đã bị từ chối.<br><br>
-                Vui lòng liên hệ Ban Quản Trị nếu bạn có thắc mắc.<br>
                 <b>Lưu ý:</b> Tài khoản của bạn sẽ tự động bị xóa sau 5 phút kể từ lúc từ chối.
             `,
             confirmButtonText: 'Đã hiểu'
