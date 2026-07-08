@@ -111,7 +111,7 @@
             @endif
 
             {{-- Nếu đang chờ thanh toán --}}
-            @if ($isPaymentPending)
+            @if ($isPaymentPending && auth()->check() && auth()->user()->role === 'tutor')
                 @if ($currentTutorId && $tutorClass->tutor_id === $currentTutorId)
                     <a href="{{ $detailUrl }}"
                         class="flex-1 text-center px-4 py-2 bg-emerald-600 text-white rounded-xl 

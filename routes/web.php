@@ -199,6 +199,8 @@ Route::prefix('tutor')
             ->name('classes.pay');
         Route::post('/classes/{class}/cancel', [TutorClassController::class, 'cancel'])
             ->name('classes.cancel');
+        Route::post('/classes/{class}/complete', [TutorClassController::class, 'complete'])
+            ->name('classes.complete');
     });
 
 // =======================

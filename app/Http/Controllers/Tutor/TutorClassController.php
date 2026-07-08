@@ -11,7 +11,12 @@ class TutorClassController extends Controller
 {
     public function index()
     {
+        $studentId = auth()->user()->student?->id;
+
         $approvedClasses = ClassRequest::where('status', 'approved')
+            ->when($studentId, function ($query, $studentId) {
+                return $query->where('student_id', '!=', $studentId);
+            })
             ->latest()
             ->take(6)
             ->get();
@@ -138,5 +143,38 @@ class TutorClassController extends Controller
 
         return redirect()->route('tutor.classes.show', $class->id)
             ->with('success', 'Đã hủy lớp học thử thành công. Hệ thống đã hoàn trả 20% phí (' . number_format($totalValueCoins * 0.20) . ' Xu) vào ví khả dụng.');
+    }
+
+    /**
+     * Gia sư mô phỏng hoàn thành lớp học (Hệ thống khấu trừ 25% vào doanh thu)
+     */
+    public function complete(ClassRequest $class)
+    {
+        $tutor = auth()->user()->tutor;
+        if (!$tutor) {
+            return back()->with('error', 'Bạn không phải gia sư.');
+        }
+
+        $tutorClass = $class->tutorClass;
+        if (!$tutorClass || $tutorClass->tutor_id !== $tutor->id) {
+            return back()->with('error', 'Lớp học này không được giao cho bạn.');
+        }
+
+        if ($tutorClass->status !== 'active') {
+            return back()->with('error', 'Chỉ có thể hoàn thành lớp học đang dạy (active).');
+        }
+
+        $totalValueCoins = (int) round($class->total_value / 1000);
+        $feeCoins = (int) round($totalValueCoins * 0.25);
+
+        // Khấu trừ 25% phí đang bị đóng băng thành doanh thu hệ thống
+        $walletService = new \App\Services\WalletService();
+        $walletService->chargeBalance(auth()->user(), $feeCoins, $class->id);
+
+        // Chỉ cập nhật trạng thái trong bảng classes (tutorClass), class_request vẫn là assigned
+        $tutorClass->update(['status' => 'completed']);
+
+        return redirect()->route('tutor.classes.show', $class->id)
+            ->with('success', 'Hoàn thành lớp học thành công. Cảm ơn bạn đã đồng hành!');
     }
 }

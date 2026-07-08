@@ -257,6 +257,15 @@
                                             lạc với học viên.</p>
                                     </div>
 
+                                    <form action="{{ route('tutor.classes.complete', $class->id) }}" method="POST"
+                                        onsubmit="return confirm('Bạn xác nhận hoàn thành lớp học này? Hệ thống sẽ ghi nhận lớp đã kết thúc.');">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white border border-blue-600 rounded-xl text-sm font-semibold transition shadow-sm mb-3">
+                                            <i class="fas fa-check-circle"></i> Hoàn thành lớp học
+                                        </button>
+                                    </form>
+
                                     <form action="{{ route('tutor.classes.cancel', $class->id) }}" method="POST"
                                         onsubmit="return confirm('Bạn có chắc muốn hủy lớp trong thời gian học thử? Bạn sẽ được hoàn lại 20% giá trị lớp ({{ number_format($refundCoins) }} Xu), trung tâm giữ 5% phí.');">
                                         @csrf
