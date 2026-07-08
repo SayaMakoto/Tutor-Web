@@ -13,9 +13,11 @@ class ClassRequestController extends Controller
 {
     public function index(FilterRequest $request)
     {
-        $student = auth()->user()?->student;
+        // Lấy thông tin học viên từ user role student hoặc both
+        $student = auth()->user()->student;
+        $both = auth()->user()->both;
 
-        if (!$student) {
+        if (!$student && !$both) {
             abort(403, 'Tài khoản này không phải học viên. Xin vui lòng đăng ký tài khoản học viên.');
         }
 
