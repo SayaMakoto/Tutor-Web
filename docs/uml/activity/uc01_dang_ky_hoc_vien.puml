@@ -1,0 +1,44 @@
+@startuml
+title Sơ đồ Activity - UC01: Đăng ký tài khoản học viên
+
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+skinparam ActivityFontSize 12
+skinparam ActivityFontName "Segoe UI"
+skinparam ArrowColor #3388FF
+skinparam ArrowThickness 1.5
+skinparam StartColor #27AE60
+skinparam EndColor #C0392B
+
+|#F4F6F7|Người dùng (Học viên)|
+|#EBF5FB|Hệ thống (Tutor-Web)|
+
+|Người dùng (Học viên)|
+start
+:Truy cập trang chủ hoặc trang chọn vai trò;
+:Chọn chức năng "Đăng ký Học viên";
+
+|Hệ thống (Tutor-Web)|
+:Hiển thị Form Đăng ký Học viên\n(Họ tên, Giới tính, Email, Mật khẩu, Xác nhận mật khẩu);
+
+repeat
+    |Người dùng (Học viên)|
+    :Nhập đầy đủ thông tin đăng ký;
+    :Nhấn nút "Tạo tài khoản";
+
+    |Hệ thống (Tutor-Web)|
+    :Nhận và kiểm tra dữ liệu đầu vào\n(RegisterStudentRequest);
+backward :Hiển thị các thông báo lỗi tương ứng\nvà giữ lại các dữ liệu đã nhập (trừ mật khẩu);
+repeat while (Dữ liệu hợp lệ?) is (Không hợp lệ) not (Hợp lệ)
+
+|Hệ thống (Tutor-Web)|
+:Mã hóa mật khẩu bằng Bcrypt;
+:Tạo bản ghi mới trong bảng `users` (role = 'student');
+:Tạo bản ghi mới trong bảng `students` (liên kết với `user_id`);
+:Lưu thông báo thành công "Đăng ký thành công" vào Session;
+:Chuyển hướng (Redirect) về trang Đăng nhập (Login);
+
+|Người dùng (Học viên)|
+:Nhận thông báo "Đăng ký thành công" tại trang Đăng nhập;
+stop
+@enduml

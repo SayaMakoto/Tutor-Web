@@ -15,8 +15,8 @@ class RegisterTutorRequest extends FormRequest
     {
         $rules = [
             'bio' => ['nullable', 'string'],
-            'education' => ['nullable', 'string'],
-            'experience' => ['nullable', 'integer', 'min:0'],
+            'education' => ['required', 'string'],
+            'experience' => ['required', 'integer', 'min:0'],
         ];
 
         if (!auth()->check()) {
@@ -34,18 +34,19 @@ class RegisterTutorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'experience.integer' => 'Kinh nghiệm (số năm) phải là một con số.',
-            'experience.min' => 'Kinh nghiệm không phù hợp.',
-            
-            'name.required' => 'Vui lòng nhập họ tên.',
+            'education.required' => 'Vui lòng nhập học vấn.',
+            'experience.required' => 'Vui lòng nhập số năm kinh nghiệm.',
+            'experience.integer' => 'Kinh nghiệm phải là một số nguyên dương.',
+            'experience.min' => 'Kinh nghiệm không được âm.',
+            'name.required' => 'Vui lòng nhập họ và tên.',
             'gender.required' => 'Vui lòng chọn giới tính.',
             'gender.in' => 'Giới tính không hợp lệ.',
             'email.required' => 'Vui lòng nhập email.',
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email này đã được sử dụng.',
             'password.required' => 'Vui lòng nhập mật khẩu.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
-            'password.min' => 'Mật khẩu phải có ít nhất :min ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
         ];
     }
 }

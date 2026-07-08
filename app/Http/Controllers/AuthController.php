@@ -122,17 +122,22 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        $request->session()->regenerate();
-
         $user = Auth::user();
 
+        if ($user->role === 'admin') {
+            Auth::guard('web')->logout();
+            return back()->withErrors([
+                'email' => 'Vui lòng sử dụng trang đăng nhập Admin dành riêng cho quản trị viên.'
+            ])->withInput();
+        }
+
         if ($user->role === 'tutor' && $user->tutor && $user->tutor->status === 'rejected') {
-            Auth::logout();
+            Auth::guard('web')->logout();
             return redirect()->route('login')->with('rejected', true);
         }
 
+        $request->session()->regenerate();
         return match ($user->role) {
-            'admin' => redirect()->route('admin.home'),
             'tutor' => redirect()->route('tutor.home'),
             'student', 'both' => redirect()->route('student.home'),
             default => redirect('/')
@@ -162,6 +167,7 @@ class AuthController extends Controller
     {
         Auth::guard('web')->logout();
 
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
