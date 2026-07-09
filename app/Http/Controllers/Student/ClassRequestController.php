@@ -14,11 +14,11 @@ class ClassRequestController extends Controller
     public function index(FilterRequest $request)
     {
         // Lấy thông tin học viên từ user role student hoặc both
-        $student = auth()->user()->student;
-        $both = auth()->user()->both;
+        $student = auth()->user()?->student;
+        $both = auth()->user()?->both;
 
         if (!$student && !$both) {
-            abort(403, 'Tài khoản này không phải học viên. Xin vui lòng đăng ký tài khoản học viên.');
+            return redirect()->route('login')->with('info', 'Bạn cần đăng nhập để truy cập vào trang này.');
         }
 
         $query = ClassRequest::where('student_id', $student->id);
