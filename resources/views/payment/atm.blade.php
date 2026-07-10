@@ -146,8 +146,8 @@
                     <span class="font-mono font-semibold text-gray-800">{{ $order->order_ref }}</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
-                    <span>Số Xu nhận</span>
-                    <span class="font-bold {{ $theme['text'] }}">{{ number_format($order->coin_amount) }} Xu</span>
+                    <span>Số tiền thanh toán</span>
+                    <span class="font-bold {{ $theme['text'] }}">{{ number_format($order->amount_vnd) }} VNĐ</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
                     <span>Số tiền</span>

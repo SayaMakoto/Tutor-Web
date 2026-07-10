@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\WalletTransaction;
+use App\Models\PaymentTransaction;
 use Illuminate\Http\Request;
 
-class AdminWalletTransactionController extends Controller
+class AdminPaymentTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = WalletTransaction::with(['wallet.user', 'classRequest']);
+        $query = PaymentTransaction::with(['user', 'classRequest']);
 
         // Tìm kiếm theo tên, email, ID hoặc mô tả
         if ($request->filled('search')) {
@@ -19,7 +19,7 @@ class AdminWalletTransactionController extends Controller
                 $q->where('id', $search)
                   ->orWhere('description', 'like', "%{$search}%")
                   ->orWhere('payment_order_ref', 'like', "%{$search}%")
-                  ->orWhereHas('wallet.user', function ($qu) use ($search) {
+                  ->orWhereHas('user', function ($qu) use ($search) {
                       $qu->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
                   });
@@ -38,14 +38,14 @@ class AdminWalletTransactionController extends Controller
 
         $transactions = $query->latest()->paginate(15)->withQueryString();
 
-        return view('admin.wallet_transactions.index', compact('transactions'));
+        return view('admin.payment_transactions.index', compact('transactions'));
     }
 
     public function show($id)
     {
-        $transaction = WalletTransaction::with(['wallet.user', 'classRequest', 'paymentOrder'])
+        $transaction = PaymentTransaction::with(['user', 'classRequest', 'paymentOrder'])
             ->findOrFail($id);
 
-        return view('admin.wallet_transactions.show', compact('transaction'));
+        return view('admin.payment_transactions.show', compact('transaction'));
     }
 }

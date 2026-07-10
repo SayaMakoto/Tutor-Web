@@ -30,15 +30,6 @@
                 <p class="text-sm text-gray-500 mt-1">Bắt đầu hành trình học tập của bạn</p>
             </div>
 
-            {{-- Step indicator --}}
-            <div class="flex items-center justify-center mb-6">
-                <span
-                    class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-                    <i class="fa-solid fa-list-ol text-xs"></i>
-                    Bước 1/2 — Thông tin cơ bản
-                </span>
-            </div>
-
             <form method="POST" action="{{ route('register.student.store') }}">
                 @csrf
 

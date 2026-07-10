@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PaymentOrder extends Model
 {
     protected $fillable = [
-        'user_id', 'order_ref', 'amount_vnd', 'coin_amount',
+        'user_id', 'class_request_id', 'order_ref', 'amount_vnd',
         'status', 'payment_method', 'vnpay_txn_no',
         'gateway_response', 'expires_at',
     ];
@@ -21,6 +21,11 @@ class PaymentOrder extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function classRequest(): BelongsTo
+    {
+        return $this->belongsTo(ClassRequest::class, 'class_request_id');
     }
 
     public function isPending(): bool  { return $this->status === 'pending'; }

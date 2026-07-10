@@ -42,8 +42,8 @@
         </div>
 
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Nạp Xu thành công! 🎉</h1>
-            <p class="text-gray-500 text-sm mt-2">Xu đã được cộng vào ví của bạn</p>
+            <h1 class="text-2xl font-bold text-gray-800">Thanh toán thành công!</h1>
+            <p class="text-gray-500 text-sm mt-2">Giao dịch đã được xử lý thành công</p>
         </div>
 
         {{-- Summary Card --}}
@@ -53,21 +53,12 @@
                 <span class="font-mono text-sm font-semibold text-gray-800">{{ $order->order_ref ?? '—' }}</span>
             </div>
             <div class="flex justify-between items-center">
-                <span class="text-gray-600 text-sm">Số Xu nhận</span>
-                <span class="text-2xl font-bold {{ $theme['text'] }}">+{{ number_format($order->coin_amount ?? 0) }}
-                    Xu</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-600 text-sm">Số tiền đã nạp</span>
+                <span class="text-gray-600 text-sm">Số tiền đã thanh toán</span>
                 <span class="font-semibold text-gray-800">{{ number_format($order->amount_vnd ?? 0) }} VNĐ</span>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-600 text-sm">Thời gian</span>
                 <span class="text-gray-800 text-sm">{{ now()->format('H:i — d/m/Y') }}</span>
-            </div>
-            <div class="pt-3 border-t border-gray-100 flex justify-between items-center">
-                <span class="text-gray-600 text-sm">Số dư mới</span>
-                <span class="font-bold text-emerald-600 text-lg">{{ number_format($wallet->balance ?? 0) }} Xu</span>
             </div>
         </div>
 
@@ -77,7 +68,7 @@
                 class="block w-full bg-linear-to-r {{ $theme['gradFrom'] }} {{ $theme['gradTo'] }} text-white
                   py-3.5 rounded-xl font-bold hover:shadow-lg {{ $theme['btnHoverFrom'] }} {{ $theme['btnHoverTo'] }}
                   transition-all duration-200">
-                <i class="fas fa-wallet mr-2"></i> Xem ví của tôi
+                <i class="fas fa-wallet mr-2"></i> Quay lại trang thanh toán
             </a>
         </div>
 

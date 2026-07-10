@@ -89,10 +89,6 @@
                     <span class="font-mono font-semibold text-gray-800">{{ $order->order_ref }}</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
-                    <span>Số Xu nhận</span>
-                    <span class="font-bold {{ $theme['text'] }}">{{ number_format($order->coin_amount) }} Xu</span>
-                </div>
-                <div class="flex justify-between text-gray-600">
                     <span>Số tiền</span>
                     <span class="font-bold text-gray-800 text-base">{{ number_format($order->amount_vnd) }} VNĐ</span>
                 </div>
@@ -170,7 +166,7 @@
         const qrColorDark = "{{ $theme['qrDark'] }}";
 
         // Tạo QR code
-        const qrData = "GiaSu247|{{ $order->order_ref }}|{{ $order->amount_vnd }}|{{ $order->coin_amount }}";
+        const qrData = "GiaSu247|{{ $order->order_ref }}|{{ $order->amount_vnd }}";
         new QRCode(document.getElementById("qrcode"), {
             text: qrData,
             width: 208,

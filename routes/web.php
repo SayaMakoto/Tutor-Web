@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\AdminTutorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
-use App\Http\Controllers\Admin\AdminWalletTransactionController;
+use App\Http\Controllers\Admin\AdminPaymentTransactionController;
 use App\Http\Controllers\Admin\AdminPaymentOrderController;
 
 // STUDENT
@@ -238,7 +238,7 @@ Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
 
 // =======================
-// PAYMENT (Ví Xu)
+// PAYMENT (Thanh toán trực tiếp bằng VNĐ)
 // =======================
 Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment.')->group(function () {
     Route::get('/wallet',             [PaymentController::class, 'wallet'])  ->name('wallet');
@@ -365,10 +365,10 @@ Route::prefix('admin')
             ->name('contacts.reply');
 
         // Quản lý tài chính
-        Route::get('wallet-transactions', [AdminWalletTransactionController::class, 'index'])
-            ->name('wallet-transactions.index');
-        Route::get('wallet-transactions/{id}', [AdminWalletTransactionController::class, 'show'])
-            ->name('wallet-transactions.show');
+        Route::get('payment-transactions', [AdminPaymentTransactionController::class, 'index'])
+            ->name('payment-transactions.index');
+        Route::get('payment-transactions/{id}', [AdminPaymentTransactionController::class, 'show'])
+            ->name('payment-transactions.show');
 
         Route::get('payment-orders', [AdminPaymentOrderController::class, 'index'])
             ->name('payment-orders.index');

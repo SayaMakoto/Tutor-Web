@@ -14,7 +14,7 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Chi tiết hóa đơn #{{ $order->order_ref }}</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Thông tin chi tiết tất cả các cột dữ liệu của hóa đơn nạp xu</p>
+            <p class="text-sm text-gray-500 mt-0.5">Thông tin chi tiết hóa đơn thanh toán bằng VNĐ</p>
         </div>
     </div>
 
@@ -41,10 +41,20 @@
                         <p class="font-semibold text-gray-800 mt-0.5 font-mono text-xs">{{ $order->order_ref }}</p>
                     </div>
 
+                    @if($order->class_request_id)
                     <div>
-                        <p class="text-xs text-gray-400 font-medium">Số xu nạp (coin_amount)</p>
-                        <p class="font-bold text-emerald-600 mt-0.5 text-base">+{{ number_format($order->coin_amount) }} Xu</p>
+                        <p class="text-xs text-gray-400 font-medium font-sans">Lớp học liên quan (class_request_id)</p>
+                        <a href="{{ route('admin.class-requests.show', $order->class_request_id) }}"
+                           class="font-semibold text-violet-600 hover:text-violet-800 mt-0.5 block hover:underline">
+                            Lớp học #{{ $order->class_request_id }} <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
                     </div>
+                    @else
+                    <div>
+                        <p class="text-xs text-gray-400 font-medium font-sans">Loại hóa đơn</p>
+                        <p class="font-semibold text-gray-700 mt-0.5">Thanh toán trực tiếp</p>
+                    </div>
+                    @endif
 
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Số tiền thanh toán (amount_vnd)</p>

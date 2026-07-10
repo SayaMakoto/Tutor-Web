@@ -1,19 +1,19 @@
 @extends('layouts.admin')
-@section('title', 'Quản lý lịch sử giao dịch ví')
+@section('title', 'Quản lý lịch sử giao dịch')
 
 @section('content')
 
     {{-- Page Header --}}
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-xl font-bold text-gray-800">Lịch sử giao dịch ví</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Quản lý toàn bộ giao dịch nạp, rút, tạm giữ và hoàn xu của gia sư</p>
+            <h1 class="text-xl font-bold text-gray-800">Lịch sử giao dịch thanh toán</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Quản lý toàn bộ giao dịch đóng băng tạm giữ và hoàn trả tiền thực tế của gia sư</p>
         </div>
     </div>
 
     {{-- Filters Card --}}
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
-        <form action="{{ route('admin.wallet-transactions.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
+        <form action="{{ route('admin.payment-transactions.index') }}" method="GET" class="flex flex-wrap items-center gap-3">
             <div class="flex-1 min-w-[200px]">
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
@@ -28,7 +28,7 @@
             <div class="w-40">
                 <select name="type" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:border-violet-500 transition-colors">
                     <option value="">-- Tất cả loại --</option>
-                    @foreach(\App\Models\WalletTransaction::TYPES as $key => $cfg)
+                    @foreach(\App\Models\PaymentTransaction::TYPES as $key => $cfg)
                         <option value="{{ $key }}" {{ request('type') === $key ? 'selected' : '' }}>
                             {{ $cfg['label'] }}
                         </option>
@@ -50,7 +50,7 @@
                     Lọc
                 </button>
                 @if(request()->anyFilled(['search', 'type', 'status']))
-                    <a href="{{ route('admin.wallet-transactions.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-semibold transition">
+                    <a href="{{ route('admin.payment-transactions.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-sm font-semibold transition">
                         Xóa lọc
                     </a>
                 @endif
@@ -67,7 +67,7 @@
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">ID</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Người dùng</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Loại giao dịch</th>
-                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Số xu</th>
+                        <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Số tiền (VND)</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Trạng thái</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ngày tạo</th>
                         <th class="px-5 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Hành động</th>
@@ -76,8 +76,8 @@
                 <tbody class="divide-y divide-gray-50">
                     @forelse($transactions as $txn)
                         @php
-                            $user = $txn->wallet?->user;
-                            $typeCfg = \App\Models\WalletTransaction::TYPES[$txn->type] ?? [
+                            $user = $txn->user;
+                            $typeCfg = \App\Models\PaymentTransaction::TYPES[$txn->type] ?? [
                                 'label' => 'Không rõ', 'color' => 'text-gray-500', 'sign' => ''
                             ];
 
@@ -111,13 +111,13 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center gap-1 text-xs font-semibold {{ $typeCfg['color'] }}">
-                                    <i class="fas {{ $txn->type === 'topup' ? 'fa-arrow-trend-up' : ($txn->type === 'hold' ? 'fa-lock' : ($txn->type === 'refund' ? 'fa-rotate-left' : 'fa-arrow-trend-down')) }} text-[10px]"></i>
+                                    <i class="fas {{ $txn->type === 'hold' ? 'fa-lock' : ($txn->type === 'refund' ? 'fa-rotate-left' : 'fa-arrow-trend-down') }} text-[10px]"></i>
                                     {{ $typeCfg['label'] }}
                                 </span>
                             </td>
                             <td class="px-5 py-3.5 text-right font-bold text-sm">
                                 <span class="{{ $typeCfg['sign'] === '+' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ $typeCfg['sign'] }}{{ number_format($txn->amount) }} Xu
+                                    {{ $typeCfg['sign'] }}{{ number_format($txn->amount) }}đ
                                 </span>
                             </td>
                             <td class="px-5 py-3.5 text-center">
@@ -129,7 +129,7 @@
                                 {{ $txn->created_at?->format('d/m/Y H:i') ?? 'N/A' }}
                             </td>
                             <td class="px-5 py-3.5 text-center">
-                                <a href="{{ route('admin.wallet-transactions.show', $txn->id) }}"
+                                <a href="{{ route('admin.payment-transactions.show', $txn->id) }}"
                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-600 rounded-lg text-xs font-semibold transition">
                                     <i class="fas fa-eye text-xs"></i> Xem chi tiết
                                 </a>

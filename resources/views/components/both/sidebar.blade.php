@@ -1,7 +1,5 @@
 @php
     $tutor    = auth()->user()?->tutor;
-    $wallet   = auth()->user()?->wallet;
-    $xuBalance = $wallet?->balance ?? 0;
 
     $pendingApplications = auth()->check()
         ? \App\Models\Application::whereHas('classRequest.student', fn($q) => $q->where('user_id', auth()->id()))
@@ -160,20 +158,14 @@
                 <span>Lớp đã ứng tuyển</span>
             </a>
 
-            {{-- Ví Xu --}}
+            {{-- Lịch sử Thanh toán & Bảo lãnh (Escrow) --}}
             <a href="{{ route('payment.wallet') }}"
                class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-150
                       {{ request()->routeIs('payment.*')
                          ? 'bg-emerald-600 text-white shadow-sm'
                          : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-700' }}">
-                <i class="fas fa-coins w-4 text-center text-[13px]"></i>
-                <span class="flex-1">Ví Xu</span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-full
-                             {{ request()->routeIs('payment.*')
-                                ? 'bg-white/20 text-white'
-                                : 'bg-emerald-100 text-emerald-700' }}">
-                    {{ number_format($xuBalance) }}
-                </span>
+                <i class="fas fa-receipt w-4 text-center text-[13px]"></i>
+                <span class="flex-1">Thanh toán</span>
             </a>
 
             {{-- Cập nhật hồ sơ (chỉ hiện khi còn pending) --}}

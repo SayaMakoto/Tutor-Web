@@ -116,14 +116,8 @@
                           {{ request()->routeIs('payment.*')
                               ? 'bg-green-600 text-white shadow-sm'
                               : 'text-gray-600 hover:bg-green-50 hover:text-green-600' }}">
-                    <i class="fas fa-coins w-4 text-center"></i>
-                    <span class="flex-1">Ví Xu</span>
-                    @php $xuBal = Auth::user()->wallet?->balance ?? 0; @endphp
-                    <span
-                        class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700' }}
-                                 font-semibold px-2 py-0.5 rounded-full">
-                        {{ number_format($xuBal) }}
-                    </span>
+                    <i class="fas fa-receipt w-4 text-center"></i>
+                    <span class="flex-1">Thanh toán</span>
                 </a>
             @endauth
         </nav>

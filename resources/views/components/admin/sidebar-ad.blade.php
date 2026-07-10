@@ -96,9 +96,9 @@
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Tài chính</p>
         </div>
 
-        <a href="{{ route('admin.wallet-transactions.index') }}"
+        <a href="{{ route('admin.payment-transactions.index') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                  {{ request()->routeIs('admin.wallet-transactions.*')
+                  {{ request()->routeIs('admin.payment-transactions.*')
                      ? 'bg-violet-600 text-white shadow-sm'
                      : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
             <i class="fas fa-money-bill-transfer w-4 text-center"></i>
@@ -111,7 +111,7 @@
                      ? 'bg-violet-600 text-white shadow-sm'
                      : 'text-gray-600 hover:bg-violet-50 hover:text-violet-700' }}">
             <i class="fas fa-credit-card w-4 text-center"></i>
-            <span>Hóa đơn nạp xu</span>
+            <span>Hóa đơn thanh toán</span>
         </a>
 
         {{-- ─── Danh mục ──────────────────────────── --}}
@@ -173,4 +173,3 @@
     </div>
 
 </aside>
-

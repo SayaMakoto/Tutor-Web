@@ -66,7 +66,7 @@
             class="bg-linear-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
             <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
             <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                <i class="fas fa-coins text-white text-lg"></i>
+                <i class="fas fa-money-bill-wave text-white text-lg"></i>
             </div>
             <p class="text-2xl font-bold text-white">{{ number_format($revenueVnd, 0, ',', '.') }}đ</p>
             <p class="text-sm text-violet-200 mt-0.5">Doanh thu tháng</p>
@@ -137,7 +137,7 @@
             <h2 class="font-bold text-gray-800 text-lg flex items-center gap-2">
                 <i class="fas fa-history text-violet-600"></i> Lịch sử nhận doanh thu gần đây
             </h2>
-            <a href="{{ route('admin.wallet-transactions.index') }}?type=charge" class="text-sm font-semibold text-violet-600 hover:text-violet-800 transition">
+            <a href="{{ route('admin.payment-transactions.index') }}?type=charge" class="text-sm font-semibold text-violet-600 hover:text-violet-800 transition">
                 Xem toàn bộ <i class="fas fa-arrow-right text-xs"></i>
             </a>
         </div>
@@ -159,18 +159,18 @@
                                 <p class="text-xs text-gray-400 mt-0.5">{{ $transaction->created_at->format('H:i') }}</p>
                             </td>
                             <td class="px-6 py-4">
-                                @if($transaction->wallet && $transaction->wallet->user)
+                                @if($transaction->user)
                                     <div class="flex items-center gap-3">
                                         <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
-                                            @if($transaction->wallet->user->avatar)
-                                                <img src="{{ asset('storage/' . $transaction->wallet->user->avatar) }}" class="w-full h-full rounded-full object-cover">
+                                            @if($transaction->user->avatar)
+                                                <img src="{{ asset('storage/' . $transaction->user->avatar) }}" class="w-full h-full rounded-full object-cover">
                                             @else
-                                                <span class="text-violet-600 font-bold text-xs">{{ mb_substr($transaction->wallet->user->name, 0, 1) }}</span>
+                                                <span class="text-violet-600 font-bold text-xs">{{ mb_substr($transaction->user->name, 0, 1) }}</span>
                                             @endif
                                         </div>
                                         <div>
-                                            <p class="text-sm font-semibold text-gray-800">{{ $transaction->wallet->user->name }}</p>
-                                            <p class="text-xs text-gray-500">{{ $transaction->wallet->user->email }}</p>
+                                            <p class="text-sm font-semibold text-gray-800">{{ $transaction->user->name }}</p>
+                                            <p class="text-xs text-gray-500">{{ $transaction->user->email }}</p>
                                         </div>
                                     </div>
                                 @else
@@ -182,7 +182,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <span class="text-sm font-bold text-emerald-600">
-                                    +{{ number_format($transaction->amount * 1000, 0, ',', '.') }}đ
+                                    +{{ number_format($transaction->amount, 0, ',', '.') }}đ
                                 </span>
                             </td>
                         </tr>

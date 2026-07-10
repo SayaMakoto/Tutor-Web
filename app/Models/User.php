@@ -32,26 +32,4 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
-    public function wallet()
-    {
-        return $this->hasOne(Wallet::class);
-    }
-
-    /** Lấy ví, tự tạo nếu chưa có */
-    public function getOrCreateWallet(): Wallet
-    {
-        if ($this->relationLoaded('wallet') && $this->wallet) {
-            return $this->wallet;
-        }
-
-        $wallet = $this->wallet()->firstOrCreate([], [
-            'balance' => 0,
-            'frozen_balance' => 0,
-            'total_topped_up' => 0,
-        ]);
-
-        $this->setRelation('wallet', $wallet);
-
-        return $wallet;
-    }
 }

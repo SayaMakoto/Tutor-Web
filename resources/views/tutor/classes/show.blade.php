@@ -199,17 +199,16 @@
                             $tutor = auth()->user() ? auth()->user()->tutor : null;
                             $isAssignedTutor = $tClass && $tutor && $tClass->tutor_id === $tutor->id;
 
-                            $totalValCoins = (int) round($class->total_value / 1000);
-                            $feeCoins = (int) round($totalValCoins * 0.25);
-                            $refundCoins = (int) round($totalValCoins * 0.2);
+                            $totalValVnd = $class->total_value;
+                            $feeVnd = (int) round($totalValVnd * 0.25);
+                            $refundVnd = (int) round($totalValVnd * 0.20);
                         @endphp
 
                         @if (!$tClass)
                             {{-- Lớp chưa được giao cho ai --}}
                             <div class="space-y-3">
                                 <p class="text-xs text-gray-500 leading-relaxed">
-                                    Bạn có thể gửi một lời ứng tuyển kèm tin nhắn giới thiệu năng lực đến học viên này để đề
-                                    xuất nhận lớp dạy kèm.
+                                    Bạn có thể gửi một lời ứng tuyển kèm tin nhắn giới thiệu năng lực đến học viên này để đề xuất nhận lớp dạy kèm.
                                 </p>
                                 <button type="button" onclick="openModal()"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold transition shadow-sm hover:shadow-md">
@@ -221,20 +220,12 @@
                             @if ($tClass->status === 'payment_pending')
                                 <div class="space-y-4">
                                     <div class="p-4 bg-yellow-50 border border-yellow-100 rounded-xl space-y-2 text-xs">
-                                        <p class="font-bold text-yellow-800"><i class="fas fa-exclamation-triangle"></i> Bạn
-                                            được chọn làm Gia sư!</p>
-                                        <p class="text-gray-600">Vui lòng thanh toán phí nhận lớp để mở khóa thông tin liên
-                                            hệ học viên.</p>
+                                        <p class="font-bold text-yellow-800"><i class="fas fa-exclamation-triangle"></i> Bạn được chọn làm Gia sư!</p>
+                                        <p class="text-gray-600 font-sans">Vui lòng chuyển khoản thanh toán phí nhận lớp để mở khóa thông tin liên hệ học viên.</p>
                                         <ul class="list-disc pl-4 text-[11px] text-gray-500 space-y-1">
-                                            <li>Tổng giá trị lớp học:
-                                                <strong>{{ number_format($class->total_value) }}đ</strong> (≈
-                                                {{ number_format($totalValCoins) }} Xu)
-                                            </li>
-                                            <li>Phí nhận lớp (25%): <strong
-                                                    class="text-yellow-700">{{ number_format($feeCoins) }} Xu</strong></li>
-                                            <li>Số xu được hoàn lại nếu hủy lớp thử (20%):
-                                                <strong>{{ number_format($refundCoins) }} Xu</strong>
-                                            </li>
+                                            <li>Tổng giá trị lớp học: <strong>{{ number_format($totalValVnd) }}đ</strong></li>
+                                            <li>Phí nhận lớp (25%): <strong class="text-yellow-750 font-sans">{{ number_format($feeVnd) }}đ</strong> (Được đóng băng bảo lãnh)</li>
+                                            <li>Số tiền được hoàn lại nếu hủy lớp thử (20%): <strong>{{ number_format($refundVnd) }}đ</strong></li>
                                         </ul>
                                     </div>
 
@@ -242,23 +233,19 @@
                                         @csrf
                                         <button type="submit"
                                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold transition shadow-sm hover:shadow-md">
-                                            <i class="fas fa-credit-card"></i> Thanh toán nhận lớp
-                                            ({{ number_format($feeCoins) }} Xu)
+                                            <i class="fas fa-credit-card"></i> Thanh toán phí bảo lãnh ({{ number_format($feeVnd) }}đ)
                                         </button>
                                     </form>
                                 </div>
                             @elseif ($tClass->status === 'active')
                                 <div class="space-y-4">
                                     <div class="p-4 bg-green-50 border border-green-150 rounded-xl space-y-2 text-xs">
-                                        <p class="font-bold text-green-800"><i class="fas fa-check-circle"></i> Đã nhận lớp
-                                            thành công!</p>
-                                        <p class="text-gray-600">Đã khóa tạm giữ <strong>{{ number_format($feeCoins) }}
-                                                Xu</strong> trong số dư đóng băng. Bạn có thể xem thông tin liên hệ và liên
-                                            lạc với học viên.</p>
+                                        <p class="font-bold text-green-800"><i class="fas fa-check-circle"></i> Đã nhận lớp thành công!</p>
+                                        <p class="text-gray-600 font-sans">Đã khóa tạm giữ <strong>{{ number_format($feeVnd) }}đ</strong> phí bảo lãnh trong hệ thống. Bạn có thể xem địa chỉ chi tiết và liên lạc với học viên.</p>
                                     </div>
 
                                     <form action="{{ route('tutor.classes.complete', $class->id) }}" method="POST"
-                                        onsubmit="return confirm('Bạn xác nhận hoàn thành lớp học này? Hệ thống sẽ ghi nhận lớp đã kết thúc.');">
+                                        onsubmit="return confirm('Bạn xác nhận hoàn thành lớp học này? Hệ thống sẽ giải ngân toàn bộ 25% phí bảo lãnh thành doanh thu của trung tâm.');">
                                         @csrf
                                         <button type="submit"
                                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white border border-blue-600 rounded-xl text-sm font-semibold transition shadow-sm mb-3">
@@ -267,11 +254,11 @@
                                     </form>
 
                                     <form action="{{ route('tutor.classes.cancel', $class->id) }}" method="POST"
-                                        onsubmit="return confirm('Bạn có chắc muốn hủy lớp trong thời gian học thử? Bạn sẽ được hoàn lại 20% giá trị lớp ({{ number_format($refundCoins) }} Xu), trung tâm giữ 5% phí.');">
+                                        onsubmit="return confirm('Bạn có chắc muốn hủy lớp trong thời gian học thử? Bạn sẽ được hoàn trả lại 20% phí ({{ number_format($refundVnd) }}đ), trung tâm giữ 5% phí dịch vụ.');">
                                         @csrf
                                         <button type="submit"
                                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-sm font-semibold transition">
-                                            <i class="fas fa-times-circle"></i> Yêu cầu hủy lớp (Hoàn 20% Xu)
+                                            <i class="fas fa-times-circle"></i> Yêu cầu hủy lớp (Hoàn 20% phí)
                                         </button>
                                     </form>
                                 </div>

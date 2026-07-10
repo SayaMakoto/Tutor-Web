@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Mã người dùng
             $table->string('order_ref')->unique(); // Mã tham chiếu đơn hàng
             $table->unsignedBigInteger('amount_vnd'); // Số tiền VND
-            $table->unsignedBigInteger('coin_amount'); // Số lượng coin
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending'); // Trạng thái
             // pending: đang chờ xử lý
             // success: thành công

@@ -94,27 +94,25 @@ class TutorClassController extends Controller
             return back()->with('error', 'Lớp học không ở trạng thái chờ thanh toán.');
         }
 
-        // Phí nhận lớp = 25% tổng giá trị lớp học quy ra xu (chia 1000)
-        $totalValueCoins = (int) round($class->total_value / 1000);
-        $feeCoins = (int) round($totalValueCoins * 0.25);
+        // Tính 25% tổng giá trị lớp học (VND)
+        $feeVnd = (int) round($class->total_value * 0.25);
 
-        $walletService = new \App\Services\WalletService();
-        $success = $walletService->holdBalance(auth()->user(), $feeCoins, $class->id);
+        // Tạo đơn hàng thanh toán trực tiếp cho lớp học này
+        $order = \App\Models\PaymentOrder::create([
+            'user_id'          => auth()->id(),
+            'class_request_id' => $class->id,
+            'order_ref'        => 'GS247-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5)),
+            'amount_vnd'       => $feeVnd,
+            'payment_method'   => 'qr',
+            'status'           => 'pending',
+            'expires_at'       => now()->addMinutes(15),
+        ]);
 
-        if (!$success) {
-            $shortage = $feeCoins - (auth()->user()->wallet->balance ?? 0);
-            return redirect()->route('payment.topup')
-                ->with('error', "Số dư ví không đủ để nhận lớp (Yêu cầu: {$feeCoins} Xu). Bạn cần nạp thêm ít nhất {$shortage} Xu.");
-        }
-
-        $tutorClass->update(['status' => 'active']);
-
-        return redirect()->route('tutor.classes.show', $class->id)
-            ->with('success', 'Thanh toán nhận lớp thành công! Đã tạm giữ ' . number_format($feeCoins) . ' Xu. Bạn có thể xem thông tin liên hệ ngay.');
+        return redirect()->route('payment.qr', $order->order_ref);
     }
 
     /**
-     * Gia sư hủy lớp học thử (Hoàn trả 20% xu, giữ lại 5% phí)
+     * Gia sư hủy lớp học thử (hoàn 20% phí, giữ lại 5% phí dịch vụ)
      */
     public function cancel(ClassRequest $class)
     {
@@ -132,17 +130,16 @@ class TutorClassController extends Controller
             return back()->with('error', 'Chỉ có thể hủy lớp học đang học thử.');
         }
 
-        $totalValueCoins = (int) round($class->total_value / 1000);
-
         // Hủy lớp học
         $tutorClass->update(['status' => 'cancelled']);
         $class->update(['status' => 'cancelled']);
 
-        $walletService = new \App\Services\WalletService();
-        $walletService->cancelClassAndRefund(auth()->user(), $totalValueCoins, $class->id);
+        $paymentService = new \App\Services\PaymentService();
+        $paymentService->cancelClassAndRefund(auth()->user(), $class->total_value, $class->id);
 
+        $refundAmount = (int) round($class->total_value * 0.20);
         return redirect()->route('tutor.classes.show', $class->id)
-            ->with('success', 'Đã hủy lớp học thử thành công. Hệ thống đã hoàn trả 20% phí (' . number_format($totalValueCoins * 0.20) . ' Xu) vào ví khả dụng.');
+            ->with('success', 'Đã hủy lớp học thử thành công. Hệ thống đã hoàn lại 20% phí (' . number_format($refundAmount) . 'đ) cho bạn.');
     }
 
     /**
@@ -164,12 +161,11 @@ class TutorClassController extends Controller
             return back()->with('error', 'Chỉ có thể hoàn thành lớp học đang dạy (active).');
         }
 
-        $totalValueCoins = (int) round($class->total_value / 1000);
-        $feeCoins = (int) round($totalValueCoins * 0.25);
+        $feeVnd = (int) round($class->total_value * 0.25);
 
         // Khấu trừ 25% phí đang bị đóng băng thành doanh thu hệ thống
-        $walletService = new \App\Services\WalletService();
-        $walletService->chargeBalance(auth()->user(), $feeCoins, $class->id);
+        $paymentService = new \App\Services\PaymentService();
+        $paymentService->chargeEscrow(auth()->user(), $feeVnd, $class->id);
 
         // Chỉ cập nhật trạng thái trong bảng classes (tutorClass), class_request vẫn là assigned
         $tutorClass->update(['status' => 'completed']);

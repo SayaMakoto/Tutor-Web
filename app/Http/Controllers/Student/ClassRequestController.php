@@ -102,12 +102,11 @@ class ClassRequestController extends Controller
             }
             
             if ($tutorClass->status === 'active') {
-                // Hủy lớp học đang học thử (hoàn tiền 20% xu cho gia sư)
+                // Hủy lớp học đang học thử (hoàn trả 20% phí cho gia sư)
                 $tutorClass->update(['status' => 'cancelled']);
                 
-                $totalValueCoins = (int) round($class_request->total_value / 1000);
-                $walletService = new \App\Services\WalletService();
-                $walletService->cancelClassAndRefund($tutorClass->tutor->user, $totalValueCoins, $class_request->id);
+                $paymentService = new \App\Services\PaymentService();
+                $paymentService->cancelClassAndRefund($tutorClass->tutor->user, $class_request->total_value, $class_request->id);
             } elseif ($tutorClass->status === 'payment_pending') {
                 // Hủy lớp khi gia sư chưa đóng phí
                 $tutorClass->update(['status' => 'cancelled']);

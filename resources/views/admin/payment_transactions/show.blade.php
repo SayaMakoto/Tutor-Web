@@ -5,7 +5,7 @@
 
     {{-- Back Link --}}
     <div class="mb-5">
-        <a href="{{ route('admin.wallet-transactions.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-violet-600 transition">
+        <a href="{{ route('admin.payment-transactions.index') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-violet-600 transition">
             <i class="fas fa-arrow-left text-xs"></i> Quay lại danh sách
         </a>
     </div>
@@ -14,7 +14,7 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-xl font-bold text-gray-800">Chi tiết giao dịch #{{ $transaction->id }}</h1>
-            <p class="text-sm text-gray-500 mt-0.5">Thông tin chi tiết và tham chiếu của giao dịch ví</p>
+            <p class="text-sm text-gray-500 mt-0.5">Thông tin chi tiết và tham chiếu của giao dịch thanh toán</p>
         </div>
     </div>
 
@@ -31,7 +31,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Mã giao dịch</p>
-                        <p class="font-semibold text-gray-800 mt-0.5">#{{ $transaction->id }}</p>
+                        <p class="font-semibold text-gray-800 mt-0.5 font-mono">#{{ $transaction->id }}</p>
                     </div>
 
                     <div>
@@ -40,22 +40,22 @@
                     </div>
 
                     @php
-                        $typeCfg = \App\Models\WalletTransaction::TYPES[$transaction->type] ?? [
+                        $typeCfg = \App\Models\PaymentTransaction::TYPES[$transaction->type] ?? [
                             'label' => 'Không rõ', 'color' => 'text-gray-500', 'sign' => ''
                         ];
                     @endphp
                     <div>
                         <p class="text-xs text-gray-400 font-medium">Loại giao dịch</p>
                         <span class="inline-flex items-center gap-1 text-xs font-bold mt-1.5 {{ $typeCfg['color'] }}">
-                            <i class="fas {{ $transaction->type === 'topup' ? 'fa-arrow-trend-up' : ($transaction->type === 'hold' ? 'fa-lock' : ($transaction->type === 'refund' ? 'fa-rotate-left' : 'fa-arrow-trend-down')) }} text-[10px]"></i>
+                            <i class="fas {{ $transaction->type === 'hold' ? 'fa-lock' : ($transaction->type === 'refund' ? 'fa-rotate-left' : 'fa-arrow-trend-down') }} text-[10px]"></i>
                             {{ $typeCfg['label'] }}
                         </span>
                     </div>
 
                     <div>
-                        <p class="text-xs text-gray-400 font-medium">Số xu thay đổi</p>
+                        <p class="text-xs text-gray-400 font-medium">Số tiền giao dịch</p>
                         <p class="font-bold text-base mt-0.5 {{ $typeCfg['sign'] === '+' ? 'text-emerald-600' : 'text-rose-600' }}">
-                            {{ $typeCfg['sign'] }}{{ number_format($transaction->amount) }} Xu
+                            {{ $typeCfg['sign'] }}{{ number_format($transaction->amount) }}đ
                         </p>
                     </div>
 
@@ -99,8 +99,8 @@
                     <i class="fas fa-user-circle text-violet-500 mr-1.5"></i> Người thực hiện
                 </h3>
 
-                @if($transaction->wallet?->user)
-                    @php $user = $transaction->wallet->user; @endphp
+                @if($transaction->user)
+                    @php $user = $transaction->user; @endphp
                     <div class="flex items-center gap-3">
                         <img src="{{ $user->avatar
                             ? asset('storage/' . $user->avatar)
@@ -140,7 +140,7 @@
                 <div class="space-y-4">
                     {{-- Liên kết hóa đơn nạp tiền --}}
                     <div>
-                        <p class="text-xs text-gray-400 font-medium">Hóa đơn nạp xu tương ứng</p>
+                        <p class="text-xs text-gray-400 font-medium">Hóa đơn thanh toán tương ứng</p>
                         @if($transaction->paymentOrder)
                             <div class="mt-1.5 flex items-center justify-between p-2.5 bg-gray-50 border border-gray-100 rounded-xl">
                                 <div class="min-w-0">
@@ -153,9 +153,15 @@
                                 </a>
                             </div>
                         @elseif($transaction->payment_order_ref)
-                            <p class="text-xs font-semibold text-gray-500 mt-1 font-mono">Ref: {{ $transaction->payment_order_ref }} (Hóa đơn không tồn tại)</p>
+                            <div class="mt-1.5 flex items-center justify-between p-2.5 bg-gray-50 border border-gray-100 rounded-xl">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-semibold text-gray-500 truncate font-mono">Ref: {{ $transaction->payment_order_ref }}</p>
+                                    <p class="text-[10px] text-gray-400">Đơn hàng tham chiếu</p>
+                                </div>
+                                <span class="text-[10px] text-gray-400 italic">Mô phỏng/Không có VNPAY ID</span>
+                            </div>
                         @else
-                            <p class="text-xs text-gray-400 mt-1 italic">Không có hóa đơn nạp xu</p>
+                            <p class="text-xs text-gray-400 mt-1 italic">Không có hóa đơn thanh toán trực tiếp</p>
                         @endif
                     </div>
 

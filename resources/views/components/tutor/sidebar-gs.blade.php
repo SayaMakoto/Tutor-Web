@@ -1,7 +1,5 @@
 @php
     $tutor = auth()->user()->tutor;
-    $wallet = auth()->user()?->wallet;
-    $xuBalance = $wallet?->balance ?? 0;
 @endphp
 
 <aside
@@ -110,7 +108,7 @@
         </a>
 
 
-        {{-- Ví Xu --}}
+        {{-- Lịch sử Thanh toán & Bảo lãnh (Escrow) --}}
         <a href="{{ route('payment.wallet') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl
                    transition-all duration-150 text-sm font-medium
@@ -118,16 +116,9 @@
                        ? 'bg-green-600 text-white shadow-sm'
                        : 'text-gray-600 hover:bg-green-50 hover:text-green-600' }}">
 
-            <i class="fas fa-coins w-4 text-center"></i>
+            <i class="fas fa-receipt w-4 text-center"></i>
 
-            <span class="flex-1">Ví Xu</span>
-
-            <span
-                class="text-xs {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700' }}
-                         font-semibold px-2 py-0.5 rounded-full">
-                {{ number_format($xuBalance) }}
-            </span>
-
+            <span class="flex-1">Thanh toán</span>
         </a>
 
 

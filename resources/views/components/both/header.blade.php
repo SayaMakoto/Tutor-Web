@@ -152,21 +152,15 @@
                     </div>
                 </div>
 
-                {{-- Ví Xu --}}
+                {{-- Thanh toán --}}
                 @auth
-                    @php $xuBal = Auth::user()->wallet?->balance ?? 0; @endphp
                     <a href="{{ route('payment.wallet') }}"
                        class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg
                               hover:bg-emerald-100 hover:text-emerald-700
                               transition-all duration-150 text-xs font-medium
                               {{ request()->routeIs('payment.*') ? 'bg-emerald-600 text-white shadow-sm' : 'text-gray-600' }}">
-                        <i class="fas fa-coins text-[10px]"></i>
-                        Ví Xu
-                        <span class="text-[10px] font-bold
-                                     {{ request()->routeIs('payment.*') ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-700' }}
-                                     px-1.5 py-0.5 rounded-full">
-                            {{ number_format($xuBal) }}
-                        </span>
+                        <i class="fas fa-receipt text-[10px]"></i>
+                        Thanh toán
                     </a>
                 @endauth
             </div>
