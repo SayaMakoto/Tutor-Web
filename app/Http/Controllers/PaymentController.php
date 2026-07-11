@@ -52,6 +52,32 @@ class PaymentController extends Controller
         return redirect()->route('payment.wallet')->with('error', 'Không thể tự tạo đơn nạp tiền. Đơn thanh toán chỉ được tạo khi gia sư nhận lớp.');
     }
 
+    // ─── Trang Chọn phương thức thanh toán ────────────────────
+    public function checkout(string $orderRef)
+    {
+        if (!$this->tablesExist()) {
+            $demo = session('demo_order', []);
+            $order = (object) array_merge([
+                'order_ref' => $orderRef,
+                'amount_vnd' => 200000,
+                'status' => 'pending',
+                'expires_at' => now()->addMinutes(15),
+            ], $demo);
+            $order->expires_at = \Carbon\Carbon::parse($order->expires_at);
+            return view('payment.checkout', compact('order'));
+        }
+
+        $order = PaymentOrder::where('order_ref', $orderRef)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($order->status === 'success') {
+            return redirect()->route('payment.success')->with('order_ref', $orderRef);
+        }
+
+        return view('payment.checkout', compact('order'));
+    }
+
     // ─── Trang QR ─────────────────────────────────────────────
     public function qr(string $orderRef)
     {

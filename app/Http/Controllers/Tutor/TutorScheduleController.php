@@ -19,13 +19,13 @@ class TutorScheduleController extends Controller
 
         // Tạo danh sách events cho lịch tuần
         $dayMap = [
-            'Thứ 2' => 'monday',
-            'Thứ 3' => 'tuesday',
-            'Thứ 4' => 'wednesday',
-            'Thứ 5' => 'thursday',
-            'Thứ 6' => 'friday',
-            'Thứ 7' => 'saturday',
-            'Chủ nhật' => 'sunday',
+            'T2' => 'monday', 'Thứ 2' => 'monday',
+            'T3' => 'tuesday', 'Thứ 3' => 'tuesday',
+            'T4' => 'wednesday', 'Thứ 4' => 'wednesday',
+            'T5' => 'thursday', 'Thứ 5' => 'thursday',
+            'T6' => 'friday', 'Thứ 6' => 'friday',
+            'T7' => 'saturday', 'Thứ 7' => 'saturday',
+            'CN' => 'sunday', 'Chủ nhật' => 'sunday',
         ];
 
         // Màu sắc cho mỗi lớp

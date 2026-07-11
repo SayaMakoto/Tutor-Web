@@ -127,7 +127,8 @@
                                     @if (count($scheduleByDay[$key]) > 0)
                                         <div class="flex flex-col gap-2">
                                             @foreach ($scheduleByDay[$key] as $event)
-                                                <a href="{{ route('tutor.classes.show', $event['class_id']) }}"
+                                                <a href="#class-{{ $event['class_id'] }}"
+                                                   onclick="highlightClass('class-{{ $event['class_id'] }}')"
                                                    class="block p-2.5 rounded-xl border transition-all duration-200
                                                           hover:shadow-md hover:-translate-y-0.5 cursor-pointer
                                                           {{ $event['color']['bg'] }} {{ $event['color']['border'] }}">
@@ -196,7 +197,8 @@
 
                                 <div class="flex flex-col gap-2">
                                     @foreach ($scheduleByDay[$key] as $event)
-                                        <a href="{{ route('tutor.classes.show', $event['class_id']) }}"
+                                        <a href="#class-{{ $event['class_id'] }}"
+                                           onclick="highlightClass('class-{{ $event['class_id'] }}')"
                                            class="flex items-center gap-3 p-3 rounded-xl bg-white border {{ $event['color']['border'] }}
                                                   hover:shadow-sm transition">
                                             <div class="w-1 h-10 rounded-full {{ $event['color']['dot'] }}"></div>
@@ -256,7 +258,7 @@
                     @foreach ($tutorClasses as $tc)
                         @php $cr = $tc->classRequest; @endphp
                         @if ($cr)
-                            <div class="p-5 hover:bg-gray-50/50 transition">
+                            <div id="class-{{ $cr->id }}" class="p-5 hover:bg-gray-50/50 transition duration-500 rounded-xl">
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
                                     {{-- Left: Class Info --}}
@@ -328,3 +330,27 @@
 
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    function highlightClass(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            // Remove previous highlights
+            document.querySelectorAll('[id^="class-"]').forEach(item => {
+                item.classList.remove('bg-green-50/80', 'ring-2', 'ring-green-400');
+            });
+            
+            // Add highlight
+            el.classList.add('bg-green-50/80', 'ring-2', 'ring-green-400');
+            
+            // Remove highlight after 2s
+            setTimeout(() => {
+                el.classList.remove('bg-green-50/80', 'ring-2', 'ring-green-400');
+            }, 2000);
+        }
+    }
+</script>
+@endpush

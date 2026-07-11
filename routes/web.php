@@ -252,6 +252,7 @@ Route::middleware(['auth', 'role:tutor,both'])->prefix('payment')->name('payment
     Route::get('/wallet',             [PaymentController::class, 'wallet'])  ->name('wallet');
     Route::get('/topup',              [PaymentController::class, 'topup'])   ->name('topup');
     Route::post('/create',            [PaymentController::class, 'create'])  ->name('create');
+    Route::get('/checkout/{orderRef}',[PaymentController::class, 'checkout'])->name('checkout');
     Route::get('/qr/{orderRef}',      [PaymentController::class, 'qr'])      ->name('qr');
     Route::get('/atm/{orderRef}',     [PaymentController::class, 'atm'])     ->name('atm');
     Route::get('/intl/{orderRef}',    [PaymentController::class, 'intl'])    ->name('intl');

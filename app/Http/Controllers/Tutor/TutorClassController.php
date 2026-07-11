@@ -103,12 +103,12 @@ class TutorClassController extends Controller
             'class_request_id' => $class->id,
             'order_ref'        => 'GS247-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5)),
             'amount_vnd'       => $feeVnd,
-            'payment_method'   => 'qr',
+            'payment_method'   => 'pending',
             'status'           => 'pending',
             'expires_at'       => now()->addMinutes(15),
         ]);
 
-        return redirect()->route('payment.qr', $order->order_ref);
+        return redirect()->route('payment.checkout', $order->order_ref);
     }
 
     /**
