@@ -83,10 +83,12 @@
 
 
         <!-- Lịch dạy -->
-        <a href="#"
+        <a href="{{ route('tutor.schedule') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl
                    transition-all duration-150 text-sm font-medium
-                   text-gray-600 hover:bg-green-50 hover:text-green-600">
+                   {{ request()->routeIs('tutor.schedule')
+                       ? 'bg-green-600 text-white shadow-sm'
+                       : 'text-gray-600 hover:bg-green-50 hover:text-green-600' }}">
 
             <i class="fas fa-calendar-alt w-4 text-center"></i>
 
@@ -96,10 +98,12 @@
 
 
         <!-- Thu nhập -->
-        <a href="#"
+        <a href="{{ route('tutor.income') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl
                    transition-all duration-150 text-sm font-medium
-                   text-gray-600 hover:bg-green-50 hover:text-green-600">
+                   {{ request()->routeIs('tutor.income')
+                       ? 'bg-green-600 text-white shadow-sm'
+                       : 'text-gray-600 hover:bg-green-50 hover:text-green-600' }}">
 
             <i class="fas fa-wallet w-4 text-center"></i>
 

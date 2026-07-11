@@ -25,7 +25,9 @@ use App\Http\Controllers\Student\TutorController;
 // TUTOR
 use App\Http\Controllers\Tutor\TutorClassController;
 use App\Http\Controllers\Tutor\TutorHomeController;
+use App\Http\Controllers\Tutor\TutorIncomeController;
 use App\Http\Controllers\Tutor\TutorProfileController;
+use App\Http\Controllers\Tutor\TutorScheduleController;
 
 // AUTH
 use App\Http\Controllers\AuthController;
@@ -186,6 +188,12 @@ Route::prefix('tutor')
 
         Route::put('/profile/update', [TutorProfileController::class, 'update'])
             ->name('profile.update');
+
+        Route::get('/schedule', [TutorScheduleController::class, 'index'])
+            ->name('schedule');
+
+        Route::get('/income', [TutorIncomeController::class, 'index'])
+            ->name('income');
 
         Route::get('/classes', [TutorClassController::class, 'index'])
             ->name('classes.index');
