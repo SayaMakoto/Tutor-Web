@@ -11,9 +11,9 @@ class TutorScheduleController extends Controller
     {
         $tutor = auth()->user()->tutor;
 
-        // Lấy tất cả lớp đang dạy hoặc đã hoàn thành
+        // Lấy các lớp đang dạy hoặc chờ thanh toán (không lấy lớp đã hoàn thành/hủy)
         $tutorClasses = TutorClass::where('tutor_id', $tutor->id)
-            ->whereIn('status', ['active', 'completed', 'payment_pending'])
+            ->whereIn('status', ['active', 'payment_pending'])
             ->with(['classRequest.schedules', 'classRequest.subject', 'classRequest.grade', 'classRequest.student.user'])
             ->get();
 

@@ -66,9 +66,6 @@
                         <span class="w-2 h-2 rounded-full bg-green-500"></span> Đang dạy
                     </span>
                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hoàn thành
-                    </span>
-                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span> Chờ thanh toán
                     </span>
                 </div>
