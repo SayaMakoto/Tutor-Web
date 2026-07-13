@@ -7,6 +7,14 @@
         $classes = $student->classRequests()->with(['subject','grade'])->latest()->get();
         $reviews = $student->reviews()->with('tutor.user')->latest()->get();
         $backRoute = request('from') === 'users' ? route('admin.users.index') : route('admin.students.index');
+        $genderLabel = match ($user->gender) {
+            'male' => 'Nam',
+            'female' => 'Nữ',
+            default => $user->gender ?? '—',
+        };
+        $dateOfBirth = $user->date_of_birth
+            ? \Carbon\Carbon::parse($user->date_of_birth)->format('d/m/Y')
+            : '—';
     @endphp
 
     {{-- Breadcrumb --}}
@@ -43,8 +51,8 @@
                     @foreach([
                         ['fas fa-envelope',  'Email',     $user->email],
                         ['fas fa-phone',     'SĐT',       $user->phone ?? '—'],
-                        ['fas fa-cake-candles','Ngày sinh',$user->date_of_birth ?? '—'],
-                        ['fas fa-venus-mars','Giới tính', $user->gender ?? '—'],
+                        ['fas fa-cake-candles','Ngày sinh', $dateOfBirth],
+                        ['fas fa-venus-mars','Giới tính', $genderLabel],
                     ] as [$icon, $label, $value])
                         <div class="flex items-start gap-3">
                             <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -77,6 +85,8 @@
                     @php
                         $statusMap = [
                             'pending'   => ['label' => 'Chờ duyệt',  'bg' => 'bg-amber-100',   'text' => 'text-amber-700'],
+                            'approved'  => ['label' => 'Đã duyệt',   'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700'],
+                            'rejected'  => ['label' => 'Đã từ chối', 'bg' => 'bg-red-100',     'text' => 'text-red-700'],
                             'assigned'  => ['label' => 'Đã nhận',    'bg' => 'bg-blue-100',    'text' => 'text-blue-700'],
                             'completed' => ['label' => 'Hoàn thành', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700'],
                             'cancelled' => ['label' => 'Đã huỷ',     'bg' => 'bg-red-100',     'text' => 'text-red-700'],

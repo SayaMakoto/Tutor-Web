@@ -6,6 +6,19 @@
         $backRoute  = request('from') === 'users' ? route('admin.users.index') : route('admin.tutors.index');
         $avgRating  = round($tutor->reviews->avg('rating'), 1);
         $totalRevs  = $tutor->reviews->count();
+        $activeClasses = $tutor->classes()
+            ->with(['classRequest.subject', 'classRequest.grade'])
+            ->where('status', 'active')
+            ->latest()
+            ->get();
+        $genderLabel = match ($tutor->user->gender) {
+            'male' => 'Nam',
+            'female' => 'Nữ',
+            default => $tutor->user->gender ?? '—',
+        };
+        $dateOfBirth = $tutor->user->date_of_birth
+            ? \Carbon\Carbon::parse($tutor->user->date_of_birth)->format('d/m/Y')
+            : '—';
     @endphp
 
     {{-- Breadcrumb --}}
@@ -66,6 +79,30 @@
                                py-2.5 rounded-xl text-sm font-semibold hover:shadow-md transition">
                     <i class="fas fa-pen text-xs"></i> Đổi trạng thái
                 </button>
+            </div>
+
+            {{-- Thông tin cá nhân --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2 mb-4">
+                    <i class="fas fa-address-card text-violet-500"></i> Thông tin cá nhân
+                </h3>
+                <div class="space-y-3">
+                    @foreach([
+                        ['fas fa-phone', 'SĐT', $tutor->user->phone ?? '—'],
+                        ['fas fa-cake-candles', 'Ngày sinh', $dateOfBirth],
+                        ['fas fa-venus-mars', 'Giới tính', $genderLabel],
+                    ] as [$icon, $label, $value])
+                        <div class="flex items-start gap-3">
+                            <div class="w-7 h-7 bg-violet-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="{{ $icon }} text-violet-500 text-xs"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs text-gray-400">{{ $label }}</p>
+                                <p class="font-medium text-gray-700 text-sm truncate">{{ $value }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
             {{-- Tài liệu hồ sơ --}}
@@ -145,6 +182,44 @@
                 @else
                     <p class="text-sm text-gray-400">Chưa đăng ký môn học</p>
                 @endif
+            </div>
+
+            {{-- Lớp đang dạy --}}
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2 text-sm">
+                    <i class="fas fa-chalkboard-teacher text-emerald-500"></i> Lớp đang dạy
+                    <span class="ml-auto text-xs bg-emerald-50 text-emerald-600 font-semibold px-2 py-0.5 rounded-full">
+                        {{ $activeClasses->count() }}
+                    </span>
+                </h3>
+                @forelse($activeClasses as $tutorClass)
+                    @php $classRequest = $tutorClass->classRequest; @endphp
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl mb-2">
+                        <div>
+                            <p class="font-semibold text-gray-800 text-sm">
+                                {{ $classRequest?->subject?->name ?? '—' }}
+                                @if($classRequest?->grade)
+                                    <span class="text-gray-400 font-normal">— {{ $classRequest->grade->name }}</span>
+                                @endif
+                            </p>
+                            @if($classRequest)
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    {{ number_format($classRequest->fee) }}đ/giờ ·
+                                    <a href="{{ route('admin.class-requests.show', $classRequest->id) }}"
+                                       class="text-violet-500 hover:underline">Xem chi tiết</a>
+                                </p>
+                            @endif
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $tutorClass->status_color }}">
+                            {{ $tutorClass->status_label }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="text-center py-8">
+                        <i class="fas fa-chalkboard text-gray-200 text-3xl mb-2"></i>
+                        <p class="text-sm text-gray-400">Hiện chưa có lớp đang dạy</p>
+                    </div>
+                @endforelse
             </div>
 
             {{-- Đánh giá --}}
