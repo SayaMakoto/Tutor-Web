@@ -24,17 +24,14 @@ class AdminClassRequestController extends Controller
 
             $query->where(function ($q) use ($keyword) {
 
-                // 🔎 Tìm theo mã yêu cầu (ID)
                 if (is_numeric($keyword)) {
                     $q->orWhere('id', $keyword);
                 }
 
-                // 🔎 Tìm theo tên grade
                 $q->orWhereHas('grade', function ($q2) use ($keyword) {
                     $q2->where('name', 'like', "%$keyword%");
                 });
 
-                // 🔎 Tìm theo tên subject
                 $q->orWhereHas('subject', function ($q3) use ($keyword) {
                     $q3->where('name', 'like', "%$keyword%");
                 });
@@ -42,7 +39,6 @@ class AdminClassRequestController extends Controller
             });
         }
 
-        // 🎯 Filter theo status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -128,7 +124,6 @@ class AdminClassRequestController extends Controller
                 'is_approved' => true
             ]);
 
-            // 🔥 nếu classRequest có grade_id thì gán luôn
             if ($classRequest->grade_id) {
                 $classRequest->subject->grades()->syncWithoutDetaching([
                     $classRequest->grade_id
@@ -151,7 +146,6 @@ class AdminClassRequestController extends Controller
                 'is_approved' => true
             ]);
 
-            // 🔥 nếu đã có subject thì gán ngược lại
             if ($classRequest->subject_id) {
                 $classRequest->grade->subjects()->syncWithoutDetaching([
                     $classRequest->subject_id

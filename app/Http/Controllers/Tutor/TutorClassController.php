@@ -75,9 +75,6 @@ class TutorClassController extends Controller
         return view('tutor.classes.assigned', compact('assignedClasses'));
     }
 
-    /**
-     * Gia sư thanh toán phí nhận lớp (Tạm giữ 25%)
-     */
     public function pay(ClassRequest $class)
     {
         $tutor = auth()->user()->tutor;
@@ -94,10 +91,8 @@ class TutorClassController extends Controller
             return back()->with('error', 'Lớp học không ở trạng thái chờ thanh toán.');
         }
 
-        // Tính 25% tổng giá trị lớp học (VND)
         $feeVnd = (int) round($class->total_value * 0.25);
 
-        // Tạo đơn hàng thanh toán trực tiếp cho lớp học này
         $order = \App\Models\PaymentOrder::create([
             'user_id'          => auth()->id(),
             'class_request_id' => $class->id,
@@ -111,9 +106,7 @@ class TutorClassController extends Controller
         return redirect()->route('payment.checkout', $order->order_ref);
     }
 
-    /**
-     * Gia sư hủy lớp học thử (hoàn 20% phí, giữ lại 5% phí dịch vụ)
-     */
+
     public function cancel(ClassRequest $class)
     {
         $tutor = auth()->user()->tutor;
@@ -130,7 +123,6 @@ class TutorClassController extends Controller
             return back()->with('error', 'Chỉ có thể hủy lớp học đang học thử.');
         }
 
-        // Hủy lớp học
         $tutorClass->update(['status' => 'cancelled']);
         $class->update(['status' => 'cancelled']);
 
@@ -142,9 +134,6 @@ class TutorClassController extends Controller
             ->with('success', 'Đã hủy lớp học thử thành công. Hệ thống đã hoàn lại 20% phí (' . number_format($refundAmount) . 'đ) cho bạn.');
     }
 
-    /**
-     * Gia sư mô phỏng hoàn thành lớp học (Hệ thống khấu trừ 25% vào doanh thu)
-     */
     public function complete(ClassRequest $class)
     {
         $tutor = auth()->user()->tutor;
@@ -163,11 +152,9 @@ class TutorClassController extends Controller
 
         $feeVnd = (int) round($class->total_value * 0.25);
 
-        // Khấu trừ 25% phí đang bị đóng băng thành doanh thu hệ thống
         $paymentService = new \App\Services\PaymentService();
         $paymentService->chargeEscrow(auth()->user(), $feeVnd, $class->id);
 
-        // Chỉ cập nhật trạng thái trong bảng classes (tutorClass), class_request vẫn là assigned
         $tutorClass->update(['status' => 'completed']);
 
         return redirect()->route('tutor.classes.show', $class->id)

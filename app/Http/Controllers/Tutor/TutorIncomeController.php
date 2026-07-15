@@ -13,7 +13,6 @@ class TutorIncomeController extends Controller
         $user = auth()->user();
         $tutor = $user->tutor;
 
-        // Lấy tất cả lớp của gia sư (trừ lớp đã hủy)
         $tutorClasses = TutorClass::where('tutor_id', $tutor->id)
             ->where('status', '!=', 'cancelled')
             ->with(['classRequest.schedules', 'classRequest.subject', 'classRequest.grade'])
@@ -23,9 +22,9 @@ class TutorIncomeController extends Controller
         $completedClasses = $tutorClasses->where('status', 'completed');
 
         $classIncomes = [];
-        $totalNetIncome = 0; // Tổng thực nhận (Lớp đã hoàn thành)
-        $expectedNetIncome = 0; // Tổng dự kiến (Lớp đang dạy)
-        $totalPlatformFee = 0; // Tổng phí đã trả (Tất cả lớp)
+        $totalNetIncome = 0;
+        $expectedNetIncome = 0;
+        $totalPlatformFee = 0;
 
         foreach ($tutorClasses as $tc) {
             $cr = $tc->classRequest;
@@ -63,7 +62,6 @@ class TutorIncomeController extends Controller
             }
         }
 
-        // Lịch sử giao dịch thanh toán
         $transactions = PaymentTransaction::where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->take(20)

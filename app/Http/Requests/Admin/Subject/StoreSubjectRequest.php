@@ -8,7 +8,7 @@ class StoreSubjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // sau này check admin ở đây
+        return true;
     }
 
     public function rules(): array

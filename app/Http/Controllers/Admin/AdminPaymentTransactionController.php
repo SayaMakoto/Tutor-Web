@@ -12,7 +12,6 @@ class AdminPaymentTransactionController extends Controller
     {
         $query = PaymentTransaction::with(['user', 'classRequest']);
 
-        // Tìm kiếm theo tên, email, ID hoặc mô tả
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -26,12 +25,10 @@ class AdminPaymentTransactionController extends Controller
             });
         }
 
-        // Lọc theo loại giao dịch
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
 
-        // Lọc theo trạng thái
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }

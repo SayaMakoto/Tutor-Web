@@ -9,7 +9,7 @@ class UpdateClassRequestStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Nếu có phân quyền admin thì check ở đây
+        return true;
     }
 
     public function rules(): array

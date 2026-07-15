@@ -7,7 +7,6 @@ use App\Models\Contact;
 
 class ContactController extends Controller
 {
-    // Hiển thị trang liên hệ
     public function index()
     {
         $layout = auth()->user()->role === 'tutor'
@@ -17,7 +16,6 @@ class ContactController extends Controller
         return view('contact.index', compact('layout'));
     }
 
-    // Xử lý gửi liên hệ
     public function store(Request $request)
     {
         $request->validate([

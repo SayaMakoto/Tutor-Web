@@ -163,7 +163,6 @@ class CreateClassController extends Controller
             return redirect()->route('create-class.step1');
         }
 
-        // Lấy grade name nếu có grade_id
         if (!empty($data['grade_id'])) {
             $data['grade_display'] =
                 \App\Models\Grade::find($data['grade_id'])?->name
@@ -174,7 +173,6 @@ class CreateClassController extends Controller
                 ?? 'Không xác định';
         }
 
-        // Lấy subject name nếu có subject_id
         if (!empty($data['subject_id'])) {
             $data['subject_display'] =
                 \App\Models\Subject::find($data['subject_id'])?->name
@@ -206,7 +204,6 @@ class CreateClassController extends Controller
             return redirect()->route('create-class.step1');
         }
 
-        // 1. Tạo ngành học tự nhập (chờ duyệt) nếu có
         $gradeId = null;
         if (!empty($data['grade_request'])) {
             $grade = Grade::create([
@@ -219,7 +216,6 @@ class CreateClassController extends Controller
             $gradeId = $data['grade_id'] ?? null;
         }
 
-        // 2. Tạo môn học tự nhập (chờ duyệt) nếu có
         $subjectId = null;
         if (!empty($data['subject_request'])) {
             $subject = Subject::create([
@@ -232,7 +228,6 @@ class CreateClassController extends Controller
             $subjectId = $data['subject_id'] ?? null;
         }
 
-        // 3. Tạo ClassRequest
         $classRequest = ClassRequest::create([
             'student_id' => auth()->user()->student->id,
             'grade_id' => $gradeId,
@@ -249,7 +244,6 @@ class CreateClassController extends Controller
             'status' => 'pending'
         ]);
 
-        // 4. Lưu lịch học chi tiết vào bảng class_schedules
         if (!empty($data['schedule_days'])) {
             foreach ($data['schedule_days'] as $day) {
                 $classRequest->schedules()->create([

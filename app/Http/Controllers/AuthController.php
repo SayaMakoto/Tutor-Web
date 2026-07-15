@@ -74,15 +74,10 @@ class AuthController extends Controller
             ->with('success', 'Đăng ký gia sư thành công! Vui lòng đăng nhập.');
     }
 
-    /**
-     * Học viên đã đăng nhập đăng ký thêm vai trò gia sư.
-     * Route: POST /become-tutor (middleware: auth, not.tutor)
-     */
     public function becomeTutor(RegisterTutorRequest $request)
     {
         $user = auth()->user();
 
-        // Tạo hồ sơ gia sư và nâng role lên 'both'
         Tutor::create([
             'user_id'    => $user->id,
             'bio'        => $request->bio,
@@ -105,7 +100,6 @@ class AuthController extends Controller
             $deletedUser = User::onlyTrashed()->where('email', $request->email)->first();
             if ($deletedUser && Hash::check($request->password, $deletedUser->password)) {
                 
-                // Xóa cứng (force delete) sau khi họ đã thấy thông báo
                 $tutor = Tutor::withTrashed()->where('user_id', $deletedUser->id)->first();
                 if ($tutor) {
                     $tutor->forceDelete();
@@ -181,7 +175,6 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Không tìm thấy tài khoản với email này.']);
         }
 
-        // Mock xác thực: Bỏ qua bước gửi email, chuyển thẳng đến trang đặt lại mật khẩu
         return redirect()->route('reset-password')->with('reset_email', $request->email);
     }
 
@@ -213,8 +206,6 @@ class AuthController extends Controller
 
     public function adminLogout(Request $request)
     {
-        // Chỉ logout guard 'admin' — KHÔNG invalidate() toàn bộ session
-        // vì invalidate() sẽ xóa cả session của guard 'web' (student/tutor/both).
         Auth::guard('admin')->logout();
 
         $request->session()->regenerateToken();

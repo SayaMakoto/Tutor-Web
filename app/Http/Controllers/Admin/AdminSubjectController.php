@@ -23,7 +23,6 @@ class AdminSubjectController extends Controller
 
     public function store(StoreSubjectRequest $request)
     {
-        // Kiểm tra tên đã tồn tại (không phân biệt status)
         $existingSubject = Subject::where('name', $request->name)->first();
 
         if ($existingSubject) {
@@ -63,12 +62,10 @@ class AdminSubjectController extends Controller
                 ->with('error', 'Đã tồn tại môn học với tên này rồi');
         }
 
-        // update name
         $subject->update([
             'name' => $request->name
         ]);
 
-        // 🔥 CẬP NHẬT bảng trung gian
         $subject->grades()->sync($request->grades ?? []);
 
         return redirect()
@@ -80,14 +77,13 @@ class AdminSubjectController extends Controller
     {
         $subject = Subject::findOrFail($id);
 
-        // 🚧 Nếu môn học đang được dùng trong class_request
         if ($subject->classRequests()->exists()) {
             return redirect()
                 ->route('admin.subjects.index')
                 ->with('error', 'Không thể xóa môn học này(đã tồn tại trong đơn đăng lớp)!');
         }
 
-        $subject->delete(); // soft delete
+        $subject->delete();
 
         return redirect()
             ->route('admin.subjects.index')
@@ -117,7 +113,6 @@ class AdminSubjectController extends Controller
     {
         $subject = Subject::onlyTrashed()->findOrFail($id);
 
-        // Xóa luôn dữ liệu trong pivot table trước
         $subject->grades()->detach();
 
         $subject->forceDelete();

@@ -8,7 +8,6 @@ use App\Models\Contact;
 
 class AdminContactController extends Controller
 {
-    // Danh sách liên hệ
     public function index()
     {
         $contacts = Contact::latest()->paginate(10);
@@ -16,7 +15,6 @@ class AdminContactController extends Controller
         return view('admin.contacts.index', compact('contacts'));
     }
 
-    // Đánh dấu đã phản hồi
     public function reply(Request $request, $id)
     {
         $request->validate([

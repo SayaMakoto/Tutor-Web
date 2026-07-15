@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentService
 {
-    /**
-     * Tạo một giao dịch đóng băng (hold) 25% phí nhận lớp khi gia sư thanh toán thành công
-     */
     public function holdEscrow(User $user, int $amountVnd, int $classRequestId, string $orderRef): PaymentTransaction
     {
         return DB::transaction(function () use ($user, $amountVnd, $classRequestId, $orderRef) {
@@ -26,9 +23,6 @@ class PaymentService
         });
     }
 
-    /**
-     * Hủy lớp học trong thời gian bảo hành và hoàn trả 20% phí cho gia sư, 5% thu phí dịch vụ
-     */
     public function cancelClassAndRefund(User $user, float $totalValueVnd, int $classRequestId): void
     {
         $holdAmount = (int) round($totalValueVnd * 0.25);
@@ -36,7 +30,6 @@ class PaymentService
         $chargeAmount = $holdAmount - $refundAmount;
 
         DB::transaction(function () use ($user, $refundAmount, $chargeAmount, $classRequestId) {
-            // Ghi nhận hoàn tiền 20% cho gia sư (type refund)
             PaymentTransaction::create([
                 'user_id'          => $user->id,
                 'class_request_id' => $classRequestId,
@@ -46,7 +39,6 @@ class PaymentService
                 'status'           => 'completed',
             ]);
 
-            // Ghi nhận khấu trừ 5% phí dịch vụ (type charge)
             if ($chargeAmount > 0) {
                 PaymentTransaction::create([
                     'user_id'          => $user->id,
@@ -60,9 +52,6 @@ class PaymentService
         });
     }
 
-    /**
-     * Hoàn thành lớp học - chuyển 25% phí đang đóng băng thành doanh thu hệ thống
-     */
     public function chargeEscrow(User $user, int $amountVnd, int $classRequestId): PaymentTransaction
     {
         return DB::transaction(function () use ($user, $amountVnd, $classRequestId) {

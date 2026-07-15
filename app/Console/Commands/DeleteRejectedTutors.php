@@ -25,7 +25,6 @@ class DeleteRejectedTutors extends Command
      */
     public function handle()
     {
-        // 1. Soft delete những tài khoản bị từ chối quá 5 phút
         $tutors = \App\Models\Tutor::where('status', 'rejected')
             ->where('updated_at', '<=', now()->subMinutes(5))
             ->get();
@@ -37,7 +36,6 @@ class DeleteRejectedTutors extends Command
             $tutor->delete();
         }
 
-        // 2. Xóa cứng (Force Delete) những tài khoản đã bị xóa mềm quá 30 ngày để dọn rác DB
         $oldTutors = \App\Models\Tutor::onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays(30))
             ->get();

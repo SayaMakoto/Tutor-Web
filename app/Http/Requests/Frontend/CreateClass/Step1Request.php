@@ -38,7 +38,6 @@ class Step1Request extends FormRequest
             $gradeId = $this->grade_id;
             $subjectId = $this->subject_id;
 
-            // Nếu chọn "other" thì bỏ qua kiểm tra quan hệ
             if (!$gradeId || !$subjectId || $gradeId === 'other' || $subjectId === 'other') {
                 return;
             }

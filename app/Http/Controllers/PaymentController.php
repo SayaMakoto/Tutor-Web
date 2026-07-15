@@ -10,13 +10,11 @@ use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    // ─── Helper: kiểm tra bảng đã tồn tại chưa ───────────────
     private function tablesExist(): bool
     {
         return Schema::hasTable('payment_transactions') && Schema::hasTable('payment_orders');
     }
 
-    // ─── Lịch sử thanh toán ───────────────────────────────────
     public function wallet()
     {
         $transactions = collect();
@@ -28,7 +26,6 @@ class PaymentController extends Controller
                 ->limit(30)
                 ->get();
 
-            // Tính số tiền đóng băng (escrow) hiện tại
             $escrowBalance = \App\Models\PaymentTransaction::where('user_id', Auth::id())
                 ->where('type', 'hold')
                 ->whereHas('classRequest.tutorClass', function ($q) {
@@ -40,19 +37,16 @@ class PaymentController extends Controller
         return view('payment.wallet', compact('transactions', 'escrowBalance'));
     }
 
-    // ─── Nạp tiền vào ví (ngừng hỗ trợ) ───────────────────────
     public function topup()
     {
         return redirect()->route('payment.wallet')->with('error', 'Không hỗ trợ nạp tiền vào ví. Phí nhận lớp được thanh toán trực tiếp bằng VNĐ.');
     }
 
-    // ─── Tạo đơn & Redirect QR ────────────────────────────────
     public function create(Request $request)
     {
         return redirect()->route('payment.wallet')->with('error', 'Không thể tự tạo đơn nạp tiền. Đơn thanh toán chỉ được tạo khi gia sư nhận lớp.');
     }
 
-    // ─── Trang Chọn phương thức thanh toán ────────────────────
     public function checkout(string $orderRef)
     {
         if (!$this->tablesExist()) {
@@ -78,11 +72,9 @@ class PaymentController extends Controller
         return view('payment.checkout', compact('order'));
     }
 
-    // ─── Trang QR ─────────────────────────────────────────────
     public function qr(string $orderRef)
     {
         if (!$this->tablesExist()) {
-            // Demo mode: dùng session
             $demo = session('demo_order', []);
             $order = (object) array_merge([
                 'order_ref' => $orderRef,
@@ -105,7 +97,6 @@ class PaymentController extends Controller
         return view('payment.qr', compact('order'));
     }
 
-    // ─── Trang ATM ────────────────────────────────────────────
     public function atm(string $orderRef)
     {
         if (!$this->tablesExist()) {
@@ -131,7 +122,6 @@ class PaymentController extends Controller
         return view('payment.atm', compact('order'));
     }
 
-    // ─── Trang Thẻ quốc tế ────────────────────────────────────
     public function intl(string $orderRef)
     {
         if (!$this->tablesExist()) {
@@ -157,11 +147,9 @@ class PaymentController extends Controller
         return view('payment.intl', compact('order'));
     }
 
-    // ─── Mô phỏng Sandbox ─────────────────────────────────────
     public function simulate(Request $request)
     {
         if (!$this->tablesExist()) {
-            // Demo mode: trực tiếp vào success
             $demo = session('demo_order', []);
             $order = (object) array_merge([
                 'order_ref' => $request->order_ref,
@@ -189,7 +177,6 @@ class PaymentController extends Controller
         return view('payment.success', compact('order'));
     }
 
-    // ─── Mô phỏng thất bại Sandbox ───────────────────────────
     public function simulateFail(Request $request)
     {
         if (!$this->tablesExist()) {
@@ -204,7 +191,6 @@ class PaymentController extends Controller
         $order->update(['status' => 'failed']);
     }
 
-    // ─── AJAX Status check ────────────────────────────────────
     public function status(string $orderRef)
     {
         if (!$this->tablesExist()) {
@@ -214,7 +200,6 @@ class PaymentController extends Controller
         return response()->json(['status' => $order?->status ?? 'not_found']);
     }
 
-    // ─── Hủy đơn ──────────────────────────────────────────────
     public function cancel(Request $request)
     {
         if ($this->tablesExist()) {
@@ -226,7 +211,6 @@ class PaymentController extends Controller
         return redirect()->route('payment.wallet')->with('info', 'Đã hủy đơn hàng.');
     }
 
-    // ─── Success / Failed ─────────────────────────────────────
     public function success()
     {
         $order = null;
@@ -239,7 +223,6 @@ class PaymentController extends Controller
         return view('payment.failed', compact('reason'));
     }
 
-    // ─── Lịch sử (alias wallet) ───────────────────────────────
     public function history()
     {
         return $this->wallet();

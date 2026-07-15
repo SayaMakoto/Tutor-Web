@@ -23,7 +23,6 @@ class AdminGradeController extends Controller
 
     public function store(StoreGradeRequest $request)
     {
-        // Tìm cả bản ghi đã xóa mềm
         $existingGrade = Grade::withTrashed()
             ->where('sort_order', $request->sort_order)
             ->first();
@@ -69,7 +68,7 @@ class AdminGradeController extends Controller
     {
         $grade = Grade::findOrFail($id);
 
-        $grade->delete(); // soft delete
+        $grade->delete();
 
         return redirect()->route('admin.grades.index')
             ->with('success', 'Xóa ngành học thành công');

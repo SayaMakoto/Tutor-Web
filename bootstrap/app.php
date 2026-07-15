@@ -22,7 +22,6 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
-        // Khi admin guard đã đăng nhập mà cố vào /admin/login → về admin.home
         $middleware->redirectUsersTo(function ($request) {
             if ($request->is('admin/login') || $request->is('admin/login/*')) {
                 return route('admin.home');

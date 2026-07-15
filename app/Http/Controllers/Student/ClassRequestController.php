@@ -13,7 +13,6 @@ class ClassRequestController extends Controller
 {
     public function index(FilterRequest $request)
     {
-        // Lấy thông tin học viên từ user role student hoặc both
         $student = auth()->user()?->student;
         $both = auth()->user()?->both;
 
@@ -85,7 +84,6 @@ class ClassRequestController extends Controller
 
     public function destroy(ClassRequest $class_request)
     {
-        // Kiểm tra quyền sở hữu
         if ($class_request->student_id != auth()->user()->student->id) {
             abort(403);
         }
@@ -102,13 +100,11 @@ class ClassRequestController extends Controller
             }
             
             if ($tutorClass->status === 'active') {
-                // Hủy lớp học đang học thử (hoàn trả 20% phí cho gia sư)
                 $tutorClass->update(['status' => 'cancelled']);
                 
                 $paymentService = new \App\Services\PaymentService();
                 $paymentService->cancelClassAndRefund($tutorClass->tutor->user, $class_request->total_value, $class_request->id);
             } elseif ($tutorClass->status === 'payment_pending') {
-                // Hủy lớp khi gia sư chưa đóng phí
                 $tutorClass->update(['status' => 'cancelled']);
             }
         }

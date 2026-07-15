@@ -16,12 +16,6 @@ class Tutor extends Model
         'status'
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONS
-    |--------------------------------------------------------------------------
-    */
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -31,9 +25,9 @@ class Tutor extends Model
     {
         return $this->belongsToMany(
             Subject::class,
-            'tutor_subjects', // tên bảng pivot
-            'tutor_id',       // khóa ngoại của Tutor
-            'subject_id'      // khóa ngoại của Subject
+            'tutor_subjects',
+            'tutor_id',
+            'subject_id'
         );
     }
 
@@ -57,19 +51,12 @@ class Tutor extends Model
         return $this->hasManyThrough(
             ClassRequest::class,
             TutorClass::class,
-            'tutor_id',          // Foreign key on TutorClass table...
-            'id',                // Foreign key on ClassRequest table...
-            'id',                // Local key on Tutor table...
-            'class_request_id'   // Local key on TutorClass table...
+            'tutor_id',
+            'id',
+            'id',
+            'class_request_id'
         );
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATUS CONFIG
-    |--------------------------------------------------------------------------
-    */
 
     public static function statusOptions()
     {
@@ -88,12 +75,6 @@ class Tutor extends Model
             'rejected' => 'bg-red-100 text-red-700',
         ];
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ACCESSORS
-    |--------------------------------------------------------------------------
-    */
 
     public function getStatusLabelAttribute()
     {

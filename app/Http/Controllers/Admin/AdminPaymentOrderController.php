@@ -12,7 +12,6 @@ class AdminPaymentOrderController extends Controller
     {
         $query = PaymentOrder::with('user');
 
-        // Tìm kiếm theo tên người dùng, email, mã tham chiếu đơn hàng hoặc ID
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -26,7 +25,6 @@ class AdminPaymentOrderController extends Controller
             });
         }
 
-        // Lọc theo trạng thái
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }

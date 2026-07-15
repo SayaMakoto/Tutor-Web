@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('class_request_id')->constrained('class_requests')->cascadeOnDelete(); // ID yêu cầu lớp học
             $table->foreignId('tutor_id')->constrained('tutors')->cascadeOnDelete(); // ID gia sư nhận lớp
             $table->enum('status', ['payment_pending', 'active', 'completed', 'cancelled'])->default('payment_pending'); // Trạng thái lớp học
-
+ 
             $table->timestamps(); // created_at và updated_at
             $table->softDeletes(); // deleted_at
         });

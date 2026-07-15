@@ -11,13 +11,11 @@ class TutorScheduleController extends Controller
     {
         $tutor = auth()->user()->tutor;
 
-        // Lấy các lớp đang dạy hoặc chờ thanh toán (không lấy lớp đã hoàn thành/hủy)
         $tutorClasses = TutorClass::where('tutor_id', $tutor->id)
             ->whereIn('status', ['active', 'payment_pending'])
             ->with(['classRequest.schedules', 'classRequest.subject', 'classRequest.grade', 'classRequest.student.user'])
             ->get();
 
-        // Tạo danh sách events cho lịch tuần
         $dayMap = [
             'T2' => 'monday', 'Thứ 2' => 'monday',
             'T3' => 'tuesday', 'Thứ 3' => 'tuesday',
@@ -28,7 +26,6 @@ class TutorScheduleController extends Controller
             'CN' => 'sunday', 'Chủ nhật' => 'sunday',
         ];
 
-        // Màu sắc cho mỗi lớp
         $colors = [
             ['bg' => 'bg-green-50', 'border' => 'border-green-200', 'text' => 'text-green-700', 'dot' => 'bg-green-500'],
             ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-700', 'dot' => 'bg-emerald-500'],
@@ -89,7 +86,6 @@ class TutorScheduleController extends Controller
             }
         }
 
-        // Sắp xếp mỗi ngày theo thời gian bắt đầu
         foreach ($scheduleByDay as &$daySchedules) {
             usort($daySchedules, fn($a, $b) => strcmp($a['start_time'], $b['start_time']));
         }

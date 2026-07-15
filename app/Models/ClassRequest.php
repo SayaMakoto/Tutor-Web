@@ -44,10 +44,10 @@ class ClassRequest extends Model
         return $this->hasOneThrough(
             Tutor::class,
             TutorClass::class,
-            'class_request_id', // Khóa ngoại trên TutorClass
-            'id',               // Khóa ngoại trên Tutor (khóa chính)
-            'id',               // Khóa nội trên ClassRequest (khóa chính)
-            'tutor_id'          // Khóa nội trên TutorClass
+            'class_request_id',
+            'id',
+            'id',
+            'tutor_id'
         );
     }
 
@@ -136,7 +136,6 @@ class ClassRequest extends Model
         };
     }
 
-    /** Tính tổng giá trị lớp học dự kiến */
     public function getTotalValueAttribute(): float
     {
         $sessionsPerWeek = $this->schedules->count() ?: 1;
@@ -169,7 +168,6 @@ class ClassRequest extends Model
         return $this->fee * $hoursPerSession * $sessionsPerWeek * $totalWeeks;
     }
 
-    /** Lấy địa chỉ bị che phần chi tiết */
     public function getMaskedLocationAttribute(): string
     {
         if (!$this->location) {
@@ -186,24 +184,20 @@ class ClassRequest extends Model
         return "*** (Thanh toán để xem)";
     }
 
-    /** Kiểm tra xem user hiện tại có thể xem thông tin liên hệ và địa chỉ chi tiết hay không */
     public function canViewContactDetails($user): bool
     {
         if (!$user) {
             return false;
         }
 
-        // Admin luôn có quyền xem
         if ($user->role === 'admin') {
             return true;
         }
 
-        // Học viên sở hữu lớp học luôn có quyền xem
         if ($user->student && $this->student_id === $user->student->id) {
             return true;
         }
 
-        // Gia sư được phân công và lớp học ở trạng thái active (đã đóng phí) thì được xem
         if ($user->tutor && $this->tutorClass) {
             if ($this->tutorClass->tutor_id === $user->tutor->id && $this->tutorClass->status === 'active') {
                 return true;

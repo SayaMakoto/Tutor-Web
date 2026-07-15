@@ -26,7 +26,7 @@
         {{-- Headline --}}
         <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight tracking-tight">
             Kết nối gia sư uy tín
-            <span class="block text-yellow-300 mt-1">— Học hiệu quả ngay hôm nay</span>
+            <span class="block text-yellow-300 mt-1">Học hiệu quả ngay hôm nay</span>
         </h1>
 
         {{-- Subtext --}}
